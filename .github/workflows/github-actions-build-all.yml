@@ -18,6 +18,8 @@ jobs:
             version: "0.1"
           - recipe-name: bert-base-uncased
             version: "0.1"
+          - recipe-name: whisper-medium
+            version: "0.1"
     permissions:
       contents: read
       packages: write
