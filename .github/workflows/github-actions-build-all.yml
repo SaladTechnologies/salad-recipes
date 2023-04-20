@@ -30,6 +30,20 @@ jobs:
             version: "0.1"
           - recipe-name: wav2vec2-large-xlsr-53-english
             version: "0.1"
+          - recipe-name: bart-large-cnn
+            version: "0.1"
+          - recipe-name: parrot_adequacy_model
+            version: "0.1"
+          - recipe-name: roberta-base-squad2
+            version: "0.1"
+          - recipe-name: twitter-roberta-base-sentiment
+            version: "0.1"
+          - recipe-name: vit-gpt2-image-captioning
+            version: "0.1"
+          - recipe-name: roberta-base
+            version: "0.1"
+          - recipe-name: twitter-roberta-base-sentiment
+            version: "0.1"
     permissions:
       contents: read
       packages: write
