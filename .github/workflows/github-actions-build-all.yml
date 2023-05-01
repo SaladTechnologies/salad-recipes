@@ -129,11 +129,11 @@ jobs:
           - recipe-name: anything4.0
             version: "0.2"
           - recipe-name: openjourney4
-            version: "0.1"
+            version: "0.2"
           - recipe-name: stable-diffusion-1.5
-            version: "0.1"
+            version: "0.2"
           - recipe-name: stable-diffusion-2.1
-            version: "0.1"
+            version: "0.2"
     permissions:
       contents: read
       packages: write
