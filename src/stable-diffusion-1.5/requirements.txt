@@ -25,6 +25,8 @@ triton==2.0.0.dev20221202
 
 ftfy==6.1.1
 
+websockets==10.0
+
 # spacy==3.4.3
 spacy==3.5.0
 
