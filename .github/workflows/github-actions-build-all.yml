@@ -134,6 +134,8 @@ jobs:
             version: "0.2"
           - recipe-name: stable-diffusion-2.1
             version: "0.2"
+          - recipe-name: stable-diffusion-1.4
+            version: "0.1"
     permissions:
       contents: read
       packages: write
