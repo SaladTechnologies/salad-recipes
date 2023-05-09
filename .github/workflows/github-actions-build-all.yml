@@ -112,9 +112,9 @@ jobs:
           echo 'socat TCP6-LISTEN:8888,fork TCP4:127.0.0.1:8080 &' >> ./src/${{ matrix.recipe-name }}/out/server/start.sh
           echo 'python3 /app/inference_server.py' >> ./src/${{ matrix.recipe-name }}/out/server/start.sh
           chmod +x ./src/${{ matrix.recipe-name }}/out/server/start.sh
-          sed -i -r ':a; /^\s*$/ {N;ba}; s/( *\n *){2,}/\n\n/' Dockerfile
-          sed -i '/COPY .\/server_requirements.txt.*/i # Salad Recipes require IPv6 tunnels\nRUN apt update\nRUN apt install -y socat\n' Dockerfile
-          sed -i 's/^\(CMD exec python3 \/app.*\)/# \1\n\nCMD bash start.sh/' Dockerfile
+          sed -i -r ':a; /^\s*$/ {N;ba}; s/( *\n *){2,}/\n\n/' ./src/${{ matrix.recipe-name }}/out/Dockerfile
+          sed -i '/COPY .\/server_requirements.txt.*/i # Salad Recipes require IPv6 tunnels\nRUN apt update\nRUN apt install -y socat\n' ./src/${{ matrix.recipe-name }}/out/Dockerfile
+          sed -i 's/^\(CMD exec python3 \/app.*\)/# \1\n\nCMD bash start.sh/' ./src/${{ matrix.recipe-name }}/out/Dockerfile
 
       # Get meta data
       - name: Extract metadata (tags, labels) for Docker
