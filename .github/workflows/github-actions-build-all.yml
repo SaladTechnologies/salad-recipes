@@ -75,7 +75,7 @@ jobs:
       - name: Checkout repository
         if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
         uses: actions/checkout@v2
-     
+
       # Log into GHCR
       - name: Log in to the Container registry
         if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
@@ -101,9 +101,22 @@ jobs:
       # Build truss container context
       - name: Build Truss docker image
         if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
-        run: truss build-context ./src/${{ matrix.recipe-name }}/out ./src/${{ matrix.recipe-name }} 
+        run: truss build-context ./src/${{ matrix.recipe-name }}/out ./src/${{ matrix.recipe-name }}
 
-     # Get meta data
+      # Add socat and startup script to Docker image for IPv6 tunneling
+      - name: Add socat to Docker image
+        if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
+        run: |
+          echo '#!/bin/bash' > ./src/${{ matrix.recipe-name }}/out/server/start.sh
+          echo "echo 'socat TCP6-LISTEN:8888,fork TCP4:127.0.0.1:8080 &'" >> ./src/${{ matrix.recipe-name }}/out/server/start.sh
+          echo 'socat TCP6-LISTEN:8888,fork TCP4:127.0.0.1:8080 &' >> ./src/${{ matrix.recipe-name }}/out/server/start.sh
+          echo 'python3 /app/inference_server.py' >> ./src/${{ matrix.recipe-name }}/out/server/start.sh
+          chmod +x ./src/${{ matrix.recipe-name }}/out/server/start.sh
+          sed -i -r ':a; /^\s*$/ {N;ba}; s/( *\n *){2,}/\n\n/' Dockerfile
+          sed -i '/COPY .\/server_requirements.txt.*/i # Salad Recipes require IPv6 tunnels\nRUN apt update\nRUN apt install -y socat\n' Dockerfile
+          sed -i 's/^\(CMD exec python3 \/app.*\)/# \1\n\nCMD bash start.sh/' Dockerfile
+
+      # Get meta data
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
@@ -169,7 +182,7 @@ jobs:
       - name: Checkout repository
         if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
         uses: actions/checkout@v2
-     
+
       # Log into GHCR
       - name: Log in to the Container registry
         if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
