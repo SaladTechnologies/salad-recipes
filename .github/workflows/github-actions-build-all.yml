@@ -149,8 +149,6 @@ jobs:
             version: "0.3"
           - recipe-name: stable-diffusion-1.4
             version: "0.2"
-          - recipe-name: gpt2-socat
-            version: "0.1"
     permissions:
       contents: read
       packages: write
