@@ -127,15 +127,15 @@ jobs:
       matrix:
         include:
           - recipe-name: anything4.0
-            version: "0.2"
-          - recipe-name: openjourney4
             version: "0.3"
+          - recipe-name: openjourney4
+            version: "0.4"
           - recipe-name: stable-diffusion-1.5
-            version: "0.2"
+            version: "0.3"
           - recipe-name: stable-diffusion-2.1
-            version: "0.2"
+            version: "0.3"
           - recipe-name: stable-diffusion-1.4
-            version: "0.1"
+            version: "0.2"
           - recipe-name: gpt2-socat
             version: "0.1"
     permissions:
