@@ -75,7 +75,7 @@ EXPOSE 50150
 
 
 
-ARG MODEL_ID="stabilityai/stable-diffusion-2-1-base"
+ARG MODEL_ID="stabilityai/stable-diffusion-2-1"
 ENV MODEL_ID=${MODEL_ID}
 ARG HF_MODEL_ID=""
 ENV HF_MODEL_ID=${HF_MODEL_ID}
