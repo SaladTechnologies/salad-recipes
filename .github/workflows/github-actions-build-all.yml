@@ -17,33 +17,33 @@ jobs:
           - recipe-name: gpt2
             version: "0.1"
           - recipe-name: bert-base-uncased
-            version: "0.1"
+            version: "0.2"
           - recipe-name: whisper-medium
-            version: "0.1"
+            version: "0.2"
           - recipe-name: clip-vit-large-patch14
-            version: "0.1"
+            version: "0.2"
           - recipe-name: t5-base
-            version: "0.1"
+            version: "0.2"
           - recipe-name: toxic-comment-model
-            version: "0.1"
+            version: "0.2"
           - recipe-name: vit-age-classifier
-            version: "0.1"
+            version: "0.2"
           - recipe-name: wav2vec2-large-xlsr-53-english
-            version: "0.1"
+            version: "0.2"
           - recipe-name: bart-large-cnn
-            version: "0.1"
+            version: "0.2"
           - recipe-name: parrot_adequacy_model
-            version: "0.1"
+            version: "0.2"
           - recipe-name: roberta-base-squad2
-            version: "0.1"
+            version: "0.2"
           - recipe-name: twitter-roberta-base-sentiment
-            version: "0.1"
+            version: "0.2"
           - recipe-name: vit-gpt2-image-captioning
-            version: "0.1"
+            version: "0.2"
           - recipe-name: roberta-base
-            version: "0.1"
+            version: "0.2"
           - recipe-name: twitter-roberta-base-sentiment
-            version: "0.1"
+            version: "0.2"
     permissions:
       contents: read
       packages: write
