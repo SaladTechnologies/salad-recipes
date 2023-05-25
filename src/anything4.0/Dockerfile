@@ -93,5 +93,8 @@ RUN python3 download.py
 ARG SAFETENSORS_FAST_GPU=1
 ENV SAFETENSORS_FAST_GPU=${SAFETENSORS_FAST_GPU}
 
+RUN apt update
+RUN apt install -y socat
+
 CMD bash start.sh
 
