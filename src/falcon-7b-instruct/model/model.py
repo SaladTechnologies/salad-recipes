@@ -1,66 +1,42 @@
-import logging
-import traceback
-from typing import Any
-
 import torch
-from transformers import pipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+import transformers
+from typing import Dict, List
 
+CHECKPOINT = "tiiuae/falcon-7b-instruct"
+DEFAULT_MAX_LENGTH = 128
+DEFAULT_TOP_P = 0.95
 
 class Model:
-    def __init__(self, **kwargs) -> None:
-        self._data_dir = kwargs["data_dir"]
-        config = kwargs["config"]
+    def __init__(self, data_dir: str, config: Dict, secrets: Dict, **kwargs) -> None:
+        self._data_dir = data_dir
         self._config = config
-        model_metadata = config["model_metadata"]
-        self._transformer_config = model_metadata["transformer_config"]
-        self._has_named_args = model_metadata["has_named_args"]
-        self._has_hybrid_args = model_metadata["has_hybrid_args"]
-        self._model = None
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.tokenizer = None
+        self.pipeline = None
 
     def load(self):
-        transformer_config = self._transformer_config.copy()
-        if torch.cuda.is_available():
-            transformer_config["device"] = 0
-
-        self._model = pipeline(
-            task=self._config["model_type"],
-            **transformer_config,
+        self.tokenizer = AutoTokenizer.from_pretrained(CHECKPOINT)
+        self.pipeline = transformers.pipeline(
+            "text-generation",
+            model=CHECKPOINT,
+            tokenizer=self.tokenizer,
+            torch_dtype=torch.bfloat16,
+            trust_remote_code=True,
+            device_map="auto",
         )
 
-    def preprocess(self, model_input: Any) -> Any:
-        """
-        Incorporate pre-processing required by the model if desired here.
 
-        These might be feature transformations that are tightly coupled to the model.
-        """
-        return model_input
-
-    def postprocess(self, model_output: Any) -> Any:
-        """
-        Incorporate post-processing required by the model if desired here.
-        """
-        return model_output
-
-    def predict(self, model_input: Any) -> Any:
-        model_output = {}
-        instances = model_input
-
+    def predict(self, request: Dict) -> Dict:
         with torch.no_grad():
-            if self._has_named_args:
-                result = [self._model(**instance) for instance in instances]
-            elif self._has_hybrid_args:
-                try:
-                    result = []
-                    for instance in instances:
-                        prompt = instance.pop("prompt")
-                        result.append(self._model(prompt, **instance))
-                except (KeyError, AttributeError):
-                    logging.error(traceback.format_exc())
-                    model_output["error"] = {
-                        "traceback": f'Expected request as an object with text in "prompt"\n{traceback.format_exc()}'
-                    }
-                    return model_output
-            else:
-                result = self._model(instances)
-        model_output["predictions"] = result
-        return model_output
+            try:
+                prompt = request.pop("prompt")
+                data = self.pipeline(
+                    prompt,
+                    eos_token_id=self.tokenizer.eos_token_id,
+                    **request
+                )[0]
+                return {"data": data}
+
+            except Exception as exc:
+                return {"status": "error", "data": None, "message": str(exc)}

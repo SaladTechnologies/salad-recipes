@@ -1,6 +1,7 @@
+base_image: null
 bundled_packages_dir: packages
 data_dir: data
-description: null
+description: Open source LLM.
 environment_variables: {}
 examples_filename: examples.yaml
 external_package_dirs: []
@@ -8,33 +9,29 @@ input_type: Any
 live_reload: false
 model_class_filename: model.py
 model_class_name: Model
-model_framework: huggingface_transformer
+model_framework: custom
 model_metadata:
-  has_hybrid_args: true
-  has_named_args: false
-  transformer_config:
-    model: tiiuae/falcon-7b-instruct
+  avatar_url: https://cdn.baseten.co/production/static/explore/wizard.png
+  cover_image_url: https://cdn.baseten.co/production/static/explore/wizardlm.png
+  tags:
+  - text-generation
 model_module_dir: model
-model_name: null
-model_type: text-generation
-python_version: py38
+model_name: Falcon 7B Instruct
+model_type: custom
+python_version: py39
 requirements:
-- transformers==4.27.4
+- torch
+- peft
+- sentencepiece
+- accelerate
+- bitsandbytes
+- einops
+- git+https://github.com/huggingface/transformers.git
 resources:
-  accelerator: null
-  cpu: 500m
-  memory: 512Mi
-  use_gpu: false
+  cpu: "3"
+  memory: 16Gi
+  use_gpu: true
+  accelerator: "A100:2"
 secrets: {}
 spec_version: '2.0'
 system_packages: []
-train:
-  resources:
-    accelerator: null
-    cpu: 500m
-    memory: 512Mi
-    use_gpu: false
-  training_class_filename: train.py
-  training_class_name: Train
-  training_module_dir: train
-  variables: {}
