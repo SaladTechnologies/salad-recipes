@@ -47,7 +47,7 @@ jobs:
           - recipe-name: bloom-560m
             version: "0.1"
           - recipe-name: falcon-7b-instruct
-            version: "0.1"
+            version: "0.2"
     permissions:
       contents: read
       packages: write
