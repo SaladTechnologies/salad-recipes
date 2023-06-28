@@ -156,7 +156,7 @@ jobs:
           - recipe-name: falcon-7b-instruct-docker
             version: "0.1"
           - recipe-name: gpt-j-6b-test
-            version: "0.1"
+            version: "0.2"
     permissions:
       contents: read
       packages: write
