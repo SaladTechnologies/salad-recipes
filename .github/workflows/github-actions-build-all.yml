@@ -157,6 +157,8 @@ jobs:
             version: "0.1"
           - recipe-name: gpt-j-6b-test
             version: "0.2"
+          - recipe-name: whisper
+            version: "0.1"
     permissions:
       contents: read
       packages: write
