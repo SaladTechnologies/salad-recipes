@@ -161,6 +161,8 @@ jobs:
             version: "0.1"
           - recipe-name: llama-7b
             version: "0.1"
+          - recipe-name: gfp-gan
+            version: "0.1"
     permissions:
       contents: read
       packages: write
