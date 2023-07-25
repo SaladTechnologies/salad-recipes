@@ -163,6 +163,8 @@ jobs:
             version: "0.1"
           - recipe-name: gfp-gan
             version: "0.1"
+          - recipe-name: musicgen-large
+            version: "0.1"
     permissions:
       contents: read
       packages: write
