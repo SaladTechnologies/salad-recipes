@@ -167,6 +167,8 @@ jobs:
             version: "0.1"
           - recipe-name: dolly-v2
             version: "0.2"
+          - recipe-name: dolly-v2-docker
+            version: "0.1"
     permissions:
       contents: read
       packages: write
