@@ -12,8 +12,8 @@ class Model:
         self._model = None
 
     def load(self):
-        tokenizer = AutoTokenizer.from_pretrained("databricks/dolly-v2-12b", padding_side="left")
-        model = AutoModelForCausalLM.from_pretrained("databricks/dolly-v2-12b", device_map="auto", torch_dtype=torch.float16, load_in_8bit=True)
+        tokenizer = AutoTokenizer.from_pretrained("databricks/dolly-v2-3b", low_cpu_mem_usage=True, padding_side="left")
+        model = AutoModelForCausalLM.from_pretrained("databricks/dolly-v2-3b", low_cpu_mem_usage=True, device_map="auto", torch_dtype=torch.float16, load_in_8bit=True)
         model.eval()
         self._model = InstructionTextGenerationPipeline(model=model, tokenizer=tokenizer)
 
