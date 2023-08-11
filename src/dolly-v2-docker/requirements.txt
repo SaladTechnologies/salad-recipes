@@ -1,0 +1,7 @@
+numpy
+transformers
+accelerate
+fastapi
+uvicorn
+pydantic
+scipy
