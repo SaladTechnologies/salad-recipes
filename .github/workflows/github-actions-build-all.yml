@@ -170,7 +170,7 @@ jobs:
           - recipe-name: dolly-v2-docker
             version: "0.1"
           - recipe-name: alpaca-7b-recipe
-            version: '0.1'
+            version: '0.2'
     permissions:
       contents: read
       packages: write
