@@ -12,17 +12,15 @@ class Model:
         self._tokenizer = None
 
     def load(self):
-        self._tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-7b-hf", low_cpu_mem_usage=True)
+        self._tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-7b-hf")
         self._model = LlamaForCausalLM.from_pretrained(
             str(self._data_dir),
-            low_cpu_mem_usage=True,
             torch_dtype=torch.float16,
-            device_map="auto",
+            device_map="cuda:0",
         ) 
         self._model = PeftModel.from_pretrained(
             self._model, "tloen/alpaca-lora-7b",
-            torch_dtype=torch.float16,
-            low_cpu_mem_usage=True
+            torch_dtype=torch.float16
         )
         self._model.eval()
 
