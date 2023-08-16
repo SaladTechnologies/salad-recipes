@@ -177,6 +177,8 @@ jobs:
             version: '0.1'
           - recipe-name: mpt-7b-storywriter
             version: '0.1'
+          - recipe-name: mpt-7b-chat
+            version: '0.1'
     permissions:
       contents: read
       packages: write
