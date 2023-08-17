@@ -2,8 +2,8 @@ name: Build & publish gpt2 recipe
 on:
   push:
     path:
-      - '/src/gpt2/*'
       - '!**'
+      - '/src/gpt2/*'
   # release:
   #   types: [published]
 
