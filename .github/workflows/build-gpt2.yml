@@ -3,6 +3,7 @@ on:
   push:
     path:
       - '/src/gpt2/*'
+      - '!**'
   # release:
   #   types: [published]
 
