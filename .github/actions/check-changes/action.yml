@@ -1,14 +1,14 @@
-name: check changes
-description: does docker stuff
+name: Released Version checker
+description: Checks if the current tag has already been deployed.
 inputs:
   recipe-name:
-    description: targeted thing
+    description: Targeted Recipe
     required: true
   version:
-    description: version
+    description: Version Number of Recipe
     required: true
   repo-token:
-    description: token
+    description: Github token
     required: true
 outputs:
   IS_NEW:

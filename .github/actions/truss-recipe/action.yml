@@ -1,14 +1,14 @@
-name: truss event
-description: does truss stuff
+name: Truss Recipe Deployer
+description: Deploys Truss Container for a recipe
 inputs:
   recipe-name:
-    description: targeted thing
+    description: Targeted Recipe
     required: true
   version:
-    description: version
+    description: Version Number of Recipe
     required: true
   repo-token:
-    description: token
+    description: Github token
     required: true
 
 runs:
