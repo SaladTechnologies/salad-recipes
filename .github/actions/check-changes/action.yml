@@ -10,6 +10,10 @@ inputs:
   repo-token:
     description: token
     required: true
+outputs:
+  IS_NEW:
+    description: Whether the version number has already been released
+    value: ${{ steps.check_new.outputs.IS_NEW }}
 
 runs:
   using: "composite"
