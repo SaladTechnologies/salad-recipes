@@ -1,6 +1,8 @@
-name: Build & publish all recipe images
+name: Build & publish gpt2 recipe
 on:
-  [push]
+  push:
+    path:
+      - 'src/gpt2'
   # release:
   #   types: [published]
 
@@ -8,7 +10,7 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  build-docker:
+  build-truss:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -19,8 +21,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      - uses: ./.github/actions/truss-event
+      - uses: ./.github/actions/docker-recipe
         with:
-          recipe-name: anything4.0
-          version: "0.5"
+          recipe-name: gpt2
+          version: "0.2"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
