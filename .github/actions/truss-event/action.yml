@@ -1,15 +1,8 @@
-inputs:
-  recipe-name:
-  version:
+name: truss event
+description: does truss stuff
 
 runs:
-  using: 'composite'
-  strategy:
-    fail-fast: false
-  permissions:
-    contents: read
-    packages: write
-    actions: write
+  using: "composite"
 
   steps:
     # Check if the package already exists for this version and skip the build if it does

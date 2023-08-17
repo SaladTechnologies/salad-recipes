@@ -10,6 +10,12 @@ env:
 jobs:
   build-truss:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+      packages: write
+      actions: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -20,6 +26,12 @@ jobs:
 
   build-docker:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+      packages: write
+      actions: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v3

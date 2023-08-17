@@ -1,15 +1,7 @@
-inputs:
-  recipe-name:
-  version:
-
+name: docker recipe
+description: does docker stuff
 runs:
-  using: 'composite'
-  strategy:
-    fail-fast: false
-  permissions:
-    contents: read
-    packages: write
-    actions: write
+  using: "composite"
 
   steps:
     # Check if the package already exists for this version and skip the build if it does
