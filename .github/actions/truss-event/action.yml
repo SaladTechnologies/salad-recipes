@@ -39,7 +39,7 @@ runs:
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ repo-token }}
 
     # Setup Python (faster than using Python container)
     - name: Setup Python
