@@ -64,9 +64,9 @@ jobs:
         run: |
 
           tags=$(curl -L \
-          --header 'authorization: Bearer ${{ inputs.repo-token }}' \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/json' \
-          https://api.github.com/orgs/saladtechnologies/packages/container/recipe-${{ inputs.recipe-name }}/versions | jq -r 'try(.[0].metadata.container.tags | any(. == "${{ inputs.version }}") ) catch "false"')
+          https://api.github.com/orgs/saladtechnologies/packages/container/recipe-${{ matrix.recipe-name }}/versions | jq -r 'try(.[0].metadata.container.tags | any(. == "${{ inputs.version }}") ) catch "false"')
 
           echo $tags
 
@@ -143,9 +143,9 @@ jobs:
         run: |
           
           tags=$(curl -L \
-          --header 'authorization: Bearer ${{ inputs.repo-token }}' \
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/json' \
-          https://api.github.com/orgs/saladtechnologies/packages/container/recipe-${{ inputs.recipe-name }}/versions | jq -r 'try(.[0].metadata.container.tags | any(. == "${{ inputs.version }}") ) catch "false"')
+          https://api.github.com/orgs/saladtechnologies/packages/container/recipe-${{ matrix.recipe-name }}/versions | jq -r 'try(.[0].metadata.container.tags | any(. == "${{ inputs.version }}") ) catch "false"')
           
           echo $tags
           
