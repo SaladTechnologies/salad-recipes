@@ -1,5 +1,15 @@
 name: docker recipe
 description: does docker stuff
+inputs:
+  recipe-name:
+    description: targeted thing
+    required: true
+  version:
+    description: version
+    required: true
+  repo-token:
+    description: token
+    required: true
 runs:
   using: "composite"
 
