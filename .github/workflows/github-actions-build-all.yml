@@ -9,7 +9,6 @@ env:
 
 jobs:
   build-truss:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     permissions:
@@ -25,7 +24,6 @@ jobs:
           version: "0.1"
 
   build-docker:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     permissions:
