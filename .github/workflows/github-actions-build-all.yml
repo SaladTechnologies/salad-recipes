@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      - uses: ./.github/actions/docker-recipe@master
+      - uses: ./.github/actions/docker-recipe
         with:
           recipe-name: gpt2
           version: "0.1"
@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      - uses: ./.github/actions/truss-event@master
+      - uses: ./.github/actions/truss-event
         with:
           recipe-name: anything4.0
           version: "0.4"
