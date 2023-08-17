@@ -24,7 +24,7 @@ runs:
         tags=$(curl -L \
         --header 'authorization: Bearer ${{ inputs.repo-token }}' \
         --header 'content-type: application/json' \
-        https://api.github.com/orgs/saladtechnologies/packages/container/recipe-${{ matrix.recipe-name }}/versions | jq -r 'try(.[0].metadata.container.tags | any(. == "${{ matrix.version }}") ) catch "false"')
+        https://api.github.com/orgs/saladtechnologies/packages/container/recipe-${{ inputs.recipe-name }}/versions | jq -r 'try(.[0].metadata.container.tags | any(. == "${{ inputs.version }}") ) catch "false"')
         
         echo $tags
         
@@ -57,15 +57,15 @@ runs:
       if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
       uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
       with:
-        images: ghcr.io/saladtechnologies/recipe-${{ matrix.recipe-name }}:${{ matrix.version }}
+        images: ghcr.io/saladtechnologies/recipe-${{ inputs.recipe-name }}:${{ inputs.version }}
 
     # Create and push image
     - name: Build and push Docker image
       if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
       uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
       with:
-        context:  ./src/${{ matrix.recipe-name }}
-        file: ./src/${{ matrix.recipe-name }}/Dockerfile
+        context:  ./src/${{ inputs.recipe-name }}
+        file: ./src/${{ inputs.recipe-name }}/Dockerfile
         push: true
-        tags: ghcr.io/saladtechnologies/recipe-${{ matrix.recipe-name }}:${{ matrix.version }}
+        tags: ghcr.io/saladtechnologies/recipe-${{ inputs.recipe-name }}:${{ inputs.version }}
         labels: ${{ steps.meta.outputs.labels }}
