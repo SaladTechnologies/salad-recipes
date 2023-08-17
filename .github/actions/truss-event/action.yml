@@ -8,6 +8,7 @@ runs:
     # Check if the package already exists for this version and skip the build if it does
     - name: Check for changes
       id: check_new
+      shell: bash
       run: |
         
         tags=$(curl -L \
@@ -50,16 +51,19 @@ runs:
     # Install Truss
     - name: Install Truss
       if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
+      shell: bash
       run: |
         python -m pip install truss
 
     # Build truss container context
     - name: Build Truss docker image
+      shell: bash
       if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
       run: truss build-context ./src/${{ matrix.recipe-name }}/out ./src/${{ matrix.recipe-name }}
 
     # Add socat and startup script to Docker image for IPv6 tunneling
     - name: Add socat to Docker image
+      shell: bash
       if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
       run: |
         echo '#!/bin/bash' > ./src/${{ matrix.recipe-name }}/out/server/start.sh
