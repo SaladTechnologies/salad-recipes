@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-      actions: read
+      actions: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
