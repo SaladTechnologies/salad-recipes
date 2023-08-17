@@ -1,0 +1,37 @@
+name: check changes
+description: does docker stuff
+inputs:
+  recipe-name:
+    description: targeted thing
+    required: true
+  version:
+    description: version
+    required: true
+  repo-token:
+    description: token
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check for changes
+      shell: bash
+      id: check_new
+      run: |
+        
+        tags=$(curl -L \
+        --header 'authorization: Bearer ${{ inputs.GITHUB_TOKEN }}' \
+        --header 'content-type: application/json' \
+        https://api.github.com/orgs/saladtechnologies/packages/container/recipe-${{ inputs.recipe-name }}/versions | jq -r 'try(.[0].metadata.container.tags | any(. == "${{ inputs.version }}") ) catch "false"')
+        
+        echo $tags
+        
+        # Checks to see if the specified version already exists in the packages versions
+        if [ "$tags" == "false" ]; then
+          echo "IS_NEW=true" >> $GITHUB_OUTPUT
+          echo "It is new!!!"
+        else
+          echo "IS_NEW=false" >> $GITHUB_OUTPUT
+          echo "This tag already exists."
+        fi
+
