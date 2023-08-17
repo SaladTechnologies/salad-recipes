@@ -11,7 +11,7 @@ jobs:
   build-truss:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/docker-recipe/
+      - uses: ./.github/actions/docker-recipe@master
         with:
           recipe-name: gpt2
           version: "0.1"
@@ -19,7 +19,7 @@ jobs:
   build-docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/truss-event/
+      - uses: ./.github/actions/truss-event@master
         with:
           recipe-name: anything4.0
           version: "0.4"
