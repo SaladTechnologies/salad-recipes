@@ -15,36 +15,12 @@ runs:
   using: "composite"
 
   steps:
-    # Check if the package already exists for this version and skip the build if it does
-    - name: Check for changes
-      shell: bash
-      id: check_new
-      run: |
-        
-        tags=$(curl -L \
-        --header 'authorization: Bearer ${{ inputs.repo-token }}' \
-        --header 'content-type: application/json' \
-        https://api.github.com/orgs/saladtechnologies/packages/container/recipe-${{ inputs.recipe-name }}/versions | jq -r 'try(.[0].metadata.container.tags | any(. == "${{ inputs.version }}") ) catch "false"')
-        
-        echo $tags
-        
-        # Checks to see if the specified version already exists in the packages versions
-        if [ "$tags" == "false" ]; then
-          echo "IS_NEW=true" >> $GITHUB_OUTPUT
-          echo "It is new!!!"
-        else
-          echo "IS_NEW=false" >> $GITHUB_OUTPUT
-          echo "This tag already exists."
-        fi
-
     # Check out the repo
     - name: Checkout repository
-      if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
       uses: actions/checkout@v2
 
     # Log into GHCR
     - name: Log in to the Container registry
-      if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
       with:
         registry: ${{ env.REGISTRY }}
@@ -54,14 +30,12 @@ runs:
     # Get meta data
     - name: Extract metadata (tags, labels) for Docker
       id: meta
-      if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
       uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
       with:
         images: ghcr.io/saladtechnologies/recipe-${{ inputs.recipe-name }}:${{ inputs.version }}
 
     # Create and push image
     - name: Build and push Docker image
-      if: ${{ steps.check_new.outputs.IS_NEW == 'true' }}
       uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
       with:
         context:  ./src/${{ inputs.recipe-name }}
