@@ -13,7 +13,7 @@ runs:
 
   steps:
     # Check if the package already exists for this version and skip the build if it does
-    - name: Check for changes
+    - name: Check for changess
       id: check_new
       run: |
         
