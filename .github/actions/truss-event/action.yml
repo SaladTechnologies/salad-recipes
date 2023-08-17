@@ -1,12 +1,12 @@
 name: truss event
 description: does truss stuff
+
 runs:
   using: "composite"
 
   steps:
     # Check if the package already exists for this version and skip the build if it does
     - name: Check for changes
-      shell: bash
       id: check_new
       run: |
         
