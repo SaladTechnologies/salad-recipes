@@ -11,6 +11,8 @@ jobs:
   build-truss:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
       - uses: ./.github/actions/docker-recipe@master
         with:
           recipe-name: gpt2
@@ -19,6 +21,8 @@ jobs:
   build-docker:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
       - uses: ./.github/actions/truss-event@master
         with:
           recipe-name: anything4.0
