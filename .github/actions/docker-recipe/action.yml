@@ -10,6 +10,7 @@ inputs:
   repo-token:
     description: token
     required: true
+
 runs:
   using: "composite"
 
@@ -21,7 +22,7 @@ runs:
       run: |
         
         tags=$(curl -L \
-        --header 'authorization: Bearer ${{ repo-token }}' \
+        --header 'authorization: Bearer ${{ inputs.repo-token }}' \
         --header 'content-type: application/json' \
         https://api.github.com/orgs/saladtechnologies/packages/container/recipe-${{ matrix.recipe-name }}/versions | jq -r 'try(.[0].metadata.container.tags | any(. == "${{ matrix.version }}") ) catch "false"')
         
@@ -48,7 +49,7 @@ runs:
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
-        password: ${{ repo-token }}
+        password: ${{ inputs.repo-token }}
 
     # Get meta data
     - name: Extract metadata (tags, labels) for Docker
