@@ -8,10 +8,50 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  build-docker:
+  docker-recipe:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      matrix:
+        include:
+          - recipe-name: anything4.0
+            version: "0.4"
+          - recipe-name: openjourney4
+            version: "0.4"
+          - recipe-name: stable-diffusion-1.5
+            version: "0.3"
+          - recipe-name: stable-diffusion-2.1
+            version: "0.3"
+          - recipe-name: stable-diffusion-1.4
+            version: "0.3"
+          - recipe-name: falcon-7b-instruct-docker
+            version: "0.1"
+          - recipe-name: gpt-j-6b-test
+            version: "0.2"
+          - recipe-name: whisper
+            version: "0.1"
+          - recipe-name: llama-7b
+            version: "0.1"
+          - recipe-name: gfp-gan
+            version: "0.1"
+          - recipe-name: musicgen-large
+            version: "0.1"
+          - recipe-name: dolly-v2
+            version: "0.3"
+          - recipe-name: dolly-v2-docker
+            version: "0.1"
+          - recipe-name: alpaca-7b-recipe
+            version: '0.2'
+            #- recipe-name: pygmalion-6b
+            #version: '0.1'
+          - recipe-name: mpt-7b-base
+            version: '0.1'
+          - recipe-name: mpt-7b-storywriter
+            version: '0.1'
+          - recipe-name: mpt-7b-chat
+            version: '0.1'
+          - recipe-name: mpt-7b-instruct
+            version: '0.1'
     permissions:
       contents: read
       packages: write
@@ -19,8 +59,62 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      - uses: ./.github/actions/truss-event
+      - uses: ./.github/actions/docker-recipe
         with:
-          recipe-name: anything4.0
-          version: "0.5"
+          recipe-name: ${{ matrix.recipe-name }}
+          version: ${{ matrix.version }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  truss-recipe:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - recipe-name: gpt2
+            version: "0.1"
+          - recipe-name: bert-base-uncased
+            version: "0.2"
+          - recipe-name: whisper-medium
+            version: "0.2"
+          - recipe-name: clip-vit-large-patch14
+            version: "0.2"
+          - recipe-name: t5-base
+            version: "0.2"
+          - recipe-name: toxic-comment-model
+            version: "0.2"
+          - recipe-name: vit-age-classifier
+            version: "0.2"
+          - recipe-name: wav2vec2-large-xlsr-53-english
+            version: "0.2"
+          - recipe-name: bart-large-cnn
+            version: "0.2"
+          - recipe-name: parrot_adequacy_model
+            version: "0.2"
+          - recipe-name: roberta-base-squad2
+            version: "0.2"
+          - recipe-name: twitter-roberta-base-sentiment
+            version: "0.2"
+          - recipe-name: vit-gpt2-image-captioning
+            version: "0.2"
+          - recipe-name: roberta-base
+            version: "0.2"
+          - recipe-name: twitter-roberta-base-sentiment
+            version: "0.2"
+          - recipe-name: bloom-560m
+            version: "0.1"
+          - recipe-name: falcon-7b-instruct
+            version: "0.2"
+    permissions:
+      contents: read
+      packages: write
+      actions: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - uses: ./.github/actions/truss-recipe
+        with:
+          recipe-name: ${{ matrix.recipe-name }}
+          version: ${{ matrix.version }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
