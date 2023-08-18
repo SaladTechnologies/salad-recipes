@@ -13,7 +13,8 @@ RUN pip install --upgrade pip --no-cache-dir
 
 
 # If user base image is supplied in config, apply build commands from truss base image
-RUN rm /etc/apt/sources.list.d/nvidia-ml.list && apt-get clean && apt-get update
+
+RUN apt-get update
 
 RUN apt-get install -y socat
 
