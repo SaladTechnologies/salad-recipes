@@ -1,0 +1,7 @@
+accelerate==0.20.3
+bitsandbytes==0.39.1
+peft==0.3.0
+protobuf==4.23.3
+sentencepiece==0.1.99
+torch==2.0.1
+transformers==4.30.2
