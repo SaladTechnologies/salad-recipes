@@ -185,6 +185,8 @@ jobs:
             version: '0.1'
           - recipe-name: dolly-v2-7b
             version: "0.1"
+          - recipe-name: stablelm-base-3b
+            version: "0.1"
     permissions:
       contents: read
       packages: write
