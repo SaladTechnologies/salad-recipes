@@ -187,6 +187,8 @@ jobs:
             version: "0.1"
           - recipe-name: stablelm-base-3b
             version: "0.1"
+          - recipe-name: stablelm-tuned-3b
+            version: "0.1"
     permissions:
       contents: read
       packages: write
