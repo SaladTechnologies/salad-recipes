@@ -191,6 +191,8 @@ jobs:
             version: "0.1"
           - recipe-name: replit-code-1.3b
             version: "0.1"
+          - recipe-name: layoutlm
+            version: "0.1"
     permissions:
       contents: read
       packages: write
