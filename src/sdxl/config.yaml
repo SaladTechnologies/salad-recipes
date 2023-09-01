@@ -1,0 +1,81 @@
+apply_library_patches: true
+base_image: null
+build:
+  arguments: {}
+  model_server: TrussServer
+bundled_packages_dir: packages
+data_dir: data
+description: Generate original images from text prompts.
+environment_variables: {}
+examples_filename: examples.yaml
+external_data: null
+external_package_dirs: []
+hf_cache:
+- allow_patterns:
+  - config.json
+  - diffusion_pytorch_model.safetensors
+  ignore_patterns: null
+  repo_id: madebyollin/sdxl-vae-fp16-fix
+  revision: null
+- allow_patterns:
+  - '*.json'
+  - '*.fp16.safetensors'
+  - sd_xl_base_1.0.safetensors
+  ignore_patterns: null
+  repo_id: stabilityai/stable-diffusion-xl-base-1.0
+  revision: null
+- allow_patterns:
+  - '*.json'
+  - '*.fp16.safetensors'
+  - sd_xl_refiner_1.0.safetensors
+  ignore_patterns: null
+  repo_id: stabilityai/stable-diffusion-xl-refiner-1.0
+  revision: null
+input_type: Any
+live_reload: false
+model_class_filename: model.py
+model_class_name: Model
+model_framework: custom
+model_metadata:
+  avatar_url: https://cdn.baseten.co/production/static/stability.png
+  cover_image_url: https://cdn.baseten.co/production/static/sd.png
+  example_model_input:
+    prompt: A tree in a field under the night sky
+    use_refiner: true
+  pretty_name: Stable Diffusion XL
+  tags:
+  - image-generation
+model_module_dir: model
+model_name: Stable Diffusion XL
+model_type: custom
+python_version: py39
+requirements:
+- transformers
+- accelerate
+- safetensors
+- git+https://github.com/basetenlabs/diffusers.git@9a353290b1497023d4745a719ec02c50f680499a
+- invisible-watermark>=0.2.0
+- xformers
+resources:
+  accelerator: A10G
+  cpu: 3500m
+  memory: 20Gi
+  use_gpu: true
+runtime:
+  predict_concurrency: 1
+secrets: {}
+spec_version: '2.0'
+system_packages:
+- ffmpeg
+- libsm6
+- libxext6
+train:
+  resources:
+    accelerator: null
+    cpu: 500m
+    memory: 512Mi
+    use_gpu: false
+  training_class_filename: train.py
+  training_class_name: Train
+  training_module_dir: train
+  variables: {}
