@@ -193,7 +193,9 @@ jobs:
             version: "0.1"
           - recipe-name: layoutlm
             version: "0.1"
-          - recipe-name: sdxl
+          #- recipe-name: sdxl
+            #version: "0.1"
+          - recipe-name: nsql
             version: "0.1"
     permissions:
       contents: read
