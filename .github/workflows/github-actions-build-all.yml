@@ -201,6 +201,8 @@ jobs:
             version: "0.1"
           - recipe-name: code-llama-python-7b
             version: "0.1"
+          - recipe-name: code-llama-instruct-7b
+            version: "0.1"
     permissions:
       contents: read
       packages: write
