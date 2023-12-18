@@ -13,7 +13,7 @@ class Model:
         self._tokenizer = None
 
     def load(self):
-        self._tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-7b-hf")
+        self._tokenizer = LlamaTokenizer.from_pretrained("huggyllama/llama-7b")
         self._model = LlamaForCausalLM.from_pretrained(
             str(self._data_dir),
             torch_dtype=torch.float16,
