@@ -160,7 +160,7 @@ jobs:
           - recipe-name: whisper
             version: "0.1"
           - recipe-name: llama-7b
-            version: "0.2"
+            version: "0.3"
           - recipe-name: gfp-gan
             version: "0.1"
           - recipe-name: musicgen-large
