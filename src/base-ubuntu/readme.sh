@@ -1,0 +1,2 @@
+#!/bin/bash
+echo -e "Unsure where to start? This image has included:\n\nExample Environment Variable definitions.\n   Running "echo $TEST_KEY" or "echo $SECOND_KEY" will echo the example Environment Variables defined for your container group.\n\nCurl. Try curling!\n\nNvidia-smi. For checking that sweet sweet GPU model.\n\nPing. Try pinging a URL.\n\nNano. For editing and accidentally breaking a file.\n\nNeofetch. So you can see what you're running on.\n\nBtop. To see all running processes and system statistics."
