@@ -205,6 +205,8 @@ jobs:
             version: "0.1"
           - recipe-name: base-ubuntu
             version: "0.1"
+          - recipe-name: example-image
+            version: "0.1"
     permissions:
       contents: read
       packages: write
