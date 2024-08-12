@@ -1,0 +1,7 @@
+curl
+neofetch
+python3-pip
+iputils-ping
+nano
+btop
+wget
