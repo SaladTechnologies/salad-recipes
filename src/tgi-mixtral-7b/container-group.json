@@ -1,0 +1,32 @@
+{
+    "name": "tgi-mistral7b-instruct",
+    "display_name": "tgi-mistral7b-instruct",
+    "container": {
+        "image": "ghcr.io/huggingface/text-generation-inference:2.1.1",
+        "resources": {
+            "cpu": 8,
+            "memory": 16384,
+            "gpu_classes": [
+                "a5db5c50-cbcb-4596-ae80-6a0c8090d80f",
+                "ed563892-aacd-40f5-80b7-90c9be6c759b",
+                "9998fe42-04a5-4807-b3a5-849943f16c38"
+            ],
+            "storage_amount": 26843545600
+        },
+        "command": [],
+        "environment_variables": {
+            "MODEL_ID": "mistralai/Mistral-7B-Instruct-v0.3",
+            "PORT": "3000",
+            "HOSTNAME": "::",
+            "HUGGING_FACE_HUB_TOKEN": ""
+        }
+    },
+    "autostart_policy": false,
+    "restart_policy": "always",
+    "replicas": 3,
+    "networking": {
+        "protocol": "http",
+        "port": 3000,
+        "auth": false
+    }
+}
