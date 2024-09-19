@@ -7,7 +7,7 @@
             "cpu": 8,
             "memory": 8192,
             "gpu_classes": [
-                "65247de0-746f-45c6-8537-650ba613966a"
+                "f51baccc-dc95-40fb-a5d1-6d0ee0db31d2"
             ]
         },
         "command": [],
