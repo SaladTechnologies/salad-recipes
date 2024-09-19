@@ -92,7 +92,7 @@ A JSON object with object labels, bounding boxes, and timestamps for the detecte
 
 ## Workload Customizations
 ### Hardware Considerations
-For optimal performance, we recommend using a GPU with at least 12 GB VRAM for video processing workloads. YOLOv8 is optimized to run on a variety of hardware, but for high-volume workloads 12+ GB cards will be preferable. Note that request times out is 90 seconds. If you need to process long videos you might need to use bigger GPU or integrate storage account to save results. If you only need to process pictures, or videos frame by frame you can use a smaller gpu 
+For optimal performance, we recommend using a GPU with at least 12 GB VRAM for video processing workloads. YOLOv8 is optimized to run on a variety of hardware, but for high-volume workloads 12+ GB cards will be preferable. Note that request times out is 90 seconds. If you need to process long videos you might need to use bigger GPU or integrate storage account to save results. With existing settings we recommend to process videos up to 30 seconds long. If you only need to process pictures, or videos frame by frame you can use a smaller gpu.
 
 ### Custom Models
 On default we are using the medium yolo model. You can extend the API by using custom YOLOv8 models or other versions of pretrained yolo model. Replace the default yolov8m.pt with your custom model file in the Docker image, and ensure the model path/name is updated in the inference script. You can push your new image to your container registry and update your container group configuration to reference this new model.
