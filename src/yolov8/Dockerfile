@@ -17,6 +17,6 @@ RUN pip install --no-cache-dir -r inference/requirements.txt
 WORKDIR /app/inference
 
 # Expose port 8000
-EXPOSE 8000
+EXPOSE 80
 
-CMD ["uvicorn", "fast:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "fast:app", "--host", "::", "--port", "80"]

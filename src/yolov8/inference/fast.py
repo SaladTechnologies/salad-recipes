@@ -32,15 +32,6 @@ if torch.cuda.is_available():
 # Load the YOLOv8 model
 model = YOLO("yolov8m.pt")
 
-class ProcessRequest(BaseModel):
-    url: str = None
-
-
-class URLRequest(BaseModel):
-    url: str
-
-
-
 @app.post("/process_file")
 async def process_file(
     file: UploadFile = File(...)
@@ -79,7 +70,6 @@ async def process_url(
 ):
     url = url_request.url
     if "youtube.com" in url or "youtu.be" in url:
-        
         cap = cap_from_youtube(url, "720p")
         detections = await process_video(cap)
         cap.release()
