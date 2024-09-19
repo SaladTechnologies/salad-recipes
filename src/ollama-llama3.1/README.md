@@ -53,7 +53,7 @@ By default, we use Llama 3.1. You can also run any other model from the [Ollama 
 
 You have 2 options on how to change the model: 
 
-- `Preloading Custom Models:` - If you want the model to be preloaded into the image, you need to fork this Git repo, upload the model into the .ollama folder in the ollama-llama3.1 directory, and update run.sh by replacing llama3.1:8b:
+- `Preloading Custom Models:` - If you want the model to be preloaded into the image, you need to fork this [Git repo](https://github.com/SaladTechnologies/salad-recipes/tree/master/src/ollama-llama3.1), upload the model into the .ollama folder in the ollama-llama3.1 directory, and update run.sh by replacing llama3.1:8b:
 
 ```bash
 MODEL=${MODEL:-llama3.1:8b}
