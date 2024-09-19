@@ -11,6 +11,8 @@ import torch
 from typing import List, Optional
 from starlette.responses import JSONResponse
 from cap_from_youtube import cap_from_youtube
+import requests
+
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -69,14 +71,32 @@ async def process_url(
     url_request: URLRequest
 ):
     url = url_request.url
-    if "youtube.com" in url or "youtu.be" in url:
-        cap = cap_from_youtube(url, "720p")
-        detections = await process_video(cap)
-        cap.release()
-        # os.remove(temp_video_file.name)
-        return detections
-    else:
-        return JSONResponse(content={"error": "Invalid URL"}, status_code=400)
+    try:
+        if "youtube.com" in url or "youtu.be" in url:
+            cap = cap_from_youtube(url, "720p")
+            detections = await process_video(cap)
+            cap.release()
+            # os.remove(temp_video_file.name)
+            return detections
+        else:
+                # Check if the URL is an image
+                response = requests.get(url, stream=True)
+                content_type = response.headers.get('Content-Type', '')
+                if 'image' in content_type:
+                    # Download the image
+                    img_array = np.asarray(bytearray(response.content), dtype=np.uint8)
+                    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+                    if img is not None:
+                        # Process as image
+                        results = model(img)
+                        detections = json.loads(results[0].tojson())
+                        return detections
+                    else:
+                        return JSONResponse(content={"error": "Could not decode the image"}, status_code=400)
+                else:
+                    return JSONResponse(content={"error": "Invalid URL: Not an image or YouTube video"}, status_code=400)
+    except Exception as e:
+        return JSONResponse(content={"error": f"An error occurred: {str(e)}"}, status_code=500)
 
 
 async def process_video(cap):
