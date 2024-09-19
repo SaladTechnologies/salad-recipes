@@ -1,0 +1,52 @@
+{
+    "name": "yolov8-m",
+    "display_name": "yolov8-m",
+    "container": {
+        "image": "saladtechnologies/yolov8-recipe:1.0.0",
+        "resources": {
+            "cpu": 8,
+            "memory": 16384,
+            "gpu_classes": [
+                "2b73eef8-be49-4667-8fc0-5c0cb127cfe0"
+            ],
+            "storage_amount": 10737418240
+        },
+        "command": [],
+        "priority": "high",
+        "size": 6627821642
+    },
+    "autostart_policy": false,
+    "restart_policy": "always",
+    "replicas": 3,
+    "networking": {
+        "protocol": "http",
+        "port": 80,
+        "auth": false
+    },
+    "readiness_probe": {
+        "http": {
+            "path": "/health",
+            "port": 80,
+            "scheme": "http",
+            "headers": []
+        },
+        "initial_delay_seconds": 0,
+        "period_seconds": 2,
+        "timeout_seconds": 2,
+        "success_threshold": 1,
+        "failure_threshold": 3
+    },
+    "startup_probe": {
+        "http": {
+            "path": "/health",
+            "port": 80,
+            "scheme": "http",
+            "headers": []
+        },
+        "initial_delay_seconds": 15,
+        "period_seconds": 3,
+        "timeout_seconds": 10,
+        "success_threshold": 2,
+        "failure_threshold": 20
+    }
+}

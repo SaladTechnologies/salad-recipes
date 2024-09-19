@@ -1,0 +1,25 @@
+{
+    "name": "ollama-llama31",
+    "display_name": "ollama-llama31",
+    "container": {
+        "image": "saladtechnologies/ollama-llama3.1-recipe:1.0.0",
+        "resources": {
+            "cpu": 8,
+            "memory": 8192,
+            "gpu_classes": [
+                "65247de0-746f-45c6-8537-650ba613966a"
+            ]
+        },
+        "command": [],
+        "size": 8056063674
+    },
+    "autostart_policy": false,
+    "restart_policy": "always",
+    "replicas": 3,
+    "networking": {
+        "protocol": "http",
+        "port": 11434,
+        "auth": false
+    }
+}
+
