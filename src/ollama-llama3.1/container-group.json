@@ -20,6 +20,32 @@
         "protocol": "http",
         "port": 11434,
         "auth": false
+    },
+    "readiness_probe": {
+        "http": {
+            "path": "/",
+            "port": 11434,
+            "scheme": "http",
+            "headers": []
+        },
+        "initial_delay_seconds": 0,
+        "period_seconds": 10,
+        "timeout_seconds": 10,
+        "success_threshold": 1,
+        "failure_threshold": 10
+    },
+    
+    "startup_probe": {
+        "http": {
+            "path": "/",
+            "port": 11434,
+            "scheme": "http",
+            "headers": []
+        },
+        "initial_delay_seconds": 60,
+        "period_seconds": 3,
+        "timeout_seconds": 10,
+        "success_threshold": 1,
+        "failure_threshold": 10
     }
 }
-
