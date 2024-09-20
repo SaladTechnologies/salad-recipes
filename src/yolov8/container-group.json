@@ -12,8 +12,7 @@
             "storage_amount": 10737418240
         },
         "command": [],
-        "priority": "high",
-        "size": 6627821642
+        "priority": "high"
     },
     "autostart_policy": false,
     "restart_policy": "always",
