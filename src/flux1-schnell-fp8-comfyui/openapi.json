@@ -1,0 +1,726 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "Comfy Wrapper API", "version": "1.4.0" },
+  "components": { "schemas": {} },
+  "paths": {
+    "/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": { "type": "string", "enum": ["1.4.0"] },
+                    "status": { "type": "string", "enum": ["healthy"] }
+                  },
+                  "required": ["version", "status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": { "type": "string", "enum": ["1.4.0"] },
+                    "status": { "type": "string", "enum": ["not healthy"] }
+                  },
+                  "required": ["version", "status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": { "type": "string", "enum": ["1.4.0"] },
+                    "status": { "type": "string", "enum": ["ready"] }
+                  },
+                  "required": ["version", "status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": { "type": "string", "enum": ["1.4.0"] },
+                    "status": { "type": "string", "enum": ["not ready"] }
+                  },
+                  "required": ["version", "status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "checkpoints": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "clip": { "type": "array", "items": { "type": "string" } },
+                    "clip_vision": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "configs": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "controlnet": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "diffusers": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "diffusion_models": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "embeddings": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "gligen": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "hypernetworks": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "loras": { "type": "array", "items": { "type": "string" } },
+                    "photomaker": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "style_models": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "unet": { "type": "array", "items": { "type": "string" } },
+                    "upscale_models": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "vae": { "type": "array", "items": { "type": "string" } },
+                    "vae_approx": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  },
+                  "required": [
+                    "checkpoints",
+                    "clip",
+                    "clip_vision",
+                    "configs",
+                    "controlnet",
+                    "diffusers",
+                    "diffusion_models",
+                    "embeddings",
+                    "gligen",
+                    "hypernetworks",
+                    "loras",
+                    "photomaker",
+                    "style_models",
+                    "unet",
+                    "upscale_models",
+                    "vae",
+                    "vae_approx"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prompt": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "inputs": {},
+                        "class_type": { "type": "string" },
+                        "_meta": {}
+                      },
+                      "required": ["class_type"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "id": {
+                    "type": "string",
+                    "default": "f9ec73b6-e457-4c8c-b250-ae2587160e3c"
+                  },
+                  "webhook": { "type": "string" }
+                },
+                "required": ["prompt"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" },
+                    "location": { "type": "string" }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/flux/img2img": {
+      "post": {
+        "description": "| Field | Type | Description | Default |\n|-|-|-|-|\n| prompt | string | The positive prompt for image generation | - |\n| width | number | Width of the generated image | 1024 |\n| height | number | Height of the generated image | 1024 |\n| seed | number | Seed for random number generation | 754970612881900 |\n| steps | number | Number of sampling steps | 4 |\n| cfg_scale | number | Classifier-free guidance scale | 1 |\n| sampler_name | enum (`euler`, `euler_cfg_pp`, `euler_ancestral`, `euler_ancestral_cfg_pp`, `heun`, `heunpp2`, `dpm_2`, `dpm_2_ancestral`, `lms`, `dpm_fast`, `dpm_adaptive`, `dpmpp_2s_ancestral`, `dpmpp_sde`, `dpmpp_sde_gpu`, `dpmpp_2m`, `dpmpp_2m_sde`, `dpmpp_2m_sde_gpu`, `dpmpp_3m_sde`, `dpmpp_3m_sde_gpu`, `ddpm`, `lcm`, `ipndm`, `ipndm_v`, `deis`, `ddim`, `uni_pc`, `uni_pc_bh2`) | Name of the sampler to use | \"euler\" |\n| scheduler | enum (`normal`, `karras`, `exponential`, `sgm_uniform`, `simple`, `ddim_uniform`, `beta`) | Type of scheduler to use | \"simple\" |\n| denoise | number | Denoising strength | 0.8 |\n| checkpoint | enum (`flux1-schnell-fp8.safetensors`) |  | \"flux1-schnell-fp8.safetensors\" |\n| image | string | Input image for img2img | - |\n| interpolation | enum (`nearest`) | Interpolation method for image resizing | \"nearest\" |\n| resize_method | enum (`fill / crop`) | Method for resizing the image | \"fill / crop\" |\n| resize_condition | enum (`always`) | Condition for when to resize the image | \"always\" |\n| multiple_of | number | Ensure image dimensions are multiples of this value | 8 |\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "default": "43272ec9-eaf1-4c0f-8400-4377616cd738"
+                  },
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "prompt": {
+                        "type": "string",
+                        "description": "The positive prompt for image generation"
+                      },
+                      "width": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Width of the generated image"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Height of the generated image"
+                      },
+                      "seed": {
+                        "type": "integer",
+                        "default": 4672557444369,
+                        "description": "Seed for random number generation"
+                      },
+                      "steps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "default": 4,
+                        "description": "Number of sampling steps"
+                      },
+                      "cfg_scale": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 20,
+                        "default": 1,
+                        "description": "Classifier-free guidance scale"
+                      },
+                      "sampler_name": {
+                        "type": "string",
+                        "enum": [
+                          "euler",
+                          "euler_cfg_pp",
+                          "euler_ancestral",
+                          "euler_ancestral_cfg_pp",
+                          "heun",
+                          "heunpp2",
+                          "dpm_2",
+                          "dpm_2_ancestral",
+                          "lms",
+                          "dpm_fast",
+                          "dpm_adaptive",
+                          "dpmpp_2s_ancestral",
+                          "dpmpp_sde",
+                          "dpmpp_sde_gpu",
+                          "dpmpp_2m",
+                          "dpmpp_2m_sde",
+                          "dpmpp_2m_sde_gpu",
+                          "dpmpp_3m_sde",
+                          "dpmpp_3m_sde_gpu",
+                          "ddpm",
+                          "lcm",
+                          "ipndm",
+                          "ipndm_v",
+                          "deis",
+                          "ddim",
+                          "uni_pc",
+                          "uni_pc_bh2"
+                        ],
+                        "default": "euler",
+                        "description": "Name of the sampler to use"
+                      },
+                      "scheduler": {
+                        "type": "string",
+                        "enum": [
+                          "normal",
+                          "karras",
+                          "exponential",
+                          "sgm_uniform",
+                          "simple",
+                          "ddim_uniform",
+                          "beta"
+                        ],
+                        "default": "simple",
+                        "description": "Type of scheduler to use"
+                      },
+                      "denoise": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 0.8,
+                        "description": "Denoising strength"
+                      },
+                      "checkpoint": {
+                        "type": "string",
+                        "enum": ["flux1-schnell-fp8.safetensors"],
+                        "default": "flux1-schnell-fp8.safetensors"
+                      },
+                      "image": {
+                        "type": "string",
+                        "description": "Input image for img2img"
+                      },
+                      "interpolation": {
+                        "type": "string",
+                        "enum": ["nearest"],
+                        "default": "nearest",
+                        "description": "Interpolation method for image resizing"
+                      },
+                      "resize_method": {
+                        "type": "string",
+                        "enum": ["fill / crop"],
+                        "default": "fill / crop",
+                        "description": "Method for resizing the image"
+                      },
+                      "resize_condition": {
+                        "type": "string",
+                        "enum": ["always"],
+                        "default": "always",
+                        "description": "Condition for when to resize the image"
+                      },
+                      "multiple_of": {
+                        "type": "integer",
+                        "default": 8,
+                        "description": "Ensure image dimensions are multiples of this value"
+                      }
+                    },
+                    "required": ["prompt", "image"],
+                    "additionalProperties": false
+                  },
+                  "webhook": { "type": "string" }
+                },
+                "required": ["input"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/flux/txt2img": {
+      "post": {
+        "description": "| Field | Type | Description | Default |\n|-|-|-|-|\n| prompt | string | The positive prompt for image generation | - |\n| width | number | Width of the generated image | 1024 |\n| height | number | Height of the generated image | 1024 |\n| seed | number | Seed for random number generation | 896117127594843 |\n| steps | number | Number of sampling steps | 4 |\n| cfg_scale | number | Classifier-free guidance scale | 1 |\n| sampler_name | enum (`euler`, `euler_cfg_pp`, `euler_ancestral`, `euler_ancestral_cfg_pp`, `heun`, `heunpp2`, `dpm_2`, `dpm_2_ancestral`, `lms`, `dpm_fast`, `dpm_adaptive`, `dpmpp_2s_ancestral`, `dpmpp_sde`, `dpmpp_sde_gpu`, `dpmpp_2m`, `dpmpp_2m_sde`, `dpmpp_2m_sde_gpu`, `dpmpp_3m_sde`, `dpmpp_3m_sde_gpu`, `ddpm`, `lcm`, `ipndm`, `ipndm_v`, `deis`, `ddim`, `uni_pc`, `uni_pc_bh2`) | Name of the sampler to use | \"euler\" |\n| scheduler | enum (`normal`, `karras`, `exponential`, `sgm_uniform`, `simple`, `ddim_uniform`, `beta`) | Type of scheduler to use | \"simple\" |\n| denoise | number | Denoising strength | 1 |\n| checkpoint | enum (`flux1-schnell-fp8.safetensors`) |  | \"flux1-schnell-fp8.safetensors\" |\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "default": "8865904a-af87-4fa9-bb21-9b397b0c8e6a"
+                  },
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "prompt": {
+                        "type": "string",
+                        "description": "The positive prompt for image generation"
+                      },
+                      "width": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Width of the generated image"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Height of the generated image"
+                      },
+                      "seed": {
+                        "type": "integer",
+                        "default": 490369469465705,
+                        "description": "Seed for random number generation"
+                      },
+                      "steps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "default": 4,
+                        "description": "Number of sampling steps"
+                      },
+                      "cfg_scale": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 20,
+                        "default": 1,
+                        "description": "Classifier-free guidance scale"
+                      },
+                      "sampler_name": {
+                        "type": "string",
+                        "enum": [
+                          "euler",
+                          "euler_cfg_pp",
+                          "euler_ancestral",
+                          "euler_ancestral_cfg_pp",
+                          "heun",
+                          "heunpp2",
+                          "dpm_2",
+                          "dpm_2_ancestral",
+                          "lms",
+                          "dpm_fast",
+                          "dpm_adaptive",
+                          "dpmpp_2s_ancestral",
+                          "dpmpp_sde",
+                          "dpmpp_sde_gpu",
+                          "dpmpp_2m",
+                          "dpmpp_2m_sde",
+                          "dpmpp_2m_sde_gpu",
+                          "dpmpp_3m_sde",
+                          "dpmpp_3m_sde_gpu",
+                          "ddpm",
+                          "lcm",
+                          "ipndm",
+                          "ipndm_v",
+                          "deis",
+                          "ddim",
+                          "uni_pc",
+                          "uni_pc_bh2"
+                        ],
+                        "default": "euler",
+                        "description": "Name of the sampler to use"
+                      },
+                      "scheduler": {
+                        "type": "string",
+                        "enum": [
+                          "normal",
+                          "karras",
+                          "exponential",
+                          "sgm_uniform",
+                          "simple",
+                          "ddim_uniform",
+                          "beta"
+                        ],
+                        "default": "simple",
+                        "description": "Type of scheduler to use"
+                      },
+                      "denoise": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 1,
+                        "description": "Denoising strength"
+                      },
+                      "checkpoint": {
+                        "type": "string",
+                        "enum": ["flux1-schnell-fp8.safetensors"],
+                        "default": "flux1-schnell-fp8.safetensors"
+                      }
+                    },
+                    "required": ["prompt"],
+                    "additionalProperties": false
+                  },
+                  "webhook": { "type": "string" }
+                },
+                "required": ["input"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
