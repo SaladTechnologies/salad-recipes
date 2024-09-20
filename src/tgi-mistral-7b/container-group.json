@@ -28,5 +28,19 @@
         "protocol": "http",
         "port": 3000,
         "auth": false
+    },
+
+    "readiness_probe": {
+        "http": {
+            "path": "/health",
+            "port": 3000,
+            "scheme": "http",
+            "headers": []
+        },
+        "initial_delay_seconds": 0,
+        "period_seconds": 10,
+        "timeout_seconds": 10,
+        "success_threshold": 1,
+        "failure_threshold": 3
     }
 }
