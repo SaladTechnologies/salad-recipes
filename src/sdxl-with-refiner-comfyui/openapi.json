@@ -1,0 +1,965 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "Comfy Wrapper API", "version": "1.4.0" },
+  "components": { "schemas": {} },
+  "paths": {
+    "/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": { "type": "string", "enum": ["1.4.0"] },
+                    "status": { "type": "string", "enum": ["healthy"] }
+                  },
+                  "required": ["version", "status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": { "type": "string", "enum": ["1.4.0"] },
+                    "status": { "type": "string", "enum": ["not healthy"] }
+                  },
+                  "required": ["version", "status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": { "type": "string", "enum": ["1.4.0"] },
+                    "status": { "type": "string", "enum": ["ready"] }
+                  },
+                  "required": ["version", "status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": { "type": "string", "enum": ["1.4.0"] },
+                    "status": { "type": "string", "enum": ["not ready"] }
+                  },
+                  "required": ["version", "status"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "checkpoints": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "clip": { "type": "array", "items": { "type": "string" } },
+                    "clip_vision": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "configs": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "controlnet": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "diffusers": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "diffusion_models": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "embeddings": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "gligen": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "hypernetworks": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "loras": { "type": "array", "items": { "type": "string" } },
+                    "photomaker": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "style_models": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "unet": { "type": "array", "items": { "type": "string" } },
+                    "upscale_models": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "vae": { "type": "array", "items": { "type": "string" } },
+                    "vae_approx": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  },
+                  "required": [
+                    "checkpoints",
+                    "clip",
+                    "clip_vision",
+                    "configs",
+                    "controlnet",
+                    "diffusers",
+                    "diffusion_models",
+                    "embeddings",
+                    "gligen",
+                    "hypernetworks",
+                    "loras",
+                    "photomaker",
+                    "style_models",
+                    "unet",
+                    "upscale_models",
+                    "vae",
+                    "vae_approx"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prompt": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "inputs": {},
+                        "class_type": { "type": "string" },
+                        "_meta": {}
+                      },
+                      "required": ["class_type"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "id": {
+                    "type": "string",
+                    "default": "9effb884-c24d-43c7-8027-a003d0aa7988"
+                  },
+                  "webhook": { "type": "string" }
+                },
+                "required": ["prompt"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" },
+                    "location": { "type": "string" }
+                  },
+                  "required": ["error"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/sdxl/img2img": {
+      "post": {
+        "description": "| Field | Type | Description | Default |\n|-|-|-|-|\n| prompt | string | The positive prompt for image generation | - |\n| negative_prompt | string | The negative prompt for image generation | - |\n| width | number | Width of the generated image | 4096 |\n| height | number | Height of the generated image | 4096 |\n| seed | number | Seed for random number generation | 511175242584909 |\n| steps | number | Number of sampling steps | 20 |\n| cfg_scale | number | Classifier-free guidance scale | 5.5 |\n| sampler_name | enum (`euler`, `euler_cfg_pp`, `euler_ancestral`, `euler_ancestral_cfg_pp`, `heun`, `heunpp2`, `dpm_2`, `dpm_2_ancestral`, `lms`, `dpm_fast`, `dpm_adaptive`, `dpmpp_2s_ancestral`, `dpmpp_sde`, `dpmpp_sde_gpu`, `dpmpp_2m`, `dpmpp_2m_sde`, `dpmpp_2m_sde_gpu`, `dpmpp_3m_sde`, `dpmpp_3m_sde_gpu`, `ddpm`, `lcm`, `ipndm`, `ipndm_v`, `deis`, `ddim`, `uni_pc`, `uni_pc_bh2`) | Name of the sampler to use | \"dpmpp_2m_sde_gpu\" |\n| scheduler | enum (`normal`, `karras`, `exponential`, `sgm_uniform`, `simple`, `ddim_uniform`, `beta`) | Type of scheduler to use | \"exponential\" |\n| denoise | number | Denoising strength | 0.75 |\n| checkpoint | enum (`sd_xl_base_1.0.safetensors`, `sd_xl_refiner_1.0.safetensors`) |  | \"sd_xl_base_1.0.safetensors\" |\n| image | string | Input image for img2img | - |\n| upscale_method | enum (`nearest-exact`) | Method used for upscaling if input image is smaller than target size | \"nearest-exact\" |\n| target_width | number | Target width for upscaling | 1024 |\n| target_height | number | Target height for upscaling | 1024 |\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "default": "cc1dd8da-9874-4354-8689-faf2c6924b35"
+                  },
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "prompt": {
+                        "type": "string",
+                        "description": "The positive prompt for image generation"
+                      },
+                      "negative_prompt": {
+                        "type": "string",
+                        "description": "The negative prompt for image generation"
+                      },
+                      "width": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 4096,
+                        "default": 4096,
+                        "description": "Width of the generated image"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 4096,
+                        "default": 4096,
+                        "description": "Height of the generated image"
+                      },
+                      "seed": {
+                        "type": "integer",
+                        "default": 597440185341559,
+                        "description": "Seed for random number generation"
+                      },
+                      "steps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "default": 20,
+                        "description": "Number of sampling steps"
+                      },
+                      "cfg_scale": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 20,
+                        "default": 5.5,
+                        "description": "Classifier-free guidance scale"
+                      },
+                      "sampler_name": {
+                        "type": "string",
+                        "enum": [
+                          "euler",
+                          "euler_cfg_pp",
+                          "euler_ancestral",
+                          "euler_ancestral_cfg_pp",
+                          "heun",
+                          "heunpp2",
+                          "dpm_2",
+                          "dpm_2_ancestral",
+                          "lms",
+                          "dpm_fast",
+                          "dpm_adaptive",
+                          "dpmpp_2s_ancestral",
+                          "dpmpp_sde",
+                          "dpmpp_sde_gpu",
+                          "dpmpp_2m",
+                          "dpmpp_2m_sde",
+                          "dpmpp_2m_sde_gpu",
+                          "dpmpp_3m_sde",
+                          "dpmpp_3m_sde_gpu",
+                          "ddpm",
+                          "lcm",
+                          "ipndm",
+                          "ipndm_v",
+                          "deis",
+                          "ddim",
+                          "uni_pc",
+                          "uni_pc_bh2"
+                        ],
+                        "default": "dpmpp_2m_sde_gpu",
+                        "description": "Name of the sampler to use"
+                      },
+                      "scheduler": {
+                        "type": "string",
+                        "enum": [
+                          "normal",
+                          "karras",
+                          "exponential",
+                          "sgm_uniform",
+                          "simple",
+                          "ddim_uniform",
+                          "beta"
+                        ],
+                        "default": "exponential",
+                        "description": "Type of scheduler to use"
+                      },
+                      "denoise": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 0.75,
+                        "description": "Denoising strength"
+                      },
+                      "checkpoint": {
+                        "type": "string",
+                        "enum": [
+                          "sd_xl_base_1.0.safetensors",
+                          "sd_xl_refiner_1.0.safetensors"
+                        ],
+                        "default": "sd_xl_base_1.0.safetensors"
+                      },
+                      "image": {
+                        "type": "string",
+                        "description": "Input image for img2img"
+                      },
+                      "upscale_method": {
+                        "type": "string",
+                        "enum": ["nearest-exact"],
+                        "default": "nearest-exact",
+                        "description": "Method used for upscaling if input image is smaller than target size"
+                      },
+                      "target_width": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 4096,
+                        "default": 1024,
+                        "description": "Target width for upscaling"
+                      },
+                      "target_height": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 4096,
+                        "default": 1024,
+                        "description": "Target height for upscaling"
+                      }
+                    },
+                    "required": ["prompt", "image"],
+                    "additionalProperties": false
+                  },
+                  "webhook": { "type": "string" }
+                },
+                "required": ["input"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/sdxl/txt2img-with-refiner": {
+      "post": {
+        "description": "| Field | Type | Description | Default |\n|-|-|-|-|\n| prompt | string | The positive prompt for image generation | - |\n| negative_prompt | string | The negative prompt for image generation | \"text, watermark\" |\n| width | number | Width of the generated image | 1024 |\n| height | number | Height of the generated image | 1024 |\n| seed | number | Seed for random number generation | 588181349326232 |\n| steps | number | Number of sampling steps | 25 |\n| cfg_scale | number | Classifier-free guidance scale | 8 |\n| sampler_name | enum (`euler`, `euler_cfg_pp`, `euler_ancestral`, `euler_ancestral_cfg_pp`, `heun`, `heunpp2`, `dpm_2`, `dpm_2_ancestral`, `lms`, `dpm_fast`, `dpm_adaptive`, `dpmpp_2s_ancestral`, `dpmpp_sde`, `dpmpp_sde_gpu`, `dpmpp_2m`, `dpmpp_2m_sde`, `dpmpp_2m_sde_gpu`, `dpmpp_3m_sde`, `dpmpp_3m_sde_gpu`, `ddpm`, `lcm`, `ipndm`, `ipndm_v`, `deis`, `ddim`, `uni_pc`, `uni_pc_bh2`) | Name of the sampler to use | \"euler\" |\n| scheduler | enum (`normal`, `karras`, `exponential`, `sgm_uniform`, `simple`, `ddim_uniform`, `beta`) | Type of scheduler to use | \"normal\" |\n| base_start_step | number | Start step for base model sampling | 0 |\n| base_end_step | number | End step for base model sampling | 20 |\n| refiner_start_step | number | Start step for refiner model sampling | 20 |\n| checkpoint | enum (`sd_xl_base_1.0.safetensors`, `sd_xl_refiner_1.0.safetensors`) |  | \"sd_xl_base_1.0.safetensors\" |\n| refiner_checkpoint | string | Checkpoint for the refiner model | \"sd_xl_refiner_1.0.safetensors\" |\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "default": "07152ec8-4692-4dc2-b12f-997564c76232"
+                  },
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "prompt": {
+                        "type": "string",
+                        "description": "The positive prompt for image generation"
+                      },
+                      "negative_prompt": {
+                        "type": "string",
+                        "default": "text, watermark",
+                        "description": "The negative prompt for image generation"
+                      },
+                      "width": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Width of the generated image"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Height of the generated image"
+                      },
+                      "seed": {
+                        "type": "integer",
+                        "default": 699836521794580,
+                        "description": "Seed for random number generation"
+                      },
+                      "steps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "default": 25,
+                        "description": "Number of sampling steps"
+                      },
+                      "cfg_scale": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 20,
+                        "default": 8,
+                        "description": "Classifier-free guidance scale"
+                      },
+                      "sampler_name": {
+                        "type": "string",
+                        "enum": [
+                          "euler",
+                          "euler_cfg_pp",
+                          "euler_ancestral",
+                          "euler_ancestral_cfg_pp",
+                          "heun",
+                          "heunpp2",
+                          "dpm_2",
+                          "dpm_2_ancestral",
+                          "lms",
+                          "dpm_fast",
+                          "dpm_adaptive",
+                          "dpmpp_2s_ancestral",
+                          "dpmpp_sde",
+                          "dpmpp_sde_gpu",
+                          "dpmpp_2m",
+                          "dpmpp_2m_sde",
+                          "dpmpp_2m_sde_gpu",
+                          "dpmpp_3m_sde",
+                          "dpmpp_3m_sde_gpu",
+                          "ddpm",
+                          "lcm",
+                          "ipndm",
+                          "ipndm_v",
+                          "deis",
+                          "ddim",
+                          "uni_pc",
+                          "uni_pc_bh2"
+                        ],
+                        "default": "euler",
+                        "description": "Name of the sampler to use"
+                      },
+                      "scheduler": {
+                        "type": "string",
+                        "enum": [
+                          "normal",
+                          "karras",
+                          "exponential",
+                          "sgm_uniform",
+                          "simple",
+                          "ddim_uniform",
+                          "beta"
+                        ],
+                        "default": "normal",
+                        "description": "Type of scheduler to use"
+                      },
+                      "base_start_step": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100,
+                        "default": 0,
+                        "description": "Start step for base model sampling"
+                      },
+                      "base_end_step": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100,
+                        "default": 20,
+                        "description": "End step for base model sampling"
+                      },
+                      "refiner_start_step": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100,
+                        "default": 20,
+                        "description": "Start step for refiner model sampling"
+                      },
+                      "checkpoint": {
+                        "type": "string",
+                        "enum": [
+                          "sd_xl_base_1.0.safetensors",
+                          "sd_xl_refiner_1.0.safetensors"
+                        ],
+                        "default": "sd_xl_base_1.0.safetensors"
+                      },
+                      "refiner_checkpoint": {
+                        "type": "string",
+                        "default": "sd_xl_refiner_1.0.safetensors",
+                        "description": "Checkpoint for the refiner model"
+                      }
+                    },
+                    "required": ["prompt"],
+                    "additionalProperties": false
+                  },
+                  "webhook": { "type": "string" }
+                },
+                "required": ["input"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/sdxl/txt2img": {
+      "post": {
+        "description": "| Field | Type | Description | Default |\n|-|-|-|-|\n| prompt | string | The positive prompt for image generation | - |\n| negative_prompt | string | The negative prompt for image generation | \"text, watermark\" |\n| width | number | Width of the generated image | 1024 |\n| height | number | Height of the generated image | 1024 |\n| seed | number | Seed for random number generation | 10098672545 |\n| steps | number | Number of sampling steps | 20 |\n| cfg_scale | number | Classifier-free guidance scale | 8 |\n| sampler_name | enum (`euler`, `euler_cfg_pp`, `euler_ancestral`, `euler_ancestral_cfg_pp`, `heun`, `heunpp2`, `dpm_2`, `dpm_2_ancestral`, `lms`, `dpm_fast`, `dpm_adaptive`, `dpmpp_2s_ancestral`, `dpmpp_sde`, `dpmpp_sde_gpu`, `dpmpp_2m`, `dpmpp_2m_sde`, `dpmpp_2m_sde_gpu`, `dpmpp_3m_sde`, `dpmpp_3m_sde_gpu`, `ddpm`, `lcm`, `ipndm`, `ipndm_v`, `deis`, `ddim`, `uni_pc`, `uni_pc_bh2`) | Name of the sampler to use | \"euler\" |\n| scheduler | enum (`normal`, `karras`, `exponential`, `sgm_uniform`, `simple`, `ddim_uniform`, `beta`) | Type of scheduler to use | \"normal\" |\n| denoise | number | Denoising strength | 1 |\n| checkpoint | enum (`sd_xl_base_1.0.safetensors`, `sd_xl_refiner_1.0.safetensors`) |  | \"sd_xl_base_1.0.safetensors\" |\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "default": "f9e66eab-45fe-46da-b694-2c4ee9b7facf"
+                  },
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "prompt": {
+                        "type": "string",
+                        "description": "The positive prompt for image generation"
+                      },
+                      "negative_prompt": {
+                        "type": "string",
+                        "default": "text, watermark",
+                        "description": "The negative prompt for image generation"
+                      },
+                      "width": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Width of the generated image"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Height of the generated image"
+                      },
+                      "seed": {
+                        "type": "integer",
+                        "default": 34616222748,
+                        "description": "Seed for random number generation"
+                      },
+                      "steps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "default": 20,
+                        "description": "Number of sampling steps"
+                      },
+                      "cfg_scale": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 20,
+                        "default": 8,
+                        "description": "Classifier-free guidance scale"
+                      },
+                      "sampler_name": {
+                        "type": "string",
+                        "enum": [
+                          "euler",
+                          "euler_cfg_pp",
+                          "euler_ancestral",
+                          "euler_ancestral_cfg_pp",
+                          "heun",
+                          "heunpp2",
+                          "dpm_2",
+                          "dpm_2_ancestral",
+                          "lms",
+                          "dpm_fast",
+                          "dpm_adaptive",
+                          "dpmpp_2s_ancestral",
+                          "dpmpp_sde",
+                          "dpmpp_sde_gpu",
+                          "dpmpp_2m",
+                          "dpmpp_2m_sde",
+                          "dpmpp_2m_sde_gpu",
+                          "dpmpp_3m_sde",
+                          "dpmpp_3m_sde_gpu",
+                          "ddpm",
+                          "lcm",
+                          "ipndm",
+                          "ipndm_v",
+                          "deis",
+                          "ddim",
+                          "uni_pc",
+                          "uni_pc_bh2"
+                        ],
+                        "default": "euler",
+                        "description": "Name of the sampler to use"
+                      },
+                      "scheduler": {
+                        "type": "string",
+                        "enum": [
+                          "normal",
+                          "karras",
+                          "exponential",
+                          "sgm_uniform",
+                          "simple",
+                          "ddim_uniform",
+                          "beta"
+                        ],
+                        "default": "normal",
+                        "description": "Type of scheduler to use"
+                      },
+                      "denoise": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 1,
+                        "description": "Denoising strength"
+                      },
+                      "checkpoint": {
+                        "type": "string",
+                        "enum": [
+                          "sd_xl_base_1.0.safetensors",
+                          "sd_xl_refiner_1.0.safetensors"
+                        ],
+                        "default": "sd_xl_base_1.0.safetensors"
+                      }
+                    },
+                    "required": ["prompt"],
+                    "additionalProperties": false
+                  },
+                  "webhook": { "type": "string" }
+                },
+                "required": ["input"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "input": { "type": "object", "additionalProperties": {} },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": { "type": "string" },
+                          "_meta": {}
+                        },
+                        "required": ["class_type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": { "type": "string", "contentEncoding": "base64" }
+                    },
+                    "webhook": { "type": "string" },
+                    "status": { "type": "string", "enum": ["ok"] }
+                  },
+                  "required": ["id", "input", "prompt"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

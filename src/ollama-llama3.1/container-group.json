@@ -10,8 +10,7 @@
                 "f51baccc-dc95-40fb-a5d1-6d0ee0db31d2"
             ]
         },
-        "command": [],
-        "size": 8056063674
+        "command": []
     },
     "autostart_policy": false,
     "restart_policy": "always",

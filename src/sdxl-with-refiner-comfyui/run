@@ -1,0 +1,41 @@
+#! /usr/bin/bash
+
+
+image="saladtechnologies/comfyui"
+usage="Usage: ./run --comfy <comfy-version> --api <api-version> [--image <image> default: $image]"
+
+model_name="sdxl-with-refiner"
+while [ "$1" != "" ]; do
+  case $1 in
+  --comfy)
+    shift
+    comfy_version=$1
+    ;;
+  --api)
+    shift
+    api_version=$1
+    ;;
+  --image)
+    shift
+    image=$1
+    ;;
+  *)
+    echo $usage
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
+  echo $usage
+  exit 1
+fi
+
+tag="comfy$comfy_version-api$api_version-$model_name"
+
+docker run -it --rm --gpus all \
+-p 8188:8188 \
+-p 3000:3000 \
+--name comfyui-$model_name \
+$image:$tag
