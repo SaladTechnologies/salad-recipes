@@ -1,0 +1,60 @@
+#! /usr/bin/bash
+set -e
+
+image="saladtechnologies/comfyui"
+usage="Usage: ./get-openapi-spec --comfy <comfy-version> --api <api-version> [--image <image> default: $image]"
+
+model_name="sdxl-with-refiner"
+while [ "$1" != "" ]; do
+  case $1 in
+  --comfy)
+    shift
+    comfy_version=$1
+    ;;
+  --api)
+    shift
+    api_version=$1
+    ;;
+  --image)
+    shift
+    image=$1
+    ;;
+  *)
+    echo $usage
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
+  echo $usage
+  exit 1
+fi
+
+tag="comfy$comfy_version-api$api_version-$model_name"
+
+# Start the server
+echo "Starting server..."
+docker run --rm --gpus all \
+-p 3000:3000 \
+--name comfyui-$model_name \
+-e MARKDOWN_SCHEMA_DESCRIPTIONS="false" \
+$image:$tag &
+
+function healthcheck {
+  curl -s http://localhost:3000/health > /dev/null
+}
+
+until healthcheck; do
+  echo "Waiting for server to start..."
+  sleep 1
+done
+
+# Download the spec to a file called openapi.json
+echo "Downloading OpenAPI spec..."
+curl -s http://localhost:3000/docs/json | jq . > openapi.json
+
+# Stop the server
+echo "Stopping server..."
+docker stop comfyui-$model_name

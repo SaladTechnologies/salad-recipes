@@ -1,10 +1,17 @@
 {
   "openapi": "3.0.0",
-  "info": { "title": "Comfy Wrapper API", "version": "1.4.0" },
-  "components": { "schemas": {} },
+  "info": {
+    "title": "Comfy Wrapper API",
+    "version": "1.4.1"
+  },
+  "components": {
+    "schemas": {}
+  },
   "paths": {
     "/health": {
       "get": {
+        "summary": "Health Probe",
+        "description": "Check if the server is healthy",
         "responses": {
           "200": {
             "description": "Default Response",
@@ -13,10 +20,23 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "version": { "type": "string", "enum": ["1.4.0"] },
-                    "status": { "type": "string", "enum": ["healthy"] }
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.4.1"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "healthy"
+                      ]
+                    }
                   },
-                  "required": ["version", "status"],
+                  "required": [
+                    "version",
+                    "status"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -29,10 +49,23 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "version": { "type": "string", "enum": ["1.4.0"] },
-                    "status": { "type": "string", "enum": ["not healthy"] }
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.4.1"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "not healthy"
+                      ]
+                    }
                   },
-                  "required": ["version", "status"],
+                  "required": [
+                    "version",
+                    "status"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -43,6 +76,8 @@
     },
     "/ready": {
       "get": {
+        "summary": "Readiness Probe",
+        "description": "Check if the server is ready to serve traffic",
         "responses": {
           "200": {
             "description": "Default Response",
@@ -51,10 +86,23 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "version": { "type": "string", "enum": ["1.4.0"] },
-                    "status": { "type": "string", "enum": ["ready"] }
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.4.1"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ready"
+                      ]
+                    }
                   },
-                  "required": ["version", "status"],
+                  "required": [
+                    "version",
+                    "status"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -67,10 +115,23 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "version": { "type": "string", "enum": ["1.4.0"] },
-                    "status": { "type": "string", "enum": ["not ready"] }
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.4.1"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "not ready"
+                      ]
+                    }
                   },
-                  "required": ["version", "status"],
+                  "required": [
+                    "version",
+                    "status"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -81,6 +142,8 @@
     },
     "/models": {
       "get": {
+        "summary": "List Models",
+        "description": "List all available models. This is from the contents of the models directory.",
         "responses": {
           "200": {
             "description": "Default Response",
@@ -91,59 +154,105 @@
                   "properties": {
                     "checkpoints": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
-                    "clip": { "type": "array", "items": { "type": "string" } },
+                    "clip": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "clip_vision": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "configs": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "controlnet": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "diffusers": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "diffusion_models": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "embeddings": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "gligen": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "hypernetworks": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
-                    "loras": { "type": "array", "items": { "type": "string" } },
+                    "loras": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "photomaker": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
                     "style_models": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
-                    "unet": { "type": "array", "items": { "type": "string" } },
+                    "unet": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "upscale_models": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     },
-                    "vae": { "type": "array", "items": { "type": "string" } },
+                    "vae": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "vae_approx": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   },
                   "required": [
@@ -175,6 +284,8 @@
     },
     "/prompt": {
       "post": {
+        "summary": "Submit Prompt",
+        "description": "Submit an API-formatted ComfyUI prompt.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -187,20 +298,28 @@
                       "type": "object",
                       "properties": {
                         "inputs": {},
-                        "class_type": { "type": "string" },
+                        "class_type": {
+                          "type": "string"
+                        },
                         "_meta": {}
                       },
-                      "required": ["class_type"],
+                      "required": [
+                        "class_type"
+                      ],
                       "additionalProperties": false
                     }
                   },
                   "id": {
                     "type": "string",
-                    "default": "db6da037-3b6f-4a1b-b634-fd62117ed287"
+                    "default": "5b3efdf7-d64d-4298-83a5-599f152ac2c1"
                   },
-                  "webhook": { "type": "string" }
+                  "webhook": {
+                    "type": "string"
+                  }
                 },
-                "required": ["prompt"],
+                "required": [
+                  "prompt"
+                ],
                 "additionalProperties": false
               }
             }
@@ -215,28 +334,47 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
+                    "id": {
+                      "type": "string"
+                    },
                     "prompt": {
                       "type": "object",
                       "additionalProperties": {
                         "type": "object",
                         "properties": {
                           "inputs": {},
-                          "class_type": { "type": "string" },
+                          "class_type": {
+                            "type": "string"
+                          },
                           "_meta": {}
                         },
-                        "required": ["class_type"],
+                        "required": [
+                          "class_type"
+                        ],
                         "additionalProperties": false
                       }
                     },
                     "images": {
                       "type": "array",
-                      "items": { "type": "string", "contentEncoding": "base64" }
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
                     },
-                    "webhook": { "type": "string" },
-                    "status": { "type": "string", "enum": ["ok"] }
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
                   },
-                  "required": ["id", "prompt"],
+                  "required": [
+                    "id",
+                    "prompt"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -249,28 +387,47 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
+                    "id": {
+                      "type": "string"
+                    },
                     "prompt": {
                       "type": "object",
                       "additionalProperties": {
                         "type": "object",
                         "properties": {
                           "inputs": {},
-                          "class_type": { "type": "string" },
+                          "class_type": {
+                            "type": "string"
+                          },
                           "_meta": {}
                         },
-                        "required": ["class_type"],
+                        "required": [
+                          "class_type"
+                        ],
                         "additionalProperties": false
                       }
                     },
                     "images": {
                       "type": "array",
-                      "items": { "type": "string", "contentEncoding": "base64" }
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
                     },
-                    "webhook": { "type": "string" },
-                    "status": { "type": "string", "enum": ["ok"] }
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
                   },
-                  "required": ["id", "prompt"],
+                  "required": [
+                    "id",
+                    "prompt"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -283,10 +440,16 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "error": { "type": "string" },
-                    "location": { "type": "string" }
+                    "error": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    }
                   },
-                  "required": ["error"],
+                  "required": [
+                    "error"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -297,7 +460,8 @@
     },
     "/workflow/sd1.5/img2img": {
       "post": {
-        "description": "| Field | Type | Description | Default |\n|-|-|-|-|\n| prompt | string | The positive prompt for image generation | - |\n| negative_prompt | string | The negative prompt for image generation | \"text, watermark\" |\n| seed | number | Seed for random number generation | 822683183183174 |\n| steps | number | Number of sampling steps | 15 |\n| cfg_scale | number | Classifier-free guidance scale | 8 |\n| sampler_name | enum (`euler`, `euler_cfg_pp`, `euler_ancestral`, `euler_ancestral_cfg_pp`, `heun`, `heunpp2`, `dpm_2`, `dpm_2_ancestral`, `lms`, `dpm_fast`, `dpm_adaptive`, `dpmpp_2s_ancestral`, `dpmpp_sde`, `dpmpp_sde_gpu`, `dpmpp_2m`, `dpmpp_2m_sde`, `dpmpp_2m_sde_gpu`, `dpmpp_3m_sde`, `dpmpp_3m_sde_gpu`, `ddpm`, `lcm`, `ipndm`, `ipndm_v`, `deis`, `ddim`, `uni_pc`, `uni_pc_bh2`) | Name of the sampler to use | \"euler\" |\n| scheduler | enum (`normal`, `karras`, `exponential`, `sgm_uniform`, `simple`, `ddim_uniform`, `beta`) | Type of scheduler to use | \"normal\" |\n| denoise | number | Denoising strength | 0.8 |\n| checkpoint | enum (`dreamshaper_8.safetensors`) |  | \"dreamshaper_8.safetensors\" |\n| image | string | Input image for img2img | - |\n| width | number | Width of the generated image | 512 |\n| height | number | Height of the generated image | 512 |\n| interpolation | enum (`nearest`) | Interpolation method for image resizing | \"nearest\" |\n| resize_method | enum (`keep proportion`) | Method for resizing the image | \"keep proportion\" |\n| resize_condition | enum (`always`) | Condition for when to resize the image | \"always\" |\n| multiple_of | number | Ensure dimensions are multiples of this value | 0 |\n",
+        "summary": "Image to Image",
+        "description": "Generate an image from another image and a text prompt",
         "requestBody": {
           "content": {
             "application/json": {
@@ -306,7 +470,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "c906e348-ec87-4a94-9383-e3118491bbb5"
+                    "default": "954f73a8-467c-4d5e-b7e2-75125035500d"
                   },
                   "input": {
                     "type": "object",
@@ -322,7 +486,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 412934701713441,
+                        "default": 354362524833600,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -396,7 +560,9 @@
                       },
                       "checkpoint": {
                         "type": "string",
-                        "enum": ["dreamshaper_8.safetensors"],
+                        "enum": [
+                          "dreamshaper_8.safetensors"
+                        ],
                         "default": "dreamshaper_8.safetensors"
                       },
                       "image": {
@@ -419,19 +585,25 @@
                       },
                       "interpolation": {
                         "type": "string",
-                        "enum": ["nearest"],
+                        "enum": [
+                          "nearest"
+                        ],
                         "default": "nearest",
                         "description": "Interpolation method for image resizing"
                       },
                       "resize_method": {
                         "type": "string",
-                        "enum": ["keep proportion"],
+                        "enum": [
+                          "keep proportion"
+                        ],
                         "default": "keep proportion",
                         "description": "Method for resizing the image"
                       },
                       "resize_condition": {
                         "type": "string",
-                        "enum": ["always"],
+                        "enum": [
+                          "always"
+                        ],
                         "default": "always",
                         "description": "Condition for when to resize the image"
                       },
@@ -442,12 +614,19 @@
                         "description": "Ensure dimensions are multiples of this value"
                       }
                     },
-                    "required": ["prompt", "image"],
+                    "required": [
+                      "prompt",
+                      "image"
+                    ],
                     "additionalProperties": false
                   },
-                  "webhook": { "type": "string" }
+                  "webhook": {
+                    "type": "string"
+                  }
                 },
-                "required": ["input"],
+                "required": [
+                  "input"
+                ],
                 "additionalProperties": false
               }
             }
@@ -462,29 +641,52 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
-                    "input": { "type": "object", "additionalProperties": {} },
+                    "id": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
                     "prompt": {
                       "type": "object",
                       "additionalProperties": {
                         "type": "object",
                         "properties": {
                           "inputs": {},
-                          "class_type": { "type": "string" },
+                          "class_type": {
+                            "type": "string"
+                          },
                           "_meta": {}
                         },
-                        "required": ["class_type"],
+                        "required": [
+                          "class_type"
+                        ],
                         "additionalProperties": false
                       }
                     },
                     "images": {
                       "type": "array",
-                      "items": { "type": "string", "contentEncoding": "base64" }
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
                     },
-                    "webhook": { "type": "string" },
-                    "status": { "type": "string", "enum": ["ok"] }
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
                   },
-                  "required": ["id", "input", "prompt"],
+                  "required": [
+                    "id",
+                    "input",
+                    "prompt"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -497,29 +699,52 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
-                    "input": { "type": "object", "additionalProperties": {} },
+                    "id": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
                     "prompt": {
                       "type": "object",
                       "additionalProperties": {
                         "type": "object",
                         "properties": {
                           "inputs": {},
-                          "class_type": { "type": "string" },
+                          "class_type": {
+                            "type": "string"
+                          },
                           "_meta": {}
                         },
-                        "required": ["class_type"],
+                        "required": [
+                          "class_type"
+                        ],
                         "additionalProperties": false
                       }
                     },
                     "images": {
                       "type": "array",
-                      "items": { "type": "string", "contentEncoding": "base64" }
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
                     },
-                    "webhook": { "type": "string" },
-                    "status": { "type": "string", "enum": ["ok"] }
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
                   },
-                  "required": ["id", "input", "prompt"],
+                  "required": [
+                    "id",
+                    "input",
+                    "prompt"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -530,7 +755,8 @@
     },
     "/workflow/sd1.5/txt2img": {
       "post": {
-        "description": "| Field | Type | Description | Default |\n|-|-|-|-|\n| prompt | string | The positive prompt for image generation | - |\n| negative_prompt | string | The negative prompt for image generation | \"text, watermark\" |\n| width | number | Width of the generated image | 512 |\n| height | number | Height of the generated image | 512 |\n| seed | number | Seed for random number generation | 60688683640 |\n| steps | number | Number of sampling steps | 20 |\n| cfg_scale | number | Classifier-free guidance scale | 8 |\n| sampler_name | enum (`euler`, `euler_cfg_pp`, `euler_ancestral`, `euler_ancestral_cfg_pp`, `heun`, `heunpp2`, `dpm_2`, `dpm_2_ancestral`, `lms`, `dpm_fast`, `dpm_adaptive`, `dpmpp_2s_ancestral`, `dpmpp_sde`, `dpmpp_sde_gpu`, `dpmpp_2m`, `dpmpp_2m_sde`, `dpmpp_2m_sde_gpu`, `dpmpp_3m_sde`, `dpmpp_3m_sde_gpu`, `ddpm`, `lcm`, `ipndm`, `ipndm_v`, `deis`, `ddim`, `uni_pc`, `uni_pc_bh2`) | Name of the sampler to use | \"euler\" |\n| scheduler | enum (`normal`, `karras`, `exponential`, `sgm_uniform`, `simple`, `ddim_uniform`, `beta`) | Type of scheduler to use | \"normal\" |\n| denoise | number | Denoising strength | 1 |\n| checkpoint | enum (`dreamshaper_8.safetensors`) |  | \"dreamshaper_8.safetensors\" |\n",
+        "summary": "Text to Image",
+        "description": "Generate an image from a text prompt",
         "requestBody": {
           "content": {
             "application/json": {
@@ -539,7 +765,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "50400830-b9b1-4573-bd02-2ab30801d81d"
+                    "default": "32b5018e-c5dc-4e8e-92d5-bb5ded57a091"
                   },
                   "input": {
                     "type": "object",
@@ -569,7 +795,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 15442403858,
+                        "default": 96154286562,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -643,16 +869,24 @@
                       },
                       "checkpoint": {
                         "type": "string",
-                        "enum": ["dreamshaper_8.safetensors"],
+                        "enum": [
+                          "dreamshaper_8.safetensors"
+                        ],
                         "default": "dreamshaper_8.safetensors"
                       }
                     },
-                    "required": ["prompt"],
+                    "required": [
+                      "prompt"
+                    ],
                     "additionalProperties": false
                   },
-                  "webhook": { "type": "string" }
+                  "webhook": {
+                    "type": "string"
+                  }
                 },
-                "required": ["input"],
+                "required": [
+                  "input"
+                ],
                 "additionalProperties": false
               }
             }
@@ -667,29 +901,52 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
-                    "input": { "type": "object", "additionalProperties": {} },
+                    "id": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
                     "prompt": {
                       "type": "object",
                       "additionalProperties": {
                         "type": "object",
                         "properties": {
                           "inputs": {},
-                          "class_type": { "type": "string" },
+                          "class_type": {
+                            "type": "string"
+                          },
                           "_meta": {}
                         },
-                        "required": ["class_type"],
+                        "required": [
+                          "class_type"
+                        ],
                         "additionalProperties": false
                       }
                     },
                     "images": {
                       "type": "array",
-                      "items": { "type": "string", "contentEncoding": "base64" }
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
                     },
-                    "webhook": { "type": "string" },
-                    "status": { "type": "string", "enum": ["ok"] }
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
                   },
-                  "required": ["id", "input", "prompt"],
+                  "required": [
+                    "id",
+                    "input",
+                    "prompt"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -702,29 +959,52 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
-                    "input": { "type": "object", "additionalProperties": {} },
+                    "id": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
                     "prompt": {
                       "type": "object",
                       "additionalProperties": {
                         "type": "object",
                         "properties": {
                           "inputs": {},
-                          "class_type": { "type": "string" },
+                          "class_type": {
+                            "type": "string"
+                          },
                           "_meta": {}
                         },
-                        "required": ["class_type"],
+                        "required": [
+                          "class_type"
+                        ],
                         "additionalProperties": false
                       }
                     },
                     "images": {
                       "type": "array",
-                      "items": { "type": "string", "contentEncoding": "base64" }
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
                     },
-                    "webhook": { "type": "string" },
-                    "status": { "type": "string", "enum": ["ok"] }
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
                   },
-                  "required": ["id", "input", "prompt"],
+                  "required": [
+                    "id",
+                    "input",
+                    "prompt"
+                  ],
                   "additionalProperties": false
                 }
               }

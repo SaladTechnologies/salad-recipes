@@ -1,26 +1,35 @@
 {
-  "name": "comfyui-flux1-schnell-fp8",
-  "display_name": "comfyui-flux1-schnell-fp8",
+  "name": "flux1-schnell-fp8-comfyui",
+  "display_name": "flux1-schnell-fp8-comfyui",
   "container": {
-    "image": "saladtechnologies/comfyui:comfy0.2.0-api1.4.0-flux1-schnell-fp8",
+    "image": "saladtechnologies/comfyui:comfy0.2.0-api1.4.1-flux1-schnell-fp8",
     "resources": {
       "cpu": 4,
       "memory": 30720,
-      "gpu_classes": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+      "gpu_classes": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
       "storage_amount": 1073741824
     },
-    "command": []
+    "command": [],
+    "priority": "high"
   },
-  "autostart_policy": false,
+  "autostart_policy": true,
   "restart_policy": "always",
   "replicas": 3,
   "networking": {
     "protocol": "http",
     "port": 3000,
-    "auth": false
+    "auth": false,
+    "load_balancer": "round_robin"
   },
   "readiness_probe": {
-    "http": { "path": "/ready", "port": 3000, "scheme": "http", "headers": [] },
+    "http": {
+      "path": "/ready",
+      "port": 3000,
+      "scheme": "http",
+      "headers": []
+    },
     "initial_delay_seconds": 0,
     "period_seconds": 1,
     "timeout_seconds": 1,
