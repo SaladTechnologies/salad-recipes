@@ -1,5 +1,6 @@
 const assert = require('assert')
 const fs = require('fs')
+const path = require('path')
 
 const { SALAD_API_KEY } = process.env
 assert(SALAD_API_KEY, 'SALAD_API_KEY is required')
@@ -32,9 +33,9 @@ async function main() {
   }
   const containerGroup = await res.json()
 
+  const recipeName = path.dirname(output).split('/').pop()
+
   const {
-    name,
-    display_name,
     container,
     restart_policy,
     networking,
@@ -50,8 +51,8 @@ async function main() {
   delete networking.dns;
  
   const newDef = {
-    name,
-    display_name,
+    name: recipeName,
+    display_name: recipeName,
     container,
     autostart_policy: true,
     restart_policy,
