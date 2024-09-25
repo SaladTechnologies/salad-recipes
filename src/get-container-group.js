@@ -8,10 +8,20 @@ const headers = {
   'Salad-Api-Key': SALAD_API_KEY
 };
 
+const usage = `
+Usage: node get-container-group.js <container-group-address> <output-file>
+
+Example:
+node get-container-group.js \
+organizations/salad-benchmarking/projects/recipe-staging/containers/comfyui-dreamshaper8 \
+dreamshaper8-comfyui/container-group.json
+`
+
 async function main() {
   const cgAddress = process.argv[2];
   const output = process.argv[3];
-  assert(cgAddress, 'Container Group address is required')
+  assert(cgAddress, usage)
+  assert(output, usage)
   const cgUrl=`https://api.salad.com/api/public/${cgAddress}`
   console.log(`Fetching container group from ${cgUrl}`)
 
