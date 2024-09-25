@@ -2,23 +2,34 @@
   "name": "comfyui-dreamshaper8",
   "display_name": "comfyui-dreamshaper8",
   "container": {
-    "image": "saladtechnologies/comfyui:comfy0.2.0-api1.4.0-dreamshaper8",
+    "image": "saladtechnologies/comfyui:comfy0.2.0-api1.4.1-dreamshaper8",
     "resources": {
       "cpu": 4,
       "memory": 12288,
-      "gpu_classes": ["cb6c1931-89b6-4f76-976f-54047320ccc6"],
+      "gpu_classes": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
       "storage_amount": 1073741824
     },
-    "command": []
+    "command": [],
+    "priority": "high"
   },
+  "autostart_policy": true,
+  "restart_policy": "always",
   "replicas": 3,
   "networking": {
     "protocol": "http",
     "port": 3000,
-    "auth": false
+    "auth": false,
+    "load_balancer": "round_robin"
   },
   "readiness_probe": {
-    "http": { "path": "/ready", "port": 3000, "scheme": "http", "headers": [] },
+    "http": {
+      "path": "/ready",
+      "port": 3000,
+      "scheme": "http",
+      "headers": []
+    },
     "initial_delay_seconds": 0,
     "period_seconds": 2,
     "timeout_seconds": 2,
