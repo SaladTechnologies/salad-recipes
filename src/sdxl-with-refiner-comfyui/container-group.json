@@ -1,6 +1,6 @@
 {
-  "name": "comfyui-sdxl-with-refiner",
-  "display_name": "comfyui-sdxl-with-refiner",
+  "name": "sdxl-with-refiner-comfyui",
+  "display_name": "sdxl-with-refiner-comfyui",
   "container": {
     "image": "saladtechnologies/comfyui:comfy0.2.0-api1.4.1-sdxl-with-refiner",
     "resources": {
