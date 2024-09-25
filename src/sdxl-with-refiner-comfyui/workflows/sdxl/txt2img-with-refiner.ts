@@ -12,6 +12,8 @@ type ComfyNode = z.infer<typeof ComfyNodeSchema>;
 interface Workflow {
   RequestSchema: z.ZodObject<any, any>;
   generateWorkflow: (input: any) => Record<string, ComfyNode>;
+  description?: string;
+  summary?: string;
 }
 
 let checkpoint: any = config.models.checkpoints.enum.optional();
@@ -244,6 +246,9 @@ function generateWorkflow(input: InputType): Record<string, ComfyNode> {
 const workflow: Workflow = {
   RequestSchema,
   generateWorkflow,
+  summary: "Text to Image (+Refiner)",
+  description:
+    "Generate an image from a text prompt, and refine it with the refiner model",
 };
 
 export default workflow;
