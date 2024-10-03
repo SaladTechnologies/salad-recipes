@@ -1,4 +1,0 @@
-Pillow==10.0.0
-pytesseract==0.3.10
-torch==2.0.1
-transformers==4.30.2
