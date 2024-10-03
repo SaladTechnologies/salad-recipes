@@ -1,5 +1,0 @@
-curl
-neofetch
-iputils-ping
-nano
-btop
