@@ -7,7 +7,7 @@
       "cpu": 4,
       "memory": 12288,
       "gpu_classes": [
-        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+        "cb6c1931-89b6-4f76-976f-54047320ccc6"
       ],
       "storage_amount": 1073741824
     },
@@ -21,7 +21,10 @@
     "protocol": "http",
     "port": 3000,
     "auth": false,
-    "load_balancer": "round_robin"
+    "load_balancer": "least_number_of_connections",
+    "single_connection_limit": false,
+    "client_request_timeout": 100000,
+    "server_response_timeout": 100000
   },
   "readiness_probe": {
     "http": {

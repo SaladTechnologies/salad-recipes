@@ -21,7 +21,10 @@
     "protocol": "http",
     "port": 3000,
     "auth": false,
-    "load_balancer": "round_robin"
+    "load_balancer": "least_number_of_connections",
+    "single_connection_limit": false,
+    "client_request_timeout": 100000,
+    "server_response_timeout": 100000
   },
   "readiness_probe": {
     "http": {
