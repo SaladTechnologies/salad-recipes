@@ -1,4 +1,4 @@
-ARG comfy_version=0.2.0
+ARG comfy_version=0.2.2
 FROM ghcr.io/ai-dock/comfyui:v2-cuda-12.1.1-base-22.04-v${comfy_version}
 
 # Disable the authentication and cloudflare tunnels provided by the base image
