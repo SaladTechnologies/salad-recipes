@@ -33,20 +33,24 @@ fi
 
 # Build the base image
 pushd comfyui-base
+echo "Building comfyui-base"
 ./build --comfy $comfy_version --api $api_version $push
 popd
 
 # Build the dreamshaper8 image
 pushd dreamshaper8-comfyui
+echo "Building dreamshaper8"
 ./build --comfy $comfy_version --api $api_version $push
 popd
 
 # Build the flux1-schnell-fp8 image
 pushd flux1-schnell-fp8-comfyui
+echo "Building flux1-schnell-fp8"
 ./build --comfy $comfy_version --api $api_version $push
 popd
 
 # Build the sdxl-with-refiner image
 pushd sdxl-with-refiner-comfyui
+echo "Building sdxl-with-refiner"
 ./build --comfy $comfy_version --api $api_version $push
 popd
