@@ -2,7 +2,7 @@
   "name": "flux1-schnell-fp8-comfyui",
   "display_name": "flux1-schnell-fp8-comfyui",
   "container": {
-    "image": "saladtechnologies/comfyui:comfy0.2.2-api1.4.1-flux1-schnell-fp8",
+    "image": "saladtechnologies/comfyui:comfy0.2.2-api1.4.2-flux1-schnell-fp8",
     "resources": {
       "cpu": 4,
       "memory": 30720,
