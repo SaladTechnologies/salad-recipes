@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Comfy Wrapper API",
-    "version": "1.4.1"
+    "version": "1.4.2"
   },
   "components": {
     "schemas": {}
@@ -23,7 +23,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.1"
+                        "1.4.2"
                       ]
                     },
                     "status": {
@@ -52,7 +52,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.1"
+                        "1.4.2"
                       ]
                     },
                     "status": {
@@ -89,7 +89,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.1"
+                        "1.4.2"
                       ]
                     },
                     "status": {
@@ -118,7 +118,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.1"
+                        "1.4.2"
                       ]
                     },
                     "status": {
@@ -311,7 +311,7 @@
                   },
                   "id": {
                     "type": "string",
-                    "default": "5b3efdf7-d64d-4298-83a5-599f152ac2c1"
+                    "default": "52d685e8-c29c-4622-b728-4b838fcd1677"
                   },
                   "webhook": {
                     "type": "string"
@@ -470,7 +470,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "954f73a8-467c-4d5e-b7e2-75125035500d"
+                    "default": "0b0309cc-ca39-49c0-a207-302778fa5ac2"
                   },
                   "input": {
                     "type": "object",
@@ -486,7 +486,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 354362524833600,
+                        "default": 310377441168065,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -765,7 +765,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "32b5018e-c5dc-4e8e-92d5-bb5ded57a091"
+                    "default": "82d32908-ec3d-47cb-b04d-ecafbd370fa7"
                   },
                   "input": {
                     "type": "object",
@@ -795,7 +795,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 96154286562,
+                        "default": 32696773924,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -1013,5 +1013,17 @@
         }
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "{accessDomainName}",
+      "description": "Your server",
+      "variables": {
+        "accessDomainName": {
+          "default": "http://localhost:3000",
+          "description": "The domain name of the server, protocol included, port optional"
+        }
+      }
+    }
+  ]
 }

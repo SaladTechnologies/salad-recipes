@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Comfy Wrapper API",
-    "version": "1.4.1"
+    "version": "1.4.2"
   },
   "components": {
     "schemas": {}
@@ -23,7 +23,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.1"
+                        "1.4.2"
                       ]
                     },
                     "status": {
@@ -52,7 +52,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.1"
+                        "1.4.2"
                       ]
                     },
                     "status": {
@@ -89,7 +89,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.1"
+                        "1.4.2"
                       ]
                     },
                     "status": {
@@ -118,7 +118,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.1"
+                        "1.4.2"
                       ]
                     },
                     "status": {
@@ -311,7 +311,7 @@
                   },
                   "id": {
                     "type": "string",
-                    "default": "435d3691-4868-4465-a8df-ce13651339ad"
+                    "default": "51466959-a5b4-4929-8d6d-2cd24acb59c9"
                   },
                   "webhook": {
                     "type": "string"
@@ -470,7 +470,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "a8d36132-2a67-4c66-b0c3-af0e60f9a617"
+                    "default": "4d58492c-a328-4c42-b54b-b418ec3e783f"
                   },
                   "input": {
                     "type": "object",
@@ -499,7 +499,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 344634302797716,
+                        "default": 614968967750606,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -757,7 +757,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "9327ecde-9d23-4858-ab5a-bdadeb9cc10f"
+                    "default": "296632c5-6bbb-4be5-9592-529926c2b94c"
                   },
                   "input": {
                     "type": "object",
@@ -787,7 +787,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 297306351377682,
+                        "default": 67495024563610,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -1037,7 +1037,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "c83cd1f3-5776-440d-82da-965b21275e57"
+                    "default": "76f403c1-9e8e-4c91-986d-fc22bcd1a627"
                   },
                   "input": {
                     "type": "object",
@@ -1067,7 +1067,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 20119024750,
+                        "default": 79014419586,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -1286,5 +1286,17 @@
         }
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "{accessDomainName}",
+      "description": "Your server",
+      "variables": {
+        "accessDomainName": {
+          "default": "http://localhost:3000",
+          "description": "The domain name of the server, protocol included, port optional"
+        }
+      }
+    }
+  ]
 }
