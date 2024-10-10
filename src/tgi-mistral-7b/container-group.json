@@ -15,10 +15,8 @@
         },
         "command": [],
         "environment_variables": {
-            "MODEL_ID": "mistralai/Mistral-7B-Instruct-v0.3",
             "PORT": "3000",
-            "HOSTNAME": "::",
-            "HUGGING_FACE_HUB_TOKEN": ""
+            "HOSTNAME": "::"
         }
     },
     "autostart_policy": false,
@@ -27,7 +25,12 @@
     "networking": {
         "protocol": "http",
         "port": 3000,
-        "auth": false
+        "auth": false,
+        "load_balancer": "least_number_of_connections",
+        "single_connection_limit": false,
+        "client_request_timeout": 100000,
+        "server_response_timeout": 100000
+
     },
 
     "readiness_probe": {

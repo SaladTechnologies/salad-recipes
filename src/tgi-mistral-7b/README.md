@@ -15,19 +15,13 @@ This recipe creates a TGI server running mistralai/Mistral-7B-Instruct-v0.3
 
 ## How To Use This Recipe
 
-As a core image of this recipe we use  TGI (Text Generation Inference) Docker image from Hugging Face: ghcr.io/huggingface/text-generation-inference:2.1.1
-
-### Hugging Face Hub Token
-You will need to pass your Hugging Face Hub Token when using this image. You can generate or retrieve your token from your Hugging Face account settings at:
-[Hugging Face Tokens](https://huggingface.co/settings/tokens).
-
 ### Changing the Model
 
-By default, we use the Mistral-7B-Instruct-v0.3 model. You can specify the model to be used by passing the following environment variable in the container group: 
-```bash
-"MODEL_ID": "mistralai/Mistral-7B-Instruct-v0.3" 
-```
-You can also change to any other supported models by updating this variable. Here is a list of supported models: [Hugging Face Supported Models](https://huggingface.co/docs/text-generation-inference/supported_models).
+- `Preloading Custom Models:` - If you want the model to be preloaded into the image, you need to fork this [Git repo](https://github.com/SaladTechnologies/salad-recipes/tree/master/src/tgi-mistral-7b), upload the model into "model" folder in the tgi-mistral-7b directory, and rebuild an image.
+
+By default, we use  Mistral-7B-Instruct-v0.3 model. You can use any other TGI supported model: [Hugging Face Supported Models](https://huggingface.co/docs/text-generation-inference/supported_models).
+
+
 
 ### Container Group Definition
 
@@ -35,17 +29,12 @@ To deploy the container-group, you must provide the following environment variab
 
 ```json
 "environment_variables": {
-    "MODEL_ID": "mistralai/Mistral-7B-Instruct-v0.3",
     "PORT": "3000",
-    "HOSTNAME": "::",
-    "HUGGING_FACE_HUB_TOKEN": ""
+    "HOSTNAME": "::"
 }
 ```
 
 You can find the full container group definition for this setup [here](container-group.json)
-
-Make sure to configure the container group to align with your deployment environment and to include your Hugging Face token for proper authentication.
-
 
 ### Authentication
 This API does not require authentication by default, but authentication can be enabled by using the container gateway. If authentication is enabled, all requests will need to include your Salad API key in the header (Salad-Api-Key). For more details about authentication, please refer to the Salad 
