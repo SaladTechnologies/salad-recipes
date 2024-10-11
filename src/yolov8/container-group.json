@@ -20,7 +20,11 @@
     "networking": {
         "protocol": "http",
         "port": 80,
-        "auth": false
+        "auth": false,
+        "load_balancer": "least_number_of_connections",
+        "single_connection_limit": false,
+        "client_request_timeout": 100000,
+        "server_response_timeout": 100000
     },
     "readiness_probe": {
         "http": {
