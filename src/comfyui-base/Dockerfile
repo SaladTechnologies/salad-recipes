@@ -1,4 +1,4 @@
-ARG comfy_version=0.2.2
+ARG comfy_version=0.2.6
 FROM ghcr.io/ai-dock/comfyui:v2-cuda-12.1.1-base-22.04-v${comfy_version}
 
 # Disable the authentication and cloudflare tunnels provided by the base image
@@ -29,5 +29,10 @@ ENV INPUT_DIR=/opt/ComfyUI/input
 # Startup can take a little longer with larger models.
 # This configures the worker binary's built-in health check.
 ENV STARTUP_CHECK_MAX_TRIES=30
+
+RUN pip install --upgrade pip
+RUN pip install comfy-cli
+RUN echo "N" | comfy tracking disable
+RUN comfy set-default /opt/ComfyUI/
 
 CMD ["./comfyui-api"]
