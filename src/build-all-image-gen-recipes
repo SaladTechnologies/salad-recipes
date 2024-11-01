@@ -49,6 +49,16 @@ echo "Building flux1-schnell-fp8"
 ./build --comfy $comfy_version --api $api_version $push
 popd
 
+pushd sd3.5-large-comfyui
+echo "Building sd3.5-large"
+./build --comfy $comfy_version --api $api_version $push
+popd
+
+pushd sd3.5-medium-comfyui
+echo "Building sd3.5-medium"
+./build --comfy $comfy_version --api $api_version $push
+popd
+
 # Build the sdxl-with-refiner image
 pushd sdxl-with-refiner-comfyui
 echo "Building sdxl-with-refiner"
