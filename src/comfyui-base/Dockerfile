@@ -22,9 +22,10 @@ ADD https://github.com/SaladTechnologies/comfyui-api/releases/download/${api_ver
 RUN chmod +x comfyui-api
 
 # Set up some environment variables for the worker
-ENV MODEL_DIR=/opt/ComfyUI/models
-ENV OUTPUT_DIR=/opt/ComfyUI/output
-ENV INPUT_DIR=/opt/ComfyUI/input
+ENV COMFY_HOME=/opt/ComfyUI
+ENV MODEL_DIR=${COMFY_HOME}/models
+ENV OUTPUT_DIR=${COMFY_HOME}/output
+ENV INPUT_DIR=${COMFY_HOME}/input
 
 # Startup can take a little longer with larger models.
 # This configures the worker binary's built-in health check.
@@ -36,6 +37,6 @@ RUN pip install comfy-cli
 
 # Disable tracking and set the default directory to /opt/ComfyUI/
 RUN echo "N" | comfy tracking disable
-RUN comfy set-default /opt/ComfyUI/
+RUN comfy set-default ${COMFY_HOME}
 
 CMD ["./comfyui-api"]

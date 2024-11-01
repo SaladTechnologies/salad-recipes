@@ -1,0 +1,47 @@
+#! /usr/bin/bash
+set -e
+
+image="saladtechnologies/comfyui"
+usage="Usage: ./build --comfy <comfy-version> --api <api-version> [--image <image> default: $image] [--push]"
+
+model_name="sd3.5-large"
+while [ "$1" != "" ]; do
+  case $1 in
+  --comfy)
+    shift
+    comfy_version=$1
+    ;;
+  --api)
+    shift
+    api_version=$1
+    ;;
+  --image)
+    shift
+    image=$1
+    ;;
+  --push)
+    push=true
+    ;;
+  *)
+    echo $usage
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
+  echo $usage
+  exit 1
+fi
+
+tag="comfy$comfy_version-api$api_version-$model_name"
+echo "Building $image:$tag"
+docker build -t $image:$tag \
+  --build-arg comfy_version=$comfy_version \
+  --build-arg api_version=$api_version \
+  .
+
+if [ "$push" = true ]; then
+  docker push $image:$tag
+fi
