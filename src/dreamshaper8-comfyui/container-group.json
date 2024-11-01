@@ -2,7 +2,7 @@
   "name": "dreamshaper8-comfyui",
   "display_name": "dreamshaper8-comfyui",
   "container": {
-    "image": "saladtechnologies/comfyui:comfy0.2.6-api1.4.2-dreamshaper8",
+    "image": "saladtechnologies/comfyui:comfy0.2.6-api1.5.0-dreamshaper8",
     "resources": {
       "cpu": 4,
       "memory": 12288,
