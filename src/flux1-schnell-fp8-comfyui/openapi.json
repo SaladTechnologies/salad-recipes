@@ -311,7 +311,7 @@
                   },
                   "id": {
                     "type": "string",
-                    "default": "3dbac099-0763-474f-8381-db189fa1f233"
+                    "default": "0d49386c-b4f3-409b-a9bd-5d166e7c4b53"
                   },
                   "webhook": {
                     "type": "string"
@@ -470,7 +470,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "56e84075-77f1-4f7a-9f37-189f92e9d189"
+                    "default": "392b7b44-736a-473f-b8b3-c2bd10c0e6c5"
                   },
                   "input": {
                     "type": "object",
@@ -495,7 +495,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 405764698762094,
+                        "default": 530716488992001,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -527,9 +527,11 @@
                           "dpm_fast",
                           "dpm_adaptive",
                           "dpmpp_2s_ancestral",
+                          "dpmpp_2s_ancestral_cfg_pp",
                           "dpmpp_sde",
                           "dpmpp_sde_gpu",
                           "dpmpp_2m",
+                          "dpmpp_2m_cfg_pp",
                           "dpmpp_2m_sde",
                           "dpmpp_2m_sde_gpu",
                           "dpmpp_3m_sde",
@@ -555,7 +557,8 @@
                           "sgm_uniform",
                           "simple",
                           "ddim_uniform",
-                          "beta"
+                          "beta",
+                          "linear_quadratic"
                         ],
                         "default": "simple",
                         "description": "Type of scheduler to use"
@@ -759,7 +762,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "3ed8426b-471d-40ad-80f0-402872fdcfb0"
+                    "default": "e6b83728-8dad-482e-bdf5-5d2d5cd1f21c"
                   },
                   "input": {
                     "type": "object",
@@ -784,7 +787,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 973493125408902,
+                        "default": 307170163465032,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -816,9 +819,11 @@
                           "dpm_fast",
                           "dpm_adaptive",
                           "dpmpp_2s_ancestral",
+                          "dpmpp_2s_ancestral_cfg_pp",
                           "dpmpp_sde",
                           "dpmpp_sde_gpu",
                           "dpmpp_2m",
+                          "dpmpp_2m_cfg_pp",
                           "dpmpp_2m_sde",
                           "dpmpp_2m_sde_gpu",
                           "dpmpp_3m_sde",
@@ -844,7 +849,8 @@
                           "sgm_uniform",
                           "simple",
                           "ddim_uniform",
-                          "beta"
+                          "beta",
+                          "linear_quadratic"
                         ],
                         "default": "simple",
                         "description": "Type of scheduler to use"
