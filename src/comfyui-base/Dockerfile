@@ -30,8 +30,11 @@ ENV INPUT_DIR=/opt/ComfyUI/input
 # This configures the worker binary's built-in health check.
 ENV STARTUP_CHECK_MAX_TRIES=30
 
+# Install comfy-cli, which makes it easy to install custom nodes and other comfy specific functionality.
 RUN pip install --upgrade pip
 RUN pip install comfy-cli
+
+# Disable tracking and set the default directory to /opt/ComfyUI/
 RUN echo "N" | comfy tracking disable
 RUN comfy set-default /opt/ComfyUI/
 
