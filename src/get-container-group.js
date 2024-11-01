@@ -18,6 +18,10 @@ organizations/salad-benchmarking/projects/recipe-staging/containers/comfyui-drea
 dreamshaper8-comfyui/container-group.json
 `
 
+function normalizeRecipeName(name) {
+  return name.replace(/[^a-z0-9]/ig, '-').toLowerCase()
+}
+
 async function main() {
   const cgAddress = process.argv[2];
   const output = process.argv[3];
@@ -33,7 +37,7 @@ async function main() {
   }
   const containerGroup = await res.json()
 
-  const recipeName = path.dirname(output).split('/').pop()
+  const recipeName = normalizeRecipeName(path.dirname(output).split('/').pop())
 
   const {
     container,
