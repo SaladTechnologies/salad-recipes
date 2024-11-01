@@ -1,5 +1,5 @@
 # We're going to use this verified comfyui image as a base
-ARG comfy_version=0.2.2
+ARG comfy_version=0.2.6
 ARG api_version=1.4.2
 FROM saladtechnologies/comfyui:comfy${comfy_version}-api${api_version}-base
 
