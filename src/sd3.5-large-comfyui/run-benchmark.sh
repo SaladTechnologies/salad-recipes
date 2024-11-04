@@ -4,7 +4,8 @@
 output_dir="benchmark-images"
 mkdir -p $output_dir
 
-export API_URL="https://tangelo-yam-rddgodpntpjivewa.salad.cloud/workflow/sd3.5-large/txt2img"
+access_domain_name="https://tangelo-yam-rddgodpntpjivewa.salad.cloud"
+export API_URL="$access_domain_name/workflow/sd3.5-large/txt2img"
 
 count=0
 k6 run --out json=benchmark-results.json benchmark.js 2>&1 | while IFS= read -r line; do

@@ -10,18 +10,12 @@ export const options = {
       executor: "ramping-vus",
       startVUs: 10,
       stages: [
-        { duration: "2m", target: 10 }, // Stay at 10 users for 15 minutes
-        { duration: "2m", target: 18 }, // Ramp up to 18 users over 15 minutes
-        { duration: "2m", target: 18 }, // Stay at 18 users for 30 minutes
+        { duration: "15m", target: 10 }, // Stay at 10 users for 15 minutes
+        { duration: "15m", target: 18 }, // Ramp up to 18 users over 15 minutes
+        { duration: "30m", target: 18 }, // Stay at 18 users for 30 minutes
       ],
     },
-  },
-  ext: {
-    loadimpact: {
-      name: "Stable Diffusion Load Test",
-      projectID: "sd35large",
-    },
-  },
+  }
 };
 
 // Request configuration
@@ -58,6 +52,9 @@ export default function () {
     try {
       const data = JSON.parse(response.body);
       if (data.images && data.images[0]) {
+        /**
+         * We log out the image so we can capture and save it to a file
+         */
         console.log(`IMAGE_DATA: ${data.images[0]}`);
       }
     } catch (e) {
