@@ -19,7 +19,9 @@ export const options = {
 };
 
 // Request configuration
-const { SALAD_API_KEY, API_URL } = __ENV;
+const { SALAD_API_KEY, API_URL, SAVE_IMAGES } = __ENV;
+
+const saveImages = SAVE_IMAGES === "true";
 
 const payload = JSON.stringify({
   input: {
@@ -48,7 +50,7 @@ export default function () {
     "status is 200": (r) => r.status === 200,
   });
 
-  if (response.status === 200) {
+  if (response.status === 200 && saveImages) {
     try {
       const data = JSON.parse(response.body);
       if (data.images && data.images[0]) {
