@@ -31,36 +31,17 @@ if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
   exit 1
 fi
 
-# Build the base image
-pushd comfyui-base
-echo "Building comfyui-base"
-./build --comfy $comfy_version --api $api_version $push
-popd
+function buildDirectory() {
+  docker system prune -y
+  pushd $1
+  echo "Building $1"
+  ./build --comfy $comfy_version --api $api_version $push
+  popd
+}
 
-# Build the dreamshaper8 image
-pushd dreamshaper8-comfyui
-echo "Building dreamshaper8"
-./build --comfy $comfy_version --api $api_version $push
-popd
-
-# Build the flux1-schnell-fp8 image
-pushd flux1-schnell-fp8-comfyui
-echo "Building flux1-schnell-fp8"
-./build --comfy $comfy_version --api $api_version $push
-popd
-
-pushd sd3.5-large-comfyui
-echo "Building sd3.5-large"
-./build --comfy $comfy_version --api $api_version $push
-popd
-
-pushd sd3.5-medium-comfyui
-echo "Building sd3.5-medium"
-./build --comfy $comfy_version --api $api_version $push
-popd
-
-# Build the sdxl-with-refiner image
-pushd sdxl-with-refiner-comfyui
-echo "Building sdxl-with-refiner"
-./build --comfy $comfy_version --api $api_version $push
-popd
+buildDirectory comfyui-base
+buildDirectory dreamshaper8-comfyui
+buildDirectory flux1-schnell-fp8-comfyui
+buildDirectory sd3.5-large-comfyui
+buildDirectory sd3.5-medium-comfyui
+buildDirectory sdxl-with-refiner-comfyui

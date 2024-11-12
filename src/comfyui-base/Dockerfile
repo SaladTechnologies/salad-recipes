@@ -1,4 +1,4 @@
-ARG comfy_version=0.2.6
+ARG comfy_version=0.2.7
 FROM ghcr.io/ai-dock/comfyui:v2-cuda-12.1.1-base-22.04-v${comfy_version}
 
 # Disable the authentication and cloudflare tunnels provided by the base image
@@ -17,7 +17,7 @@ RUN rm /etc/supervisor/supervisord/conf.d/syncthing.conf
 # is fully asyncronous by default, and has no convenient way to retrieve 
 # generated images. If you're adding a custom worker, you'll need to copy it in here.
 # COPY comfyui-api .
-ARG api_version=1.5.0
+ARG api_version=1.6.0
 ADD https://github.com/SaladTechnologies/comfyui-api/releases/download/${api_version}/comfyui-api .
 RUN chmod +x comfyui-api
 

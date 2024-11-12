@@ -1,6 +1,6 @@
 # We're going to use this verified comfyui image as a base
-ARG comfy_version=0.2.6
-ARG api_version=1.5.0
+ARG comfy_version=0.2.7
+ARG api_version=1.6.0
 FROM saladtechnologies/comfyui:comfy${comfy_version}-api${api_version}-base
 
 ENV CHECKPOINT_DIR=${MODEL_DIR}/checkpoints
