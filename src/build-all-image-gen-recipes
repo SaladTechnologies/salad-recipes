@@ -32,16 +32,16 @@ if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
 fi
 
 function buildDirectory() {
-  docker system prune -y
+  docker system prune -f
   pushd $1
   echo "Building $1"
   ./build --comfy $comfy_version --api $api_version $push
   popd
 }
 
-buildDirectory comfyui-base
-buildDirectory dreamshaper8-comfyui
-buildDirectory flux1-schnell-fp8-comfyui
+# buildDirectory comfyui-base
+# buildDirectory dreamshaper8-comfyui
+# buildDirectory flux1-schnell-fp8-comfyui
 buildDirectory sd3.5-large-comfyui
 buildDirectory sd3.5-medium-comfyui
 buildDirectory sdxl-with-refiner-comfyui

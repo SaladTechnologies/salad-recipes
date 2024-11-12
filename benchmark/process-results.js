@@ -1,7 +1,22 @@
 const fs = require("fs/promises");
+const path = require("path");
 
-const rawResultsFile = "results.jsonl";
-const outputResultsFile = "results.json";
+const usage = `
+Usage: process-results.js <raw-results-file> [output-results-file]
+
+  raw-results-file: The file containing the raw results from the k6 run, in JSON Lines format
+  [output-results-file]: The file to write the processed results to. Defaults to results.json in the same directory as the raw-results-file
+`
+
+const rawResultsFile = sys.argv[2];
+
+if (!rawResultsFile) {
+  console.error(usage);
+  process.exit(1);
+}
+
+const parentDir = path.dirname(rawResultsFile);
+const outputResultsFile = sys.argv[3] || path.join(parentDir, "results.json");
 
 async function processResults() {
   const data = await fs.readFile(rawResultsFile, "utf-8");

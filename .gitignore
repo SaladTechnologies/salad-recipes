@@ -1,5 +1,4 @@
 *.safetensors
 comfyui-api
 **/benchmark/results.jsonl
-**/benchmark/results.json
 **/benchmark/images/

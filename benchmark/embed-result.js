@@ -1,14 +1,15 @@
 const {
-  backgroundColor,
-  font,
-  vusLabel,
-  vusColor,
-  durationLabel,
-  durationColor,
-  durationPeriod,
-  throughputLabel,
-  throughputColor,
-  throughputPeriod,
+  title = "Benchmark Results",
+  backgroundColor = "#ffffff",
+  font = "Arial",
+  vusLabel = "Number of Virtual Users",
+  vusColor = "gray",
+  durationLabel = "Average Response Time (s)",
+  durationColor = "green",
+  durationPeriod = 5 * 60 * 1000, // 5 minutes,
+  throughputLabel = "Throughput (req/s)",
+  throughputColor = "blue",
+  throughputPeriod = 60 * 1000, // 1 minute
   dataUrl,
 } = window.benchmarkViz;
 
@@ -129,7 +130,7 @@ async function render() {
 
   const tenMinutes = 10 * 60 * 1000;
   const layout = {
-    title: "Benchmark Results",
+    title,
     plot_bgcolor: backgroundColor,
     font: { family: font },
     legend: { x: 0, y: -0.3, orientation: "h" },
