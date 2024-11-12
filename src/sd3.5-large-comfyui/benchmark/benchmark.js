@@ -55,7 +55,7 @@ export default function () {
       const data = JSON.parse(response.body);
       if (data.images && data.images[0]) {
         /**
-         * We log out the image so we can capture and save it to a file
+         * We log out the image so we can capture and save it to a file if we want to.
          */
         console.log(`IMAGE_DATA: ${data.images[0]}`);
       }
