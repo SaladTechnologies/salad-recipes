@@ -46,7 +46,7 @@ function getCurrentStatus() {
   cg=$(curl -s -X GET \
     -H "Salad-Api-Key: $SALAD_API_KEY" \
     $baseURL)
-  status=$(echo $cg | jq '.current_state.status')
+  status=$(echo $cg | jq -r '.current_state.status')
   echo $status
 }
 
@@ -62,7 +62,7 @@ function getConfiguredReplicas() {
       -H "Salad-Api-Key: $SALAD_API_KEY" \
       $baseURL
   )
-  replicas=$(echo $cg | jq '.replicas')
+  replicas=$(echo $cg | jq -r '.replicas')
   echo $replicas
 }
 
@@ -88,19 +88,19 @@ function getRunningReplicas() {
 
 currentState=$(getCurrentStatus)
 echo "Current state: $currentState"
-if [ "$currentState" == "stopped" ]; then
+if [[ "$currentState" == "stopped" ]]; then
   echo "Starting container group"
   startContainerGroup
 fi
 
 configuredReplicas=$(getConfiguredReplicas)
-if [ "$configuredReplicas" -lt "$replicas" ]; then
+if [[ "$configuredReplicas" -lt "$replicas" ]]; then
   echo "Setting replicas to $replicas"
   setReplicas
 fi
 
 runningReplicas=$(getRunningReplicas)
-while [ "$runningReplicas" -lt "$replicas" ]; do
+while [[ "$runningReplicas" -lt "$replicas" ]]; do
   echo "$runningReplicas out of $replicas replicas running. Waiting 30s..."
   sleep 30
   runningReplicas=$(getRunningReplicas)
