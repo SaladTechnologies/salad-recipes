@@ -136,7 +136,7 @@ async function render() {
   const errorsLine = {
     x: errors.map((d) => d.timeFromStart),
     y: errors.map((d) => d.value),
-    hovertemplate: `%{text}: %{y:.2f}%`,
+    hovertemplate: `%{text}: %{y:.2f}`,
     text: errors.map((d) => msToTime(d.timeFromStart)),
     type: "scatter",
     mode: "lines",
