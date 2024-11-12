@@ -37,6 +37,10 @@ function getRollingAverage(data, period, metric) {
   return rolling;
 }
 
+function getBucket(data, key, start, end) {
+  return data.filter((d) => d[key] >= start && d[key] < end);
+}
+
 /**
  * Convert milliseconds to a human readable time format
  * @param {number} ms - milliseconds
@@ -64,25 +68,6 @@ async function render() {
       [vusLabel]: r.data.value,
     }));
 
-  // Errors should be expressed as a ratio of errors to requests for a given time period
-  let totalErrors = 0;
-  const allErrors = results.filter((r) => r.metric === "http_req_failed").map((r) => ({
-    timeFromStart: r.data.timeFromStart,
-    value: r.data.value,
-  }))
-  const errors = allErrors.map((r, i) => {
-    const { timeFromStart } = r;
-    totalErrors += r.value;
-    const count = allErrors
-      .slice(i)
-      .filter((r) => r.timeFromStart - timeFromStart < errorsPeriod)
-      .reduce((acc, r) => acc + r.value, 0);
-    return {
-      timeFromStart,
-      value: count / (errorsPeriod / 1000),
-    };
-  })
-
   const duration = results
     .filter((r) => r.metric === "http_req_duration")
     .map((r) => ({
@@ -94,6 +79,29 @@ async function render() {
     duration,
     durationPeriod,
     durationLabel
+  );
+
+  const allErrors = results
+    .filter((r) => r.metric === "http_req_failed")
+    .filter((r) => r.data.value > 0)
+    .map((r) => ({
+      timeFromStart: r.data.timeFromStart,
+      value: r.data.value,
+    }));
+  const bucketedErrors = allErrors.reduce((acc, r) => {
+    const bucket = Math.floor(r.timeFromStart / errorsPeriod);
+    acc[bucket] = (acc[bucket] || 0) + r.value;
+    return acc;
+  }, {});
+  const errors = Object.keys(bucketedErrors).map((timeFromStart) => 
+    ({
+      timeFromStart: parseInt(timeFromStart) * errorsPeriod,
+      value: bucketedErrors[timeFromStart] / getBucket(duration,
+        "timeFromStart",
+        parseInt(timeFromStart) * errorsPeriod,
+        (parseInt(timeFromStart) + 1) * errorsPeriod
+      ).length,
+    })
   );
 
   // Throughput is the number of http_req_duration per second, taken in 1 minute intervals
@@ -131,7 +139,7 @@ async function render() {
     hovertemplate: `%{text}: %{y:.2f}%`,
     text: errors.map((d) => msToTime(d.timeFromStart)),
     type: "scatter",
-    mode: "line",
+    mode: "lines",
     name: errorsLabel,
     marker: { color: errorsColor },
     yaxis: "y4",
@@ -163,9 +171,17 @@ async function render() {
 
   const data = [vusLine, durationLine, throughputLine, errorsLine];
 
+  const numRequests = duration.length;
+  const errorRate = allErrors.length / numRequests;
+  const avgDuration = duration.reduce((acc, d) => acc + d[durationLabel], 0) / numRequests;
+  const avgThroughput = throughput.reduce((acc, d) => acc + d[throughputLabel], 0) / throughput.length;
+  const subtitle = `Total Requests: ${numRequests}, Total Errors: ${
+    allErrors.length
+  }, Error Rate: ${(errorRate * 100).toFixed(2)}%, Avg Duration: ${avgDuration.toFixed(2)}s, Avg Throughput: ${avgThroughput.toFixed(2)} req/s`;
+
   const tenMinutes = 10 * 60 * 1000;
   const layout = {
-    title,
+    title: `${title}<br>${subtitle}`,
     plot_bgcolor: backgroundColor,
     font: { family: font },
     legend: { x: 0, y: -0.3, orientation: "h" },
@@ -230,7 +246,7 @@ async function render() {
       range: [0, 1],
     },
   };
-  Plotly.newPlot(div, data, layout);
+  Plotly.newPlot(div, data, layout, { displayLogo: false, responsive: true });
 }
 
 render();
