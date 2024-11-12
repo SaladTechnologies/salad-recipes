@@ -100,7 +100,7 @@ if [ "$configuredReplicas" -lt "$replicas" ]; then
 fi
 
 runningReplicas=$(getRunningReplicas)
-while [ "$runningReplicas" != "$replicas" ]; do
+while [ "$runningReplicas" -lt "$replicas" ]; do
   echo "$runningReplicas out of $replicas replicas running. Waiting 30s..."
   sleep 30
   runningReplicas=$(getRunningReplicas)
