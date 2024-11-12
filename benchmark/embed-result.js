@@ -4,6 +4,9 @@ const {
   font = "Arial",
   vusLabel = "Number of Virtual Users",
   vusColor = "gray",
+  errorsLabel = "Error Rate (5m window)",
+  errorsColor = "red",
+  errorsPeriod = 5 * 60 * 1000, // 5 minutes
   durationLabel = "Average Response Time (s)",
   durationColor = "green",
   durationPeriod = 5 * 60 * 1000, // 5 minutes,
@@ -60,6 +63,26 @@ async function render() {
       timeFromStart: r.data.timeFromStart,
       [vusLabel]: r.data.value,
     }));
+
+  // Errors should be expressed as a ratio of errors to requests for a given time period
+  let totalErrors = 0;
+  const allErrors = results.filter((r) => r.metric === "http_req_failed").map((r) => ({
+    timeFromStart: r.data.timeFromStart,
+    value: r.data.value,
+  }))
+  const errors = allErrors.map((r, i) => {
+    const { timeFromStart } = r;
+    totalErrors += r.value;
+    const count = allErrors
+      .slice(i)
+      .filter((r) => r.timeFromStart - timeFromStart < errorsPeriod)
+      .reduce((acc, r) => acc + r.value, 0);
+    return {
+      timeFromStart,
+      value: count / (errorsPeriod / 1000),
+    };
+  })
+
   const duration = results
     .filter((r) => r.metric === "http_req_duration")
     .map((r) => ({
@@ -102,6 +125,18 @@ async function render() {
     yaxis: "y",
   };
 
+  const errorsLine = {
+    x: errors.map((d) => d.timeFromStart),
+    y: errors.map((d) => d.value),
+    hovertemplate: `%{text}: %{y:.2f}%`,
+    text: errors.map((d) => msToTime(d.timeFromStart)),
+    type: "scatter",
+    mode: "line",
+    name: errorsLabel,
+    marker: { color: errorsColor },
+    yaxis: "y4",
+  };
+
   const durationLine = {
     x: rollingDuration.map((d) => d.timeFromStart),
     y: rollingDuration.map((d) => d[durationLabel]),
@@ -126,7 +161,7 @@ async function render() {
     yaxis: "y3",
   };
 
-  const data = [vusLine, durationLine, throughputLine];
+  const data = [vusLine, durationLine, throughputLine, errorsLine];
 
   const tenMinutes = 10 * 60 * 1000;
   const layout = {
@@ -184,6 +219,15 @@ async function render() {
         0,
         Math.max(...rollingThroughput.map((d) => d[throughputLabel])) * 1.3,
       ],
+    },
+    yaxis4: {
+      title: errorsLabel,
+      side: "right",
+      anchor: "free",
+      autoshift: true,
+      overlaying: "y",
+      color: errorsColor,
+      range: [0, 1],
     },
   };
   Plotly.newPlot(div, data, layout);
