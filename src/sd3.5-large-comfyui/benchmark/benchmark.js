@@ -5,13 +5,12 @@ import { check } from "k6";
 export const options = {
   scenarios: {
     ramp_up_users: {
-      // Ramp up from 10 to 18 users over 15 minutes
       executor: "ramping-vus",
       startVUs: 10,
       stages: [
         { duration: "15m", target: 10 }, // Stay at 10 users for 15 minutes
-        { duration: "15m", target: 12 }, // Ramp up to 18 users over 15 minutes
-        { duration: "30m", target: 12 }, // Stay at 18 users for 30 minutes
+        { duration: "15m", target: 12 }, // Ramp up to 12 users over 15 minutes
+        { duration: "30m", target: 12 }, // Stay at 12 users for 30 minutes
       ],
     },
   },
