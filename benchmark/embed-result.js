@@ -211,6 +211,7 @@ async function render() {
       side: "left",
       color: vusColor,
       range: [0, Math.max(...vus.map((d) => d[vusLabel])) * 1.3],
+      showgrid: false
     },
     yaxis2: {
       title: durationLabel,
@@ -223,6 +224,7 @@ async function render() {
         0,
         Math.max(...rollingDuration.map((d) => d[durationLabel])) * 1.3,
       ],
+      showgrid: false
     },
     yaxis3: {
       title: throughputLabel,
@@ -235,6 +237,7 @@ async function render() {
         0,
         Math.max(...rollingThroughput.map((d) => d[throughputLabel])) * 1.3,
       ],
+      showgrid: false
     },
     yaxis4: {
       title: errorsLabel,
@@ -244,6 +247,7 @@ async function render() {
       overlaying: "y",
       color: errorsColor,
       range: [0, 1],
+      showgrid: false
     },
   };
   Plotly.newPlot(div, data, layout, { displayLogo: false, responsive: true });

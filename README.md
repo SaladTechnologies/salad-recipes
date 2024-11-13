@@ -10,6 +10,9 @@
       - [`process-results.js`](#process-resultsjs)
       - [`embed-result.js`](#embed-resultjs)
     - [Scripts](#scripts)
+      - [`get-container-group.js`](#get-container-groupjs)
+      - [`start-container-group-and-wait-for-replicas`](#start-container-group-and-wait-for-replicas)
+      - [`salad-api`](#salad-api)
 
 
 ## Introduction
@@ -75,3 +78,32 @@ This is the script that can be embedded on an external website by linking to the
 ### Scripts
 
 The `scripts` directory contains scripts that are used to automate various tasks related to the recipes and benchmarks. The scripts are written in bash and node.js.
+
+#### `get-container-group.js`
+
+```text
+Usage: node scripts/get-container-group.js <container-group-address> <output-file>
+
+Example:
+node scripts/get-container-group.js \
+organizations/salad-benchmarking/projects/recipe-staging/containers/dreamshaper8-comfyui \
+src/dreamshaper8-comfyui/container-group.json
+```
+
+This script fetches the container group configuration from SaladCloud and writes it to a file, making small modifications to the configuration to make it standardized for the recipe.
+
+#### `start-container-group-and-wait-for-replicas`
+
+```text
+Usage: ./scripts/start-container-group-and-wait-for-replicas --org <org> --project <project> --container-group <container-group> --replicas <replicas>
+```
+
+This script starts the container group and waits for the specified number of replicas to be ready before exiting.
+
+#### `salad-api`
+
+```shell
+source scripts/salad-api
+```
+
+This script adds some functions for interacting with the salad api. It is sourced in other scripts.

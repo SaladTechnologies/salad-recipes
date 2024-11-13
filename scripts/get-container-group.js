@@ -14,7 +14,7 @@ Usage: node scripts/get-container-group.js <container-group-address> <output-fil
 
 Example:
 node scripts/get-container-group.js \
-organizations/salad-benchmarking/projects/recipe-staging/containers/comfyui-dreamshaper8 \
+organizations/salad-benchmarking/projects/recipe-staging/containers/dreamshaper8-comfyui \
 src/dreamshaper8-comfyui/container-group.json
 `
 
