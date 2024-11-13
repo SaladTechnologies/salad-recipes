@@ -1,5 +1,5 @@
-const {
-  title = "Benchmark Results",
+let {
+  title,
   plotBackgroundColor = "#ffffff",
   font = "Verdana",
   lineWidth = 2,
@@ -17,6 +17,10 @@ const {
   divId = "benchmarkViz",
   dataUrl,
 } = window.benchmarkViz;
+
+if (!title) {
+  title = dataUrl;
+}
 
 function getRollingAverage(data, period, metric) {
   const rolling = [];
@@ -83,7 +87,7 @@ async function render() {
     durationLabel
   );
 
-  console.log(rollingDuration)
+  console.log(rollingDuration);
 
   const allErrors = results
     .filter((r) => r.metric === "http_req_failed")
