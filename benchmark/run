@@ -2,7 +2,7 @@
 
 set -e
 
-usage="Usage: ./$0 --org <org> --project <project> --container-group <container-group> --replicas <replicas> --recipe <recipe> [--output <output>]"
+usage="Usage: ./$0 --org <org> --project <project> [--container-group <container-group>] --replicas <replicas> --recipe <recipe> [--output <output>]"
 
 while [ "$1" != "" ]; do
   case $1 in
@@ -38,7 +38,7 @@ while [ "$1" != "" ]; do
   shift
 done
 
-if [ -z "$org" ] || [ -z "$project" ] || [ -z "$container_group" ] || [ -z "$replicas" ] || [ -z "$recipe" ]; then
+if [ -z "$org" ] || [ -z "$project" ]  || [ -z "$replicas" ] || [ -z "$recipe" ]; then
   echo $usage
   exit 1
 fi
@@ -61,6 +61,11 @@ if [ -z "$output" ]; then
   output=$(dirname $benchmark_file)/results.jsonl
 else
   output=$(dirname $benchmark_file)/$output
+fi
+
+if [ -z "$container_group" ]; then
+  # Normalize recipe name to /[^a-z0-9]/ig, '-'
+  container_group=$(echo $recipe | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
 fi
 
 export ACCESS_DOMAIN_NAME="https://$(getAccessDomainName $org $project $container_group)"

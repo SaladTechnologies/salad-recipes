@@ -3,19 +3,20 @@
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
 <script type="module">
   window.benchmarkViz = {
-    dataUrl: "../src/dreamshaper8-comfyui/benchmark/3060ti.json", // REQUIRED
-    // title: "Benchmark Results",
-    // backgroundColor: "#ffffff",
+    dataUrl: "../src/sd3.5-large-comfyui/benchmark/results.json", // REQUIRED
+    title: "RTX 4090",
+    // plotBackgroundColor: "#000000",
     // font: "Arial, sans-serif",
+    // lineWidth: 2,
     // vusLabel: "Number of Virtual Users",
     // vusColor: "gray",
     // durationLabel: "Average Response Time (s)",
     // durationColor: "green",
-    // durationPeriod: 5 * 60 * 1000, // 5 minutes
+    durationPeriod: 5 * 60 * 1000, // 5 minutes
     // throughputLabel: "Throughput (req/s)",
     // throughputColor: "blue",
     // throughputPeriod: 60 * 1000, // 1 minute
-
+    // divId: "benchmarkViz",
   }
 </script>
 <script src="embed-result.js" type="module"></script>

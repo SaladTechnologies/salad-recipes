@@ -1,7 +1,8 @@
 const {
   title = "Benchmark Results",
-  backgroundColor = "#ffffff",
-  font = "Arial",
+  plotBackgroundColor = "#ffffff",
+  font = "Verdana",
+  lineWidth = 2,
   vusLabel = "Number of Virtual Users",
   vusColor = "gray",
   errorsLabel = "Error Rate (5m window)",
@@ -13,6 +14,7 @@ const {
   throughputLabel = "Throughput (req/s)",
   throughputColor = "blue",
   throughputPeriod = 60 * 1000, // 1 minute
+  divId = "benchmarkViz",
   dataUrl,
 } = window.benchmarkViz;
 
@@ -59,7 +61,7 @@ function msToTime(ms) {
 async function render() {
   const response = await fetch(dataUrl);
   const results = await response.json();
-  const div = document.querySelector("#benchmarkViz");
+  const div = document.querySelector(`#${divId}`);
 
   const vus = results
     .filter((r) => r.metric === "vus")
@@ -93,16 +95,17 @@ async function render() {
     acc[bucket] = (acc[bucket] || 0) + r.value;
     return acc;
   }, {});
-  const errors = Object.keys(bucketedErrors).map((timeFromStart) => 
-    ({
-      timeFromStart: parseInt(timeFromStart) * errorsPeriod,
-      value: bucketedErrors[timeFromStart] / getBucket(duration,
+  const errors = Object.keys(bucketedErrors).map((timeFromStart) => ({
+    timeFromStart: parseInt(timeFromStart) * errorsPeriod,
+    value:
+      bucketedErrors[timeFromStart] /
+      getBucket(
+        duration,
         "timeFromStart",
         parseInt(timeFromStart) * errorsPeriod,
         (parseInt(timeFromStart) + 1) * errorsPeriod
       ).length,
-    })
-  );
+  }));
 
   // Throughput is the number of http_req_duration per second, taken in 1 minute intervals
   const throughput = duration.map((d, i) => {
@@ -117,7 +120,7 @@ async function render() {
   });
   const rollingThroughput = getRollingAverage(
     throughput,
-    durationPeriod,
+    throughputPeriod,
     throughputLabel
   );
 
@@ -126,10 +129,10 @@ async function render() {
     y: vus.map((d) => d[vusLabel]),
     hovertemplate: `%{text} | %{y} VUs`,
     text: vus.map((d) => msToTime(d.timeFromStart)),
-    type: "scatter",
+    type: "scattergl",
     mode: "lines",
     name: vusLabel,
-    line: { color: vusColor },
+    line: { color: vusColor, width: lineWidth },
     yaxis: "y",
   };
 
@@ -138,10 +141,10 @@ async function render() {
     y: errors.map((d) => d.value),
     hovertemplate: `%{text} | %{y:.2f}`,
     text: errors.map((d) => msToTime(d.timeFromStart)),
-    type: "scatter",
+    type: "scattergl",
     mode: "lines",
     name: errorsLabel,
-    marker: { color: errorsColor },
+    line: { color: errorsColor, width: lineWidth },
     yaxis: "y4",
   };
 
@@ -150,10 +153,10 @@ async function render() {
     y: rollingDuration.map((d) => d[durationLabel]),
     hovertemplate: `%{text} | %{y:.2f}s`,
     text: rollingDuration.map((d) => msToTime(d.timeFromStart)),
-    type: "scatter",
+    type: "scattergl",
     mode: "lines",
     name: durationLabel,
-    line: { color: durationColor },
+    line: { color: durationColor, width: lineWidth },
     yaxis: "y2",
   };
 
@@ -162,10 +165,10 @@ async function render() {
     y: rollingThroughput.map((d) => d[throughputLabel]),
     hovertemplate: `%{text} | %{y:.2f} req/s`,
     text: rollingThroughput.map((d) => msToTime(d.timeFromStart)),
-    type: "scatter",
+    type: "scattergl",
     mode: "lines",
     name: throughputLabel,
-    line: { color: throughputColor },
+    line: { color: throughputColor, width: lineWidth },
     yaxis: "y3",
   };
 
@@ -173,17 +176,25 @@ async function render() {
 
   const numRequests = duration.length;
   const errorRate = allErrors.length / numRequests;
-  const avgDuration = duration.reduce((acc, d) => acc + d[durationLabel], 0) / numRequests;
-  const avgThroughput = throughput.reduce((acc, d) => acc + d[throughputLabel], 0) / throughput.length;
+  const avgDuration =
+    duration.reduce((acc, d) => acc + d[durationLabel], 0) / numRequests;
+  const avgThroughput =
+    throughput.reduce((acc, d) => acc + d[throughputLabel], 0) /
+    throughput.length;
   const subtitle = `Total Requests: ${numRequests}, Total Errors: ${
     allErrors.length
-  }, Error Rate: ${(errorRate * 100).toFixed(2)}%, Avg Duration: ${avgDuration.toFixed(2)}s, Avg Throughput: ${avgThroughput.toFixed(2)} req/s`;
+  }, Error Rate: ${(errorRate * 100).toFixed(
+    2
+  )}%, Avg Duration: ${avgDuration.toFixed(
+    2
+  )}s, Avg Throughput: ${avgThroughput.toFixed(2)} req/s`;
 
   const tenMinutes = 10 * 60 * 1000;
   const layout = {
-    title: `${title}<br>${subtitle}`,
-    plot_bgcolor: backgroundColor,
-    font: { family: font },
+    title: { text: title, subtitle: { text: subtitle } },
+
+    plot_bgcolor: plotBackgroundColor,
+    font: { family: font, size: 14 },
     legend: { x: 0, y: -0.3, orientation: "h" },
     xaxis: {
       title: "Time",
@@ -205,13 +216,17 @@ async function render() {
         },
         (_, i) => msToTime(i * tenMinutes)
       ),
+
+      linecolor: "black",
+      linewidth: lineWidth,
     },
     yaxis: {
       title: vusLabel,
       side: "left",
       color: vusColor,
       range: [0, Math.max(...vus.map((d) => d[vusLabel])) * 1.3],
-      showgrid: false
+      showgrid: false,
+      linewidth: lineWidth
     },
     yaxis2: {
       title: durationLabel,
@@ -224,7 +239,8 @@ async function render() {
         0,
         Math.max(...rollingDuration.map((d) => d[durationLabel])) * 1.3,
       ],
-      showgrid: false
+      showgrid: false,
+      linewidth: lineWidth
     },
     yaxis3: {
       title: throughputLabel,
@@ -237,7 +253,8 @@ async function render() {
         0,
         Math.max(...rollingThroughput.map((d) => d[throughputLabel])) * 1.3,
       ],
-      showgrid: false
+      showgrid: false,
+      linewidth: lineWidth
     },
     yaxis4: {
       title: errorsLabel,
@@ -247,7 +264,8 @@ async function render() {
       overlaying: "y",
       color: errorsColor,
       range: [0, 1],
-      showgrid: false
+      showgrid: false,
+      linewidth: lineWidth
     },
   };
   Plotly.newPlot(div, data, layout, { displayLogo: false, responsive: true });
