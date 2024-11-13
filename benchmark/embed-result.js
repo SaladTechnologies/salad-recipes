@@ -67,19 +67,28 @@ async function render() {
   const results = await response.json();
   const div = document.querySelector(`#${divId}`);
 
-  const vus = results
-    .filter((r) => r.metric === "vus")
-    .map((r) => ({
-      timeFromStart: r.timeFromStart,
-      [vusLabel]: r.value,
-    }));
+  const vus = [];
+  const duration = [];
+  const allErrors = [];
 
-  const duration = results
-    .filter((r) => r.metric === "http_req_duration")
-    .map((r) => ({
-      timeFromStart: r.timeFromStart,
-      [durationLabel]: r.value / 1000,
-    }));
+  for (let i = 0; i < results.timeFromStart.length; i++) {
+    if (results.metric[i] === "vus") {
+      vus.push({
+        timeFromStart: results.timeFromStart[i],
+        [vusLabel]: results.value[i],
+      });
+    } else if (results.metric[i] === "http_req_duration") {
+      duration.push({
+        timeFromStart: results.timeFromStart[i],
+        [durationLabel]: results.value[i] / 1000,
+      });
+    } else if (results.metric[i] === "http_req_failed" && results.value[i] > 0) {
+      allErrors.push({
+        timeFromStart: results.timeFromStart[i],
+        value: results.value[i],
+      });
+    }
+  }
 
   const rollingDuration = getRollingAverage(
     duration,
@@ -87,11 +96,6 @@ async function render() {
     durationLabel
   );
 
-  console.log(rollingDuration);
-
-  const allErrors = results
-    .filter((r) => r.metric === "http_req_failed")
-    .filter((r) => r.value > 0);
   const bucketedErrors = allErrors.reduce((acc, r) => {
     const bucket = Math.floor(r.timeFromStart / errorsPeriod);
     acc[bucket] = (acc[bucket] || 0) + r.value;

@@ -46,8 +46,14 @@ async function processResults() {
     timeFromStart: new Date(result.data.time) - firstTime,
   }));
 
+  const smallResults = {
+    metric: results.map((r) => r.metric),
+    timeFromStart: results.map((r) => r.timeFromStart),
+    value: results.map((r) => r.value),
+  }
+
   console.log(`Processed ${results.length} results`);
-  await fs.writeFile(outputResultsFile, JSON.stringify(results, null, 2));
+  await fs.writeFile(outputResultsFile, JSON.stringify(smallResults, null, 2));
 }
 
 processResults();
