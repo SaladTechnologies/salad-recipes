@@ -124,7 +124,7 @@ async function render() {
   const vusLine = {
     x: vus.map((d) => d.timeFromStart),
     y: vus.map((d) => d[vusLabel]),
-    hovertemplate: `%{text}: %{y} VUs`,
+    hovertemplate: `%{text} | %{y} VUs`,
     text: vus.map((d) => msToTime(d.timeFromStart)),
     type: "scatter",
     mode: "lines",
@@ -136,7 +136,7 @@ async function render() {
   const errorsLine = {
     x: errors.map((d) => d.timeFromStart),
     y: errors.map((d) => d.value),
-    hovertemplate: `%{text}: %{y:.2f}`,
+    hovertemplate: `%{text} | %{y:.2f}`,
     text: errors.map((d) => msToTime(d.timeFromStart)),
     type: "scatter",
     mode: "lines",
@@ -148,7 +148,7 @@ async function render() {
   const durationLine = {
     x: rollingDuration.map((d) => d.timeFromStart),
     y: rollingDuration.map((d) => d[durationLabel]),
-    hovertemplate: `%{text}: %{y:.2f}s`,
+    hovertemplate: `%{text} | %{y:.2f}s`,
     text: rollingDuration.map((d) => msToTime(d.timeFromStart)),
     type: "scatter",
     mode: "lines",
@@ -160,7 +160,7 @@ async function render() {
   const throughputLine = {
     x: rollingThroughput.map((d) => d.timeFromStart),
     y: rollingThroughput.map((d) => d[throughputLabel]),
-    hovertemplate: `%{text}: %{y:.2f} req/s`,
+    hovertemplate: `%{text} | %{y:.2f} req/s`,
     text: rollingThroughput.map((d) => msToTime(d.timeFromStart)),
     type: "scatter",
     mode: "lines",
