@@ -1,7 +1,6 @@
 import http from "k6/http";
 import { check } from "k6";
 
-
 // Test configuration
 export const options = {
   scenarios: {
@@ -15,13 +14,14 @@ export const options = {
         { duration: "30m", target: 18 }, // Stay at 18 users for 30 minutes
       ],
     },
-  }
+  },
 };
 
 // Request configuration
-const { SALAD_API_KEY, API_URL, SAVE_IMAGES } = __ENV;
+const { SALAD_API_KEY, ACCESS_DOMAIN_NAME, SAVE_IMAGES } = __ENV;
 
 const saveImages = SAVE_IMAGES === "true";
+const url = `${ACCESS_DOMAIN_NAME}/workflow/sd3.5-large/txt2img`;
 
 const payload = JSON.stringify({
   input: {
@@ -43,7 +43,7 @@ export default function () {
   }
 
   // Make the request
-  const response = http.post(API_URL, payload, params);
+  const response = http.post(url, payload, params);
 
   // Check if request was successful
   check(response, {
@@ -64,4 +64,3 @@ export default function () {
     }
   }
 }
-

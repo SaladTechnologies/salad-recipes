@@ -1,0 +1,90 @@
+#!/bin/bash
+
+function getCurrentStatus() {
+  org=$1
+  project=$2
+  container_group=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
+  cg=$(curl -s -X GET \
+    -H "Salad-Api-Key: $SALAD_API_KEY" \
+    $baseURL)
+  status=$(echo $cg | jq -r '.current_state.status')
+  echo $status
+}
+
+function startContainerGroup() {
+  org=$1
+  project=$2
+  container_group=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
+  curl -s -X POST \
+    -H "Salad-Api-Key: $SALAD_API_KEY" \
+    $baseURL/start
+}
+
+function stopContainerGroup() {
+  org=$1
+  project=$2
+  container_group=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
+  curl -s -X POST \
+    -H "Salad-Api-Key: $SALAD_API_KEY" \
+    $baseURL/stop
+}
+
+function getConfiguredReplicas() {
+  org=$1
+  project=$2
+  container_group=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
+  cg=$(
+    curl -s -X GET \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      $baseURL
+  )
+  replicas=$(echo $cg | jq -r '.replicas')
+  echo $replicas
+}
+
+function setReplicas() {
+  org=$1
+  project=$2
+  container_group=$3
+  replicas=$4
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
+  cg=$(
+    curl -s -X PATCH \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      -H "Content-Type: application/merge-patch+json" \
+      -d "{\"replicas\": $replicas}" \
+      $baseURL
+  )
+}
+
+function getRunningReplicas() {
+  org=$1
+  project=$2
+  container_group=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
+  cg=$(
+    curl -s -X GET \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      $baseURL
+  )
+  running=$(echo $cg | jq -r '.current_state.instance_status_counts.running_count')
+  echo $running
+}
+
+function getAccessDomainName() {
+  org=$1
+  project=$2
+  container_group=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
+  cg=$(
+    curl -s -X GET \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      $baseURL
+  )
+  dns=$(echo $cg | jq -r '.networking.dns')
+  echo $dns
+}
