@@ -8,9 +8,8 @@ export const options = {
       executor: "ramping-vus",
       startVUs: 10,
       stages: [
-        { duration: "15m", target: 10 }, // Stay at 10 users for 15 minutes
-        { duration: "15m", target: 12 }, // Ramp up to 12 users over 15 minutes
-        { duration: "30m", target: 12 }, // Stay at 12 users for 30 minutes
+        { duration: "30m", target: 10 },
+        { duration: "30m", target: 11 },
       ],
     },
   },
