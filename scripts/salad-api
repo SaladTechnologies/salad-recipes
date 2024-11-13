@@ -1,5 +1,14 @@
 #!/bin/bash
 
+################################################################################################
+# Salad API Functions
+#
+# You should `source` this file to gain access to these functions. All of them accept the
+# organization, project, and container group as the first three arguments.
+#
+# All of them require the SALAD_API_KEY environment variable to be set.
+################################################################################################
+
 function getCurrentStatus() {
   org=$1
   project=$2
