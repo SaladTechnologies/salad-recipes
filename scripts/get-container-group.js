@@ -10,12 +10,12 @@ const headers = {
 };
 
 const usage = `
-Usage: node get-container-group.js <container-group-address> <output-file>
+Usage: node scripts/get-container-group.js <container-group-address> <output-file>
 
 Example:
-node get-container-group.js \
+node scripts/get-container-group.js \
 organizations/salad-benchmarking/projects/recipe-staging/containers/comfyui-dreamshaper8 \
-dreamshaper8-comfyui/container-group.json
+src/dreamshaper8-comfyui/container-group.json
 `
 
 function normalizeRecipeName(name) {

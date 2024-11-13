@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 set -e
 
-usage="Usage: ./build --comfy <comfy-version> --api <api-version> [--push]"
+usage="Usage: $0 --comfy <comfy-version> --api <api-version> [--push]"
 
 push=""
 while [ "$1" != "" ]; do
@@ -39,9 +39,9 @@ function buildDirectory() {
   popd
 }
 
-# buildDirectory comfyui-base
-# buildDirectory dreamshaper8-comfyui
-# buildDirectory flux1-schnell-fp8-comfyui
-buildDirectory sd3.5-large-comfyui
-buildDirectory sd3.5-medium-comfyui
-buildDirectory sdxl-with-refiner-comfyui
+buildDirectory src/comfyui-base
+buildDirectory src/dreamshaper8-comfyui
+buildDirectory src/flux1-schnell-fp8-comfyui
+buildDirectory src/sd3.5-large-comfyui
+buildDirectory src/sd3.5-medium-comfyui
+buildDirectory src/sdxl-with-refiner-comfyui
