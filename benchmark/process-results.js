@@ -2,7 +2,7 @@ const fs = require("fs/promises");
 const path = require("path");
 
 const usage = `
-Usage: process-results.js <raw-results-file> [output-results-file]
+Usage: node benchmark/process-results.js <raw-results-file> [output-results-file]
 
   raw-results-file: The file containing the raw results from the k6 run, in JSON Lines format
   [output-results-file]: The file to write the processed results to. Defaults to results.json in the same directory as the raw-results-file
