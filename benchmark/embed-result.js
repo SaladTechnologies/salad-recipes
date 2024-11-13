@@ -66,15 +66,15 @@ async function render() {
   const vus = results
     .filter((r) => r.metric === "vus")
     .map((r) => ({
-      timeFromStart: r.data.timeFromStart,
-      [vusLabel]: r.data.value,
+      timeFromStart: r.timeFromStart,
+      [vusLabel]: r.value,
     }));
 
   const duration = results
     .filter((r) => r.metric === "http_req_duration")
     .map((r) => ({
-      timeFromStart: r.data.timeFromStart,
-      [durationLabel]: r.data.value / 1000,
+      timeFromStart: r.timeFromStart,
+      [durationLabel]: r.value / 1000,
     }));
 
   const rollingDuration = getRollingAverage(
@@ -83,13 +83,11 @@ async function render() {
     durationLabel
   );
 
+  console.log(rollingDuration)
+
   const allErrors = results
     .filter((r) => r.metric === "http_req_failed")
-    .filter((r) => r.data.value > 0)
-    .map((r) => ({
-      timeFromStart: r.data.timeFromStart,
-      value: r.data.value,
-    }));
+    .filter((r) => r.value > 0);
   const bucketedErrors = allErrors.reduce((acc, r) => {
     const bucket = Math.floor(r.timeFromStart / errorsPeriod);
     acc[bucket] = (acc[bucket] || 0) + r.value;
@@ -176,6 +174,7 @@ async function render() {
 
   const numRequests = duration.length;
   const errorRate = allErrors.length / numRequests;
+  const successRate = 1 - errorRate;
   const avgDuration =
     duration.reduce((acc, d) => acc + d[durationLabel], 0) / numRequests;
   const avgThroughput =
@@ -183,7 +182,7 @@ async function render() {
     throughput.length;
   const subtitle = `Total Requests: ${numRequests}, Total Errors: ${
     allErrors.length
-  }, Error Rate: ${(errorRate * 100).toFixed(
+  }, Success Rate: ${(successRate * 100).toFixed(
     2
   )}%, Avg Duration: ${avgDuration.toFixed(
     2
@@ -226,7 +225,7 @@ async function render() {
       color: vusColor,
       range: [0, Math.max(...vus.map((d) => d[vusLabel])) * 1.3],
       showgrid: false,
-      linewidth: lineWidth
+      linewidth: lineWidth,
     },
     yaxis2: {
       title: durationLabel,
@@ -240,7 +239,7 @@ async function render() {
         Math.max(...rollingDuration.map((d) => d[durationLabel])) * 1.3,
       ],
       showgrid: false,
-      linewidth: lineWidth
+      linewidth: lineWidth,
     },
     yaxis3: {
       title: throughputLabel,
@@ -254,7 +253,7 @@ async function render() {
         Math.max(...rollingThroughput.map((d) => d[throughputLabel])) * 1.3,
       ],
       showgrid: false,
-      linewidth: lineWidth
+      linewidth: lineWidth,
     },
     yaxis4: {
       title: errorsLabel,
@@ -265,7 +264,7 @@ async function render() {
       color: errorsColor,
       range: [0, 1],
       showgrid: false,
-      linewidth: lineWidth
+      linewidth: lineWidth,
     },
   };
   Plotly.newPlot(div, data, layout, { displayLogo: false, responsive: true });

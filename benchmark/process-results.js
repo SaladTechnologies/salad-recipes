@@ -6,7 +6,7 @@ Usage: node benchmark/process-results.js <raw-results-file> [output-results-file
 
   raw-results-file: The file containing the raw results from the k6 run, in JSON Lines format
   [output-results-file]: The file to write the processed results to. Defaults to results.json in the same directory as the raw-results-file
-`
+`;
 
 const rawResultsFile = process.argv[2];
 
@@ -15,8 +15,8 @@ if (!rawResultsFile) {
   process.exit(1);
 }
 
-const parentDir = path.dirname(rawResultsFile);
-const outputResultsFile = process.argv[3] || path.join(parentDir, "results.json");
+const outputResultsFile =
+  process.argv[3] || rawResultsFile.replace(/\.jsonl?$/, ".json");
 
 async function processResults() {
   const data = await fs.readFile(rawResultsFile, "utf-8");
@@ -32,31 +32,19 @@ async function processResults() {
     .filter(Boolean);
 
   const metrics = ["checks", "http_req_duration", "http_req_failed", "vus"];
-  const results = allResults
-    .filter(
-      (result) =>
-        result.type === "Point" &&
-        result.metric &&
-        metrics.includes(result.metric)
-    )
-    .map((result) => {
-      return {
-        ...result,
-        data: {
-          ...result.data,
-          time: new Date(result.data.time),
-        },
-      };
-    });
+  const rawResults = allResults.filter(
+    (result) =>
+      result.type === "Point" &&
+      result.metric &&
+      metrics.includes(result.metric)
+  ).sort((a, b) => a.data.time - b.data.time);
 
-  // Sort by .data.time
-  results.sort((a, b) => a.data.time - b.data.time);
-
-  const firstTime = results[0].data.time;
-  results.forEach((result) => {
-    result.data.timeFromStart = result.data.time - firstTime;
-    delete result.data.time;
-  });
+  const firstTime = new Date(rawResults[0].data.time);
+  const results = rawResults.map((result) => ({
+    metric: result.metric,
+    value: result.data.value,
+    timeFromStart: new Date(result.data.time) - firstTime,
+  }));
 
   console.log(`Processed ${results.length} results`);
   await fs.writeFile(outputResultsFile, JSON.stringify(results, null, 2));
