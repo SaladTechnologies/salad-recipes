@@ -1,5 +1,17 @@
 # Salad Recipes
 
+- [Salad Recipes](#salad-recipes)
+  - [Introduction](#introduction)
+  - [Looking for Help with a Recipe?](#looking-for-help-with-a-recipe)
+  - [Repository Structure](#repository-structure)
+    - [Recipes](#recipes)
+    - [Benchmark](#benchmark)
+      - [`run`](#run)
+      - [`process-results.js`](#process-resultsjs)
+      - [`embed-result.js`](#embed-resultjs)
+    - [Scripts](#scripts)
+
+
 ## Introduction
 
 Recipes are the easiest way to start running an application on SaladCloud. By using recipes, you can run the most popular applications with pre-validated configurations. Simply head over to the [portal](https://portal.salad.com/) to create an account, which takes just a few minutes. Once the account is created, set up a payment method to pay for the resource usage. Once the payment method is set up, you can deploy recipes to any of the thousands of GPU powered nodes available on SaladCloud. With access to such a large number of nodes, you can be confident that there will always be the resources that you need to run your applications.
