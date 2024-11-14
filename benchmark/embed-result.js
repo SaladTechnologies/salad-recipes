@@ -15,13 +15,23 @@ let {
   throughputColor = "blue",
   throughputPeriod = 60 * 1000, // 1 minute
   divId = "benchmarkViz",
+  interactionsDivId = "vizInteractions",
+  defaultPriority = "batch",
+  maxNodes = 10,
   dataUrl,
-  pricesUrl
+  pricesUrl,
+  gpu,
+  vCPUs,
+  vCPUPrice = 0.004,
+  memGB,
+  memGBPrice = 0.001,
 } = window.benchmarkViz;
 
 if (!title) {
   title = dataUrl;
 }
+
+gpu = gpu.toLowerCase();
 
 function getRollingAverage(data, period, metric) {
   const rolling = [];
@@ -66,19 +76,30 @@ function msToTime(ms) {
 function makePriceMap(prices) {
   const priceMap = {};
   for (const gpuObject of prices.items) {
-    priceMap[gpuObject.name] = {};
+    const gpuName = gpuObject.name.toLowerCase();
+    priceMap[gpuName] = {};
     for (const priceObject of gpuObject.prices) {
-      priceMap[gpuObject.name][priceObject.priority] = priceObject.price;
+      priceMap[gpuName][priceObject.priority] = parseFloat(priceObject.price);
     }
   }
   return priceMap;
 }
 
+function getPriorityLevels(priceMap) {
+  const gpu = Object.keys(priceMap)[0];
+  const pricesByPriority = priceMap[gpu];
+  return Object.keys(pricesByPriority);
+}
+
 async function render() {
-  const [benchmarkData, pricesInfo] = await Promise.all([fetch(dataUrl), fetch(pricesUrl)]); 
+  const [benchmarkData, pricesInfo] = await Promise.all([
+    fetch(dataUrl),
+    fetch(pricesUrl),
+  ]);
   const results = await benchmarkData.json();
   const priceData = await pricesInfo.json();
   const priceMap = makePriceMap(priceData);
+  const priorityLevels = getPriorityLevels(priceMap);
   const div = document.querySelector(`#${divId}`);
 
   const vus = [];
@@ -96,7 +117,10 @@ async function render() {
         timeFromStart: results.timeFromStart[i],
         [durationLabel]: results.value[i] / 1000,
       });
-    } else if (results.metric[i] === "http_req_failed" && results.value[i] > 0) {
+    } else if (
+      results.metric[i] === "http_req_failed" &&
+      results.value[i] > 0
+    ) {
       allErrors.push({
         timeFromStart: results.timeFromStart[i],
         value: results.value[i],
@@ -144,6 +168,36 @@ async function render() {
     throughputLabel
   );
 
+  const getHourlyPrice = (priority) => {
+    const hourlyPrice =
+      (parseFloat(priceMap[gpu][priority]) +
+        vCPUs * vCPUPrice +
+        memGB * memGBPrice) *
+      maxNodes;
+    return hourlyPrice;
+  };
+
+  const getThroughputLabel = (d) => {
+    const time = msToTime(d.timeFromStart);
+    const displayFormat =
+      document.getElementById("priceFormat")?.value || "reqPerDollar";
+    const currentPriority =
+      document.getElementById("prioritySelector")?.value || defaultPriority;
+    const hourlyPrice = getHourlyPrice(currentPriority);
+    const reqPerSecond = d[throughputLabel];
+    const reqPerHour = reqPerSecond * 3600;
+    const costPerRequest = hourlyPrice / reqPerHour;
+    let priceText = "";
+    if (displayFormat === "reqPerDollar") {
+      const reqPerDollar = 1 / costPerRequest;
+      priceText = `${reqPerDollar.toFixed(2)} req/$`;
+    } else {
+      priceText = `$${costPerRequest.toFixed(5)}/req`;
+    }
+
+    return `${time} | ${reqPerSecond.toFixed(2)} req/s | ${priceText}`;
+  };
+
   const vusLine = {
     x: vus.map((d) => d.timeFromStart),
     y: vus.map((d) => d[vusLabel]),
@@ -183,14 +237,23 @@ async function render() {
   const throughputLine = {
     x: rollingThroughput.map((d) => d.timeFromStart),
     y: rollingThroughput.map((d) => d[throughputLabel]),
-    hovertemplate: `%{text} | %{y:.2f} req/s`,
-    text: rollingThroughput.map((d) => msToTime(d.timeFromStart)),
+    hovertemplate: `%{text}`,
+    text: rollingThroughput.map(getThroughputLabel),
     type: "scattergl",
     mode: "lines",
     name: throughputLabel,
     line: { color: throughputColor, width: lineWidth },
     yaxis: "y3",
   };
+
+  // Add a vertical line for minimum duration, and for maximum throughput
+
+  const maxThroughput = Math.max(
+    ...rollingThroughput.map((d) => d[throughputLabel])
+  );
+  const maxThroughputIndex = rollingThroughput.findIndex(
+    (d) => d[throughputLabel] === maxThroughput
+  );
 
   const data = [vusLine, durationLine, throughputLine, errorsLine];
 
@@ -202,11 +265,11 @@ async function render() {
   const avgThroughput =
     throughput.reduce((acc, d) => acc + d[throughputLabel], 0) /
     throughput.length;
-  const subtitle = `Total Requests: ${numRequests}, Total Errors: ${
+  const subtitle = `Max Nodes: ${maxNodes}, Total Requests: ${numRequests}, Total Errors: ${
     allErrors.length
   }, Success Rate: ${(successRate * 100).toFixed(
     2
-  )}%, Avg Duration: ${avgDuration.toFixed(
+  )}%, Avg Response Time: ${avgDuration.toFixed(
     2
   )}s, Avg Throughput: ${avgThroughput.toFixed(2)} req/s`;
 
@@ -290,6 +353,67 @@ async function render() {
     },
   };
   Plotly.newPlot(div, data, layout, { displayLogo: false, responsive: true });
+
+  const attachInteractions = () => {
+    const interactionsDiv = document.querySelector(`#${interactionsDivId}`);
+    const configText = document.createElement("p");
+    configText.textContent = `Configuration: ${gpu.toUpperCase()} | ${vCPUs} vCPUs | ${memGB} GB Memory`;
+    configText.style.fontFamily = font;
+
+    // Create Priority Selector
+    const prioritySelector = document.createElement("select");
+    prioritySelector.style.fontFamily = font;
+    prioritySelector.style.margin = "10px";
+
+    prioritySelector.id = "prioritySelector";
+    for (const priority of priorityLevels) {
+      const option = document.createElement("option");
+      option.value = priority;
+      option.text = `${priority} | $${(getHourlyPrice(priority) / maxNodes).toFixed(
+        2
+      )}/hr/node`;
+      prioritySelector.appendChild(option);
+    }
+
+    // Set the default value to the first priority level
+    prioritySelector.value = defaultPriority;
+
+    const updateThroughputLine = () => {
+      throughputLine.text = rollingThroughput.map(getThroughputLabel);
+      Plotly.update(div, [throughputLine], layout);
+    };
+
+    // Re-render throughput line on change
+    prioritySelector.addEventListener("change", updateThroughputLine);
+
+    // Label it
+    const label = document.createElement("label");
+    label.htmlFor = "prioritySelector";
+    label.textContent = "Select Priority Level: ";
+    label.style.fontFamily = font;
+
+    const priceFormat = document.createElement("select");
+    priceFormat.style.fontFamily = font;
+    priceFormat.style.margin = "10px";
+    priceFormat.id = "priceFormat";
+    const costPerReq = document.createElement("option");
+    costPerReq.value = "costPerReq";
+    costPerReq.text = "Cost per Request";
+    const reqPerDollar = document.createElement("option");
+    reqPerDollar.value = "reqPerDollar";
+    reqPerDollar.text = "Requests per Dollar";
+    priceFormat.appendChild(costPerReq);
+    priceFormat.appendChild(reqPerDollar);
+    priceFormat.value = "reqPerDollar";
+
+    priceFormat.addEventListener("change", updateThroughputLine);
+
+    interactionsDiv.appendChild(configText);
+    interactionsDiv.appendChild(label);
+    interactionsDiv.appendChild(prioritySelector);
+    interactionsDiv.appendChild(priceFormat);
+  };
+  attachInteractions();
 }
 
 render();
