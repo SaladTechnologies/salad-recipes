@@ -256,13 +256,36 @@ async function render() {
   const avgThroughput =
     throughput.reduce((acc, d) => acc + d[throughputLabel], 0) /
     throughput.length;
-  const subtitle = `Max Nodes: ${maxNodes}, Total Requests: ${numRequests}, Total Errors: ${
-    allErrors.length
-  }, Success Rate: ${(successRate * 100).toFixed(
-    2
-  )}%, Avg Response Time: ${avgDuration.toFixed(
-    2
-  )}s, Avg Throughput: ${avgThroughput.toFixed(2)} req/s`;
+  const subtitle = `Total Requests: ${numRequests}, Success Rate: ${(
+    successRate * 100
+  ).toFixed(2)}%`;
+
+  const getPerformanceAtNVUs = (numVUs, priority = defaultPriority) => {
+    // We find the time slice during which the number of VUs equals numVUs
+    const startTime = vus.find((d) => d[vusLabel] === numVUs)?.timeFromStart;
+    if (typeof startTime === "undefined") {
+      return null;
+    }
+    const endTime = vus.find((d, i) => d[vusLabel] !== numVUs && vus[i - 1]?.[vusLabel] === numVUs)?.timeFromStart;
+    if (!endTime) {
+      return null;
+    }
+
+    const durationSlice = getBucket(duration, "timeFromStart", startTime, endTime);
+    const throughputSlice = getBucket(rollingThroughput, "timeFromStart", startTime, endTime);
+    
+    const avgResponseTime = durationSlice.reduce((acc, d) => acc + d[durationLabel], 0) / durationSlice.length;
+    const avgThroughput = throughputSlice.reduce((acc, d) => acc + d[throughputLabel], 0) / throughputSlice.length;
+    const costPerImage = getHourlyPrice(priority) / avgThroughput / 3600;
+    const imagesPerDollar = 1 / costPerImage;
+
+    return {
+      avgResponseTime,
+      avgThroughput,
+      costPerImage,
+      imagesPerDollar,
+    }
+  }
 
   const tenMinutes = 10 * 60 * 1000;
   const layout = {
@@ -270,7 +293,7 @@ async function render() {
 
     plot_bgcolor: plotBackgroundColor,
     font: { family: font, size: 14 },
-    legend: { x: 0, y: -0.3, orientation: "h" },
+    legend: { x: 0, y: -0.3, orientation: "h"},
     xaxis: {
       title: "Time",
 
@@ -347,22 +370,121 @@ async function render() {
 
   const attachInteractions = () => {
     const interactionsDiv = document.querySelector(`#${interactionsDivId}`);
+
     const configText = document.createElement("p");
-    configText.textContent = `Configuration: ${gpu.toUpperCase()} | ${vCPUs} vCPUs | ${memGB} GB Memory`;
     configText.style.fontFamily = font;
+    configText.textContent = `Configuration: ${gpu.toUpperCase()} | ${vCPUs} vCPUs | ${memGB} GB Memory`;
+
+    const statsText = document.createElement("ul");
+    statsText.id = "statsText";
+    statsText.style.fontFamily = font;
+
+    const updateStatsText = () => {
+      const statsText = document.getElementById("statsText");
+      statsText.innerHTML = "";
+
+      const currentPriority =
+        document.getElementById("prioritySelector")?.value || defaultPriority;
+
+      const minVUs = vus[0][vusLabel];
+      const maxVUs = Math.max(...vus.map((d) => d[vusLabel]));
+
+      const bestThroughput = Math.max(
+        ...throughput.map((d) => d[throughputLabel])
+      );
+      const timeAtBestThroughput = throughput.find(
+        (d) => d[throughputLabel] === bestThroughput
+      ).timeFromStart;
+      const vusAtMaxThroughput = vus[vus.findIndex((r) => r.timeFromStart > timeAtBestThroughput) - 1][vusLabel];
+
+      const summaryText = [
+        `Max Running Nodes: ${maxNodes}`,
+        `Total Cost of ${maxNodes} Replicas at "${currentPriority}" priority: $${getHourlyPrice(
+        currentPriority
+      ).toFixed(2)}/hr`,
+        `Reliability: ${(successRate * 100).toFixed(3)}% of Requests Succeeded`,
+        `Best Response Time: ${Math.min( ...duration.map((d) => d[durationLabel]) ).toFixed(2)}s`,
+        `Worst Response Time: ${Math.max( ...duration.map((d) => d[durationLabel]) ).toFixed(2)}s`,
+        `Best Throughput: ${bestThroughput.toFixed(2)} req/s at ${vusAtMaxThroughput} VUs`,
+      ]
+      for (const text of summaryText) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        statsText.appendChild(li);
+      }
+
+      const performanceAtMinVUs = getPerformanceAtNVUs(minVUs, currentPriority);
+      const performanceAtMaxVUs = getPerformanceAtNVUs(maxVUs, currentPriority);
+
+      const minPerfTitle = document.createElement("li");
+      minPerfTitle.textContent = `Performance at ${minVUs} VUs`;
+
+      const minPerfList = document.createElement("ul");
+      minPerfTitle.appendChild(minPerfList);
+      statsText.appendChild(minPerfTitle);
+      const minPerfItems = [
+        `Average Response Time: ${performanceAtMinVUs.avgResponseTime.toFixed(2)}s`,
+        `Average Throughput: ${performanceAtMinVUs.avgThroughput.toFixed(2)} req/s`,
+        `Cost per Image: $${performanceAtMinVUs.costPerImage.toFixed(5)}`,
+        `Images per Dollar: ${performanceAtMinVUs.imagesPerDollar.toFixed(2)}`,
+      ];
+
+      for (const text of minPerfItems) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        minPerfList.appendChild(li);
+      }
+
+      const maxPerfTitle = document.createElement("li");
+      maxPerfTitle.textContent = `Performance at ${maxVUs} VUs`;
+      const maxPerfList = document.createElement("ul");
+      maxPerfTitle.appendChild(maxPerfList);
+      statsText.appendChild(maxPerfTitle);
+      const maxPerfItems = [
+        `Average Response Time: ${performanceAtMaxVUs.avgResponseTime.toFixed(2)}s`,
+        `Average Throughput: ${performanceAtMaxVUs.avgThroughput.toFixed(2)} req/s`,
+        `Cost per Image: $${performanceAtMaxVUs.costPerImage.toFixed(5)}`,
+        `Images per Dollar: ${performanceAtMaxVUs.imagesPerDollar.toFixed(2)}`,
+      ];
+
+      for (const text of maxPerfItems) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        maxPerfList.appendChild(li);
+      }
+
+      const overallPerfTitle = document.createElement("li");
+      overallPerfTitle.textContent = `Performance Over Entire Test`;
+      const overallPerfList = document.createElement("ul");
+      overallPerfTitle.appendChild(overallPerfList);
+      statsText.appendChild(overallPerfTitle);
+      const overallPerfItems = [
+        `Average Response Time: ${avgDuration.toFixed(2)}s`,
+        `Average Throughput: ${avgThroughput.toFixed(2)} req/s`,
+        `Cost per Image: $${(getHourlyPrice(currentPriority) / avgThroughput / 3600).toFixed(5)}`,
+        `Images per Dollar: ${(1 / (getHourlyPrice(currentPriority) / avgThroughput / 3600)).toFixed(2)}`,
+      ];
+
+      for (const text of overallPerfItems) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        overallPerfList.appendChild(li);
+      }
+
+    };
 
     // Create Priority Selector
     const prioritySelector = document.createElement("select");
     prioritySelector.style.fontFamily = font;
-    prioritySelector.style.margin = "10px";
+    prioritySelector.style.marginRight = "10px";
 
     prioritySelector.id = "prioritySelector";
     for (const priority of priorityLevels) {
       const option = document.createElement("option");
       option.value = priority;
-      option.text = `${priority} | $${(getHourlyPrice(priority) / maxNodes).toFixed(
-        2
-      )}/hr/node`;
+      option.text = `${priority} | $${(
+        getHourlyPrice(priority) / maxNodes
+      ).toFixed(2)}/hr/node`;
       prioritySelector.appendChild(option);
     }
 
@@ -372,6 +494,7 @@ async function render() {
     const updateThroughputLine = () => {
       throughputLine.text = rollingThroughput.map(getThroughputLabel);
       Plotly.update(div, [throughputLine], layout);
+      updateStatsText();
     };
 
     // Re-render throughput line on change
@@ -387,22 +510,31 @@ async function render() {
     priceFormat.style.fontFamily = font;
     priceFormat.style.margin = "10px";
     priceFormat.id = "priceFormat";
-    const costPerReq = document.createElement("option");
-    costPerReq.value = "costPerReq";
-    costPerReq.text = "Cost per Request";
-    const reqPerDollar = document.createElement("option");
-    reqPerDollar.value = "reqPerDollar";
-    reqPerDollar.text = "Requests per Dollar";
-    priceFormat.appendChild(costPerReq);
-    priceFormat.appendChild(reqPerDollar);
+    for (const format of ["reqPerDollar", "costPerReq"]) {
+      const option = document.createElement("option");
+      option.value = format;
+      option.text =
+        format === "reqPerDollar" ? "Requests per Dollar" : "Cost per Request";
+      priceFormat.appendChild(option);
+    }
+
     priceFormat.value = "reqPerDollar";
+
+    const formatLabel = document.createElement("label");
+    formatLabel.htmlFor = "priceFormat";
+    formatLabel.textContent = "View";
+    formatLabel.style.fontFamily = font;
 
     priceFormat.addEventListener("change", updateThroughputLine);
 
     interactionsDiv.appendChild(configText);
     interactionsDiv.appendChild(label);
     interactionsDiv.appendChild(prioritySelector);
+    interactionsDiv.appendChild(formatLabel);
     interactionsDiv.appendChild(priceFormat);
+    interactionsDiv.appendChild(statsText);
+
+    updateStatsText();
   };
   attachInteractions();
 }
