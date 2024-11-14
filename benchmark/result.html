@@ -2,16 +2,16 @@
 <div id="benchmarkViz"></div>
 <div id="vizInteractions"></div>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
-<script type="module">
+<script>
   window.benchmarkViz = {
-    dataUrl: "../src/sd3.5-medium-comfyui/benchmark/4090.json", // REQUIRED
-    pricesUrl: "prices.json", // REQUIRED
+    dataUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/src/flux1-schnell-fp8-comfyui/benchmark/4090.json", // REQUIRED
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json", // REQUIRED
     gpu: "RTX 4090 (24 GB)", // REQUIRED
     vCPUs: 4, // REQUIRED
     memGB: 30, // REQUIRED
     maxNodes: 9,
     // defaultPriority: "batch",
-    title: "Flux1 Schnell (fp8) (ComfyUI)",
+    title: "Flux1 Schnell (FP8) (ComfyUI)",
     // plotBackgroundColor: "#000000",
     // font: "Arial, sans-serif",
     // lineWidth: 2,
@@ -27,4 +27,4 @@
     // interactionsDivId: "vizInteractions",
   }
 </script>
-<script src="embed-result.js" type="module"></script>
+<script src="https://rawcdn.githack.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/embed-result.js" type="module"></script>
