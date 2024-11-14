@@ -1,0 +1,84 @@
+{
+  "lengthOfBenchmarkSeconds": 3605.649,
+  "numRequests": 9826,
+  "numFailedRequests": 3,
+  "successRate": 0.9996946875636068,
+  "minDurationSeconds": 2.860762608,
+  "maxDurationSeconds": 15.717099261,
+  "meanDurationSeconds": 5.454455946385384,
+  "percentile90DurationSeconds": 7.021628294,
+  "minVUs": 2,
+  "maxVUs": 18,
+  "vuTimeline": [
+    {
+      "metric": "vus",
+      "value": 10,
+      "timeFromStart": 0
+    },
+    {
+      "metric": "vus",
+      "value": 11,
+      "timeFromStart": 1011.962
+    },
+    {
+      "metric": "vus",
+      "value": 12,
+      "timeFromStart": 1124.958
+    },
+    {
+      "metric": "vus",
+      "value": 13,
+      "timeFromStart": 1236.955
+    },
+    {
+      "metric": "vus",
+      "value": 14,
+      "timeFromStart": 1349.951
+    },
+    {
+      "metric": "vus",
+      "value": 15,
+      "timeFromStart": 1461.947
+    },
+    {
+      "metric": "vus",
+      "value": 16,
+      "timeFromStart": 1574.943
+    },
+    {
+      "metric": "vus",
+      "value": 17,
+      "timeFromStart": 1686.939
+    },
+    {
+      "metric": "vus",
+      "value": 18,
+      "timeFromStart": 1799.936
+    },
+    {
+      "metric": "vus",
+      "value": 16,
+      "timeFromStart": 3599.867
+    },
+    {
+      "metric": "vus",
+      "value": 14,
+      "timeFromStart": 3600.867
+    },
+    {
+      "metric": "vus",
+      "value": 10,
+      "timeFromStart": 3601.867
+    },
+    {
+      "metric": "vus",
+      "value": 5,
+      "timeFromStart": 3602.867
+    },
+    {
+      "metric": "vus",
+      "value": 2,
+      "timeFromStart": 3604.866
+    }
+  ]
+}

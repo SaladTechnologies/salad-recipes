@@ -97,3 +97,14 @@ function getAccessDomainName() {
   dns=$(echo $cg | jq -r '.networking.dns')
   echo $dns
 }
+
+function getAllPrices() {
+  org=$1
+  baseURL="https://api.salad.com/api/public/organizations/${org}/gpu-classes"
+  data=$(
+    curl -s -X GET \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      $baseURL
+  )
+  echo $data
+}

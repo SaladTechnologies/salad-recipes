@@ -16,6 +16,7 @@ let {
   throughputPeriod = 60 * 1000, // 1 minute
   divId = "benchmarkViz",
   dataUrl,
+  pricesUrl
 } = window.benchmarkViz;
 
 if (!title) {
@@ -62,9 +63,22 @@ function msToTime(ms) {
   )}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
+function makePriceMap(prices) {
+  const priceMap = {};
+  for (const gpuObject of prices.items) {
+    priceMap[gpuObject.name] = {};
+    for (const priceObject of gpuObject.prices) {
+      priceMap[gpuObject.name][priceObject.priority] = priceObject.price;
+    }
+  }
+  return priceMap;
+}
+
 async function render() {
-  const response = await fetch(dataUrl);
-  const results = await response.json();
+  const [benchmarkData, pricesInfo] = await Promise.all([fetch(dataUrl), fetch(pricesUrl)]); 
+  const results = await benchmarkData.json();
+  const priceData = await pricesInfo.json();
+  const priceMap = makePriceMap(priceData);
   const div = document.querySelector(`#${divId}`);
 
   const vus = [];
