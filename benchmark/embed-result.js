@@ -370,6 +370,7 @@ async function render() {
 
   const attachInteractions = () => {
     const interactionsDiv = document.querySelector(`#${interactionsDivId}`);
+    div.style
 
     const configText = document.createElement("p");
     configText.style.fontFamily = font;
@@ -527,11 +528,17 @@ async function render() {
 
     priceFormat.addEventListener("change", updateThroughputLine);
 
+    const prioritySpan = document.createElement("span");
+    prioritySpan.appendChild(label);
+    prioritySpan.appendChild(prioritySelector);
+
+    const formatSpan = document.createElement("span");
+    formatSpan.appendChild(formatLabel);
+    formatSpan.appendChild(priceFormat);
+
     interactionsDiv.appendChild(configText);
-    interactionsDiv.appendChild(label);
-    interactionsDiv.appendChild(prioritySelector);
-    interactionsDiv.appendChild(formatLabel);
-    interactionsDiv.appendChild(priceFormat);
+    interactionsDiv.appendChild(prioritySpan);
+    interactionsDiv.appendChild(formatSpan);
     interactionsDiv.appendChild(statsText);
 
     updateStatsText();
