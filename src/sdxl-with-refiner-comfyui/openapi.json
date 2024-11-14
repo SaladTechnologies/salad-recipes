@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Comfy Wrapper API",
-    "version": "1.4.2"
+    "version": "1.6.0"
   },
   "components": {
     "schemas": {}
@@ -23,7 +23,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.2"
+                        "1.6.0"
                       ]
                     },
                     "status": {
@@ -52,7 +52,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.2"
+                        "1.6.0"
                       ]
                     },
                     "status": {
@@ -89,7 +89,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.2"
+                        "1.6.0"
                       ]
                     },
                     "status": {
@@ -118,7 +118,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.4.2"
+                        "1.6.0"
                       ]
                     },
                     "status": {
@@ -311,7 +311,7 @@
                   },
                   "id": {
                     "type": "string",
-                    "default": "51466959-a5b4-4929-8d6d-2cd24acb59c9"
+                    "default": "9029839d-448a-413a-ae8c-52cce59c5f4c"
                   },
                   "webhook": {
                     "type": "string"
@@ -470,7 +470,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "4d58492c-a328-4c42-b54b-b418ec3e783f"
+                    "default": "1eb3090e-e781-4a07-a54d-7160c9b00957"
                   },
                   "input": {
                     "type": "object",
@@ -499,7 +499,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 614968967750606,
+                        "default": 966948284070505,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -531,9 +531,11 @@
                           "dpm_fast",
                           "dpm_adaptive",
                           "dpmpp_2s_ancestral",
+                          "dpmpp_2s_ancestral_cfg_pp",
                           "dpmpp_sde",
                           "dpmpp_sde_gpu",
                           "dpmpp_2m",
+                          "dpmpp_2m_cfg_pp",
                           "dpmpp_2m_sde",
                           "dpmpp_2m_sde_gpu",
                           "dpmpp_3m_sde",
@@ -559,7 +561,8 @@
                           "sgm_uniform",
                           "simple",
                           "ddim_uniform",
-                          "beta"
+                          "beta",
+                          "linear_quadratic"
                         ],
                         "default": "exponential",
                         "description": "Type of scheduler to use"
@@ -757,7 +760,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "296632c5-6bbb-4be5-9592-529926c2b94c"
+                    "default": "772145b1-3a02-4795-99ee-c020fcec194c"
                   },
                   "input": {
                     "type": "object",
@@ -787,7 +790,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 67495024563610,
+                        "default": 728493818272602,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -819,9 +822,11 @@
                           "dpm_fast",
                           "dpm_adaptive",
                           "dpmpp_2s_ancestral",
+                          "dpmpp_2s_ancestral_cfg_pp",
                           "dpmpp_sde",
                           "dpmpp_sde_gpu",
                           "dpmpp_2m",
+                          "dpmpp_2m_cfg_pp",
                           "dpmpp_2m_sde",
                           "dpmpp_2m_sde_gpu",
                           "dpmpp_3m_sde",
@@ -847,7 +852,8 @@
                           "sgm_uniform",
                           "simple",
                           "ddim_uniform",
-                          "beta"
+                          "beta",
+                          "linear_quadratic"
                         ],
                         "default": "normal",
                         "description": "Type of scheduler to use"
@@ -1037,7 +1043,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "76f403c1-9e8e-4c91-986d-fc22bcd1a627"
+                    "default": "3c520f1a-e4e2-41d2-b905-04f7ae04bc4c"
                   },
                   "input": {
                     "type": "object",
@@ -1067,7 +1073,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 79014419586,
+                        "default": 93490232206,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
@@ -1099,9 +1105,11 @@
                           "dpm_fast",
                           "dpm_adaptive",
                           "dpmpp_2s_ancestral",
+                          "dpmpp_2s_ancestral_cfg_pp",
                           "dpmpp_sde",
                           "dpmpp_sde_gpu",
                           "dpmpp_2m",
+                          "dpmpp_2m_cfg_pp",
                           "dpmpp_2m_sde",
                           "dpmpp_2m_sde_gpu",
                           "dpmpp_3m_sde",
@@ -1127,7 +1135,8 @@
                           "sgm_uniform",
                           "simple",
                           "ddim_uniform",
-                          "beta"
+                          "beta",
+                          "linear_quadratic"
                         ],
                         "default": "normal",
                         "description": "Type of scheduler to use"

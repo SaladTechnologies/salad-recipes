@@ -1,0 +1,82 @@
+#!/bin/bash
+
+set -e
+
+usage="Usage: ./$0 --org <org> --project <project> [--container-group <container-group>] --replicas <replicas> --recipe <recipe> [--output <output>]"
+
+while [ "$1" != "" ]; do
+  case $1 in
+  --org)
+    shift
+    org=$1
+    ;;
+  --project)
+    shift
+    project=$1
+    ;;
+  --container-group)
+    shift
+    container_group=$1
+    ;;
+  --replicas)
+    shift
+    replicas=$1
+    ;;
+  --recipe)
+    shift
+    recipe=$1
+    ;;
+  --output)
+    shift
+    output=$1
+    ;;
+  *)
+    echo $usage
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+if [ -z "$org" ] || [ -z "$project" ]  || [ -z "$replicas" ] || [ -z "$recipe" ]; then
+  echo $usage
+  exit 1
+fi
+
+if [ -z "$SALAD_API_KEY" ]; then
+  echo "Please set the SALAD_API_KEY environment variable"
+  exit 1
+fi
+
+# Check that the recipe exists and has a benchmark file
+benchmark_file="src/$recipe/benchmark/benchmark.js"
+if [ ! -f "$benchmark_file" ]; then
+  echo "Benchmark file $benchmark_file not found"
+  exit 1
+fi
+
+source scripts/salad-api
+
+if [ -z "$output" ]; then
+  output=$(dirname $benchmark_file)/results.jsonl
+else
+  output=$(dirname $benchmark_file)/$output
+fi
+
+if [ -z "$container_group" ]; then
+  # Normalize recipe name to /[^a-z0-9]/ig, '-'
+  container_group=$(echo $recipe | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
+fi
+
+export ACCESS_DOMAIN_NAME="https://$(getAccessDomainName $org $project $container_group)"
+echo "Access domain name: $ACCESS_DOMAIN_NAME"
+
+./scripts/start-container-group-and-wait-for-replicas --org $org --project $project --container-group $container_group --replicas $replicas
+
+k6 run --out json=$output $benchmark_file
+
+stopContainerGroup $org $project $container_group
+
+# the jsonl file will be processed to a file with the same name, but .json
+processed_filename=$(echo $output | sed 's/\.jsonl$/.json/')
+node benchmark/process-results.js $output $processed_filename

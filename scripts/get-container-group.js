@@ -10,13 +10,17 @@ const headers = {
 };
 
 const usage = `
-Usage: node get-container-group.js <container-group-address> <output-file>
+Usage: node scripts/get-container-group.js <container-group-address> <output-file>
 
 Example:
-node get-container-group.js \
-organizations/salad-benchmarking/projects/recipe-staging/containers/comfyui-dreamshaper8 \
-dreamshaper8-comfyui/container-group.json
+node scripts/get-container-group.js \
+organizations/salad-benchmarking/projects/recipe-staging/containers/dreamshaper8-comfyui \
+src/dreamshaper8-comfyui/container-group.json
 `
+
+function normalizeRecipeName(name) {
+  return name.replace(/[^a-z0-9]/ig, '-').toLowerCase()
+}
 
 async function main() {
   const cgAddress = process.argv[2];
@@ -33,7 +37,7 @@ async function main() {
   }
   const containerGroup = await res.json()
 
-  const recipeName = path.dirname(output).split('/').pop()
+  const recipeName = normalizeRecipeName(path.dirname(output).split('/').pop())
 
   const {
     container,

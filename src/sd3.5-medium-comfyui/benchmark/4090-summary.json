@@ -1,0 +1,103 @@
+{
+  "lengthOfBenchmarkSeconds": 3623.049,
+  "numRequests": 6613,
+  "numFailedRequests": 11,
+  "successRate": 0.9983366097081506,
+  "minDurationSeconds": 2.964299251,
+  "maxDurationSeconds": 59.998284782,
+  "meanDurationSeconds": 8.113115855662471,
+  "percentile90DurationSeconds": 10.863650777,
+  "avgThroughput": 1.825258228635605,
+  "maxThroughput": 2.1508064516129037,
+  "timeOfMaxThroughput": 2668.499,
+  "vusAtMaxThroughput": 18,
+  "minVUs": 1,
+  "maxVUs": 18,
+  "vuTimeline": [
+    {
+      "metric": "vus",
+      "value": 10,
+      "timeFromStart": 0
+    },
+    {
+      "metric": "vus",
+      "value": 11,
+      "timeFromStart": 1011.958
+    },
+    {
+      "metric": "vus",
+      "value": 12,
+      "timeFromStart": 1124.954
+    },
+    {
+      "metric": "vus",
+      "value": 13,
+      "timeFromStart": 1236.949
+    },
+    {
+      "metric": "vus",
+      "value": 14,
+      "timeFromStart": 1349.944
+    },
+    {
+      "metric": "vus",
+      "value": 15,
+      "timeFromStart": 1461.941
+    },
+    {
+      "metric": "vus",
+      "value": 16,
+      "timeFromStart": 1574.935
+    },
+    {
+      "metric": "vus",
+      "value": 17,
+      "timeFromStart": 1686.931
+    },
+    {
+      "metric": "vus",
+      "value": 18,
+      "timeFromStart": 1799.926
+    },
+    {
+      "metric": "vus",
+      "value": 17,
+      "timeFromStart": 3599.858
+    },
+    {
+      "metric": "vus",
+      "value": 15,
+      "timeFromStart": 3600.858
+    },
+    {
+      "metric": "vus",
+      "value": 11,
+      "timeFromStart": 3601.857
+    },
+    {
+      "metric": "vus",
+      "value": 9,
+      "timeFromStart": 3603.858
+    },
+    {
+      "metric": "vus",
+      "value": 7,
+      "timeFromStart": 3604.857
+    },
+    {
+      "metric": "vus",
+      "value": 4,
+      "timeFromStart": 3606.858
+    },
+    {
+      "metric": "vus",
+      "value": 3,
+      "timeFromStart": 3607.857
+    },
+    {
+      "metric": "vus",
+      "value": 1,
+      "timeFromStart": 3608.858
+    }
+  ]
+}

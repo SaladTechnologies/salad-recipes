@@ -1,0 +1,731 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Comfy Wrapper API",
+    "version": "1.6.0"
+  },
+  "components": {
+    "schemas": {}
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Probe",
+        "description": "Check if the server is healthy",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.6.0"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "healthy"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.6.0"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "not healthy"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "summary": "Readiness Probe",
+        "description": "Check if the server is ready to serve traffic",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.6.0"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ready"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.6.0"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "not ready"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models": {
+      "get": {
+        "summary": "List Models",
+        "description": "List all available models. This is from the contents of the models directory.",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "checkpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "clip": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "clip_vision": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "configs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "controlnet": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "diffusers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "diffusion_models": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "embeddings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "gligen": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "hypernetworks": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "loras": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "photomaker": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "style_models": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "unet": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "upscale_models": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "vae": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "vae_approx": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "checkpoints",
+                    "clip",
+                    "clip_vision",
+                    "configs",
+                    "controlnet",
+                    "diffusers",
+                    "diffusion_models",
+                    "embeddings",
+                    "gligen",
+                    "hypernetworks",
+                    "loras",
+                    "photomaker",
+                    "style_models",
+                    "unet",
+                    "upscale_models",
+                    "vae",
+                    "vae_approx"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prompt": {
+      "post": {
+        "summary": "Submit Prompt",
+        "description": "Submit an API-formatted ComfyUI prompt.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "inputs": {},
+                        "class_type": {
+                          "type": "string"
+                        },
+                        "_meta": {}
+                      },
+                      "required": [
+                        "class_type"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "id": {
+                    "type": "string",
+                    "default": "738b750a-3aa9-49db-aea0-b1e31c5deea4"
+                  },
+                  "webhook": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": {
+                            "type": "string"
+                          },
+                          "_meta": {}
+                        },
+                        "required": [
+                          "class_type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
+                    },
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "prompt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": {
+                            "type": "string"
+                          },
+                          "_meta": {}
+                        },
+                        "required": [
+                          "class_type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
+                    },
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "prompt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/sd3.5-medium/txt2img": {
+      "post": {
+        "summary": "txt2img",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "default": "2477a567-87cb-49de-8ea7-8c46d11a4e6e"
+                  },
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "prompt": {
+                        "type": "string",
+                        "description": "The positive prompt for image generation"
+                      },
+                      "width": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Width of the generated image"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Height of the generated image"
+                      },
+                      "seed": {
+                        "type": "integer",
+                        "default": 81700131354066,
+                        "description": "Seed for random number generation"
+                      },
+                      "steps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "default": 20,
+                        "description": "Number of sampling steps"
+                      },
+                      "cfg_scale": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 20,
+                        "default": 4.5,
+                        "description": "Classifier-free guidance scale"
+                      },
+                      "sampler_name": {
+                        "type": "string",
+                        "enum": [
+                          "euler",
+                          "euler_cfg_pp",
+                          "euler_ancestral",
+                          "euler_ancestral_cfg_pp",
+                          "heun",
+                          "heunpp2",
+                          "dpm_2",
+                          "dpm_2_ancestral",
+                          "lms",
+                          "dpm_fast",
+                          "dpm_adaptive",
+                          "dpmpp_2s_ancestral",
+                          "dpmpp_2s_ancestral_cfg_pp",
+                          "dpmpp_sde",
+                          "dpmpp_sde_gpu",
+                          "dpmpp_2m",
+                          "dpmpp_2m_cfg_pp",
+                          "dpmpp_2m_sde",
+                          "dpmpp_2m_sde_gpu",
+                          "dpmpp_3m_sde",
+                          "dpmpp_3m_sde_gpu",
+                          "ddpm",
+                          "lcm",
+                          "ipndm",
+                          "ipndm_v",
+                          "deis",
+                          "ddim",
+                          "uni_pc",
+                          "uni_pc_bh2"
+                        ],
+                        "default": "dpmpp_2m",
+                        "description": "Name of the sampler to use"
+                      },
+                      "scheduler": {
+                        "type": "string",
+                        "enum": [
+                          "normal",
+                          "karras",
+                          "exponential",
+                          "sgm_uniform",
+                          "simple",
+                          "ddim_uniform",
+                          "beta",
+                          "linear_quadratic"
+                        ],
+                        "default": "sgm_uniform",
+                        "description": "Type of scheduler to use"
+                      },
+                      "denoise": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 1,
+                        "description": "Denoising strength"
+                      },
+                      "checkpoint": {
+                        "type": "string",
+                        "enum": [
+                          "sd3.5_medium.safetensors"
+                        ],
+                        "default": "sd3.5_medium.safetensors"
+                      }
+                    },
+                    "required": [
+                      "prompt"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "webhook": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "input"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": {
+                            "type": "string"
+                          },
+                          "_meta": {}
+                        },
+                        "required": [
+                          "class_type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
+                    },
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "input",
+                    "prompt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": {
+                            "type": "string"
+                          },
+                          "_meta": {}
+                        },
+                        "required": [
+                          "class_type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
+                    },
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "input",
+                    "prompt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "{accessDomainName}",
+      "description": "Your server",
+      "variables": {
+        "accessDomainName": {
+          "default": "http://localhost:3000",
+          "description": "The domain name of the server, protocol included, port optional"
+        }
+      }
+    }
+  ]
+}

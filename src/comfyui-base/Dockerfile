@@ -1,4 +1,4 @@
-ARG comfy_version=0.2.6
+ARG comfy_version=0.2.7
 FROM ghcr.io/ai-dock/comfyui:v2-cuda-12.1.1-base-22.04-v${comfy_version}
 
 # Disable the authentication and cloudflare tunnels provided by the base image
@@ -17,14 +17,15 @@ RUN rm /etc/supervisor/supervisord/conf.d/syncthing.conf
 # is fully asyncronous by default, and has no convenient way to retrieve 
 # generated images. If you're adding a custom worker, you'll need to copy it in here.
 # COPY comfyui-api .
-ARG api_version=1.4.2
+ARG api_version=1.6.0
 ADD https://github.com/SaladTechnologies/comfyui-api/releases/download/${api_version}/comfyui-api .
 RUN chmod +x comfyui-api
 
 # Set up some environment variables for the worker
-ENV MODEL_DIR=/opt/ComfyUI/models
-ENV OUTPUT_DIR=/opt/ComfyUI/output
-ENV INPUT_DIR=/opt/ComfyUI/input
+ENV COMFY_HOME=/opt/ComfyUI
+ENV MODEL_DIR=${COMFY_HOME}/models
+ENV OUTPUT_DIR=${COMFY_HOME}/output
+ENV INPUT_DIR=${COMFY_HOME}/input
 
 # Startup can take a little longer with larger models.
 # This configures the worker binary's built-in health check.
@@ -36,6 +37,6 @@ RUN pip install comfy-cli
 
 # Disable tracking and set the default directory to /opt/ComfyUI/
 RUN echo "N" | comfy tracking disable
-RUN comfy set-default /opt/ComfyUI/
+RUN comfy set-default ${COMFY_HOME}
 
 CMD ["./comfyui-api"]
