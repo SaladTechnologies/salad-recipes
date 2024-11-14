@@ -20,6 +20,27 @@ const outputResultsFile =
 
 const summaryFile = rawResultsFile.replace(/\.jsonl?$/, "-summary.json");
 
+function getRollingAverage(data, period, metric) {
+  const rolling = [];
+  for (let i = 0; i < data.length; i++) {
+    let sum = 0;
+    let count = 0;
+    for (
+      let j = i;
+      j >= 0 && data[i].timeFromStart - data[j].timeFromStart < period;
+      j--
+    ) {
+      sum += data[j][metric];
+      count++;
+    }
+    rolling.push({
+      timeFromStart: data[i].timeFromStart,
+      [metric]: sum / count,
+    });
+  }
+  return rolling;
+}
+
 async function processResults() {
   const data = await fs.readFile(rawResultsFile, "utf-8");
   const lines = data.split("\n");
@@ -83,6 +104,34 @@ async function processResults() {
       Math.floor(numRequests * 0.9)
     ] / 1000;
 
+  const throughputPeriod = 60 * 1000;
+  const throughput = durations.map((d, i) => {
+    const { timeFromStart } = d;
+    const count = durations
+      .slice(i)
+      .filter((d) => d.timeFromStart - timeFromStart < throughputPeriod).length;
+    return {
+      timeFromStart,
+      value: count / (throughputPeriod / 1000),
+    };
+  });
+  const rollingThroughput = getRollingAverage(
+    throughput,
+    throughputPeriod,
+    "value"
+  );
+
+  const avgThroughput = numRequests / lengthOfBenchmarkSeconds;
+  const maxThroughput = Math.max(
+    ...rollingThroughput.map((r) => r.value),
+  );
+  const timeOfMaxThroughputSeconds = rollingThroughput.find(
+    (r) => r.value === maxThroughput,
+  ).timeFromStart / 1000;
+  
+  // Find the number of VUs at the time of max throughput. This should be done by seeking vus until time is greater than timeOfMaxThroughput, then taking the value before that
+  const vusAtMaxThroughput = vus[vus.findIndex((r) => r.timeFromStart / 1000 > timeOfMaxThroughputSeconds) - 1].value;
+
   const minVUs = Math.min(...vus.map((r) => r.value));
   const maxVUs = Math.max(...vus.map((r) => r.value));
 
@@ -99,6 +148,10 @@ async function processResults() {
     maxDurationSeconds,
     meanDurationSeconds,
     percentile90DurationSeconds,
+    avgThroughput,
+    maxThroughput,
+    timeOfMaxThroughput: timeOfMaxThroughputSeconds,
+    vusAtMaxThroughput,
     minVUs,
     maxVUs,
     vuTimeline,

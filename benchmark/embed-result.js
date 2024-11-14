@@ -246,15 +246,6 @@ async function render() {
     yaxis: "y3",
   };
 
-  // Add a vertical line for minimum duration, and for maximum throughput
-
-  const maxThroughput = Math.max(
-    ...rollingThroughput.map((d) => d[throughputLabel])
-  );
-  const maxThroughputIndex = rollingThroughput.findIndex(
-    (d) => d[throughputLabel] === maxThroughput
-  );
-
   const data = [vusLine, durationLine, throughputLine, errorsLine];
 
   const numRequests = duration.length;

@@ -7,6 +7,10 @@
   "maxDurationSeconds": 59.998999856000005,
   "meanDurationSeconds": 13.691905080120351,
   "percentile90DurationSeconds": 17.175248755000002,
+  "avgThroughput": 0.7293754148426512,
+  "maxThroughput": 0.8038194444444448,
+  "timeOfMaxThroughput": 1448.661,
+  "vusAtMaxThroughput": 10,
   "minVUs": 1,
   "maxVUs": 10,
   "vuTimeline": [
