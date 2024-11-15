@@ -1,0 +1,1483 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Comfy Wrapper API",
+    "version": "1.6.0"
+  },
+  "components": {
+    "schemas": {}
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Probe",
+        "description": "Check if the server is healthy",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.6.0"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "healthy"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.6.0"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "not healthy"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "summary": "Readiness Probe",
+        "description": "Check if the server is ready to serve traffic",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.6.0"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ready"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "enum": [
+                        "1.6.0"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "not ready"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "version",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models": {
+      "get": {
+        "summary": "List Models",
+        "description": "List all available models. This is from the contents of the models directory.",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "checkpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "clip": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "clip_vision": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "configs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "controlnet": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "diffusers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "diffusion_models": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "embeddings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "gligen": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "hypernetworks": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "loras": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "photomaker": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "style_models": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "text_encoders": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "unet": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "upscale_models": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "vae": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "vae_approx": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "checkpoints",
+                    "clip",
+                    "clip_vision",
+                    "configs",
+                    "controlnet",
+                    "diffusers",
+                    "diffusion_models",
+                    "embeddings",
+                    "gligen",
+                    "hypernetworks",
+                    "loras",
+                    "photomaker",
+                    "style_models",
+                    "text_encoders",
+                    "unet",
+                    "upscale_models",
+                    "vae",
+                    "vae_approx"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prompt": {
+      "post": {
+        "summary": "Submit Prompt",
+        "description": "Submit an API-formatted ComfyUI prompt.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "inputs": {},
+                        "class_type": {
+                          "type": "string"
+                        },
+                        "_meta": {}
+                      },
+                      "required": [
+                        "class_type"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "id": {
+                    "type": "string",
+                    "default": "8512694d-5f89-42cc-8f87-b321fd862841"
+                  },
+                  "webhook": {
+                    "type": "string"
+                  },
+                  "convert_output": {
+                    "type": "object",
+                    "properties": {
+                      "format": {
+                        "type": "string",
+                        "enum": [
+                          "jpeg",
+                          "webp"
+                        ],
+                        "description": "output format"
+                      },
+                      "options": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "quality": {
+                                "type": "number",
+                                "default": 80,
+                                "description": "quality, integer 1-100"
+                              },
+                              "progressive": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use progressive (interlace) scan"
+                              },
+                              "chromaSubsampling": {
+                                "type": "string",
+                                "default": "4:2:0",
+                                "description": "set to '4:4:4' to prevent chroma subsampling otherwise defaults to '4:2:0' chroma subsampling"
+                              },
+                              "optimizeCoding": {
+                                "type": "boolean",
+                                "default": true,
+                                "description": "optimize Huffman coding tables"
+                              },
+                              "mozjpeg": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use mozjpeg defaults, equivalent to { trellisQuantisation: true, overshootDeringing: true, optimizeScans: true, quantisationTable: 3 }"
+                              },
+                              "trellisQuantisation": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "apply trellis quantisation"
+                              },
+                              "overshootDeringing": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "apply overshoot deringing"
+                              },
+                              "optimizeScans": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "optimize progressive scans"
+                              },
+                              "quantisationTable": {
+                                "type": "number",
+                                "default": 0,
+                                "description": "set quantization table (0-8)"
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "quality": {
+                                "type": "integer",
+                                "default": 80,
+                                "description": "quality, integer 1-100"
+                              },
+                              "alphaQuality": {
+                                "type": "integer",
+                                "default": 100,
+                                "description": "quality of alpha layer, integer 1-100"
+                              },
+                              "lossless": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use lossless compression mode"
+                              },
+                              "nearLossless": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use near_lossless compression mode"
+                              },
+                              "smartSubsample": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use smart_subsample mode"
+                              },
+                              "preset": {
+                                "type": "string",
+                                "enum": [
+                                  "default",
+                                  "photo",
+                                  "picture",
+                                  "drawing",
+                                  "icon",
+                                  "text"
+                                ],
+                                "default": "default",
+                                "description": "named preset for preprocessing/filtering, one of: default, photo, picture, drawing, icon, text"
+                              },
+                              "effort": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 6,
+                                "default": 4,
+                                "description": "CPU effort, between 0 (fastest) and 6 (slowest)"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "format"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": {
+                            "type": "string"
+                          },
+                          "_meta": {}
+                        },
+                        "required": [
+                          "class_type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
+                    },
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "convert_output": {
+                      "type": "object",
+                      "properties": {
+                        "format": {
+                          "type": "string",
+                          "enum": [
+                            "jpeg",
+                            "webp"
+                          ],
+                          "description": "output format"
+                        },
+                        "options": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "quality": {
+                                  "type": "number",
+                                  "default": 80,
+                                  "description": "quality, integer 1-100"
+                                },
+                                "progressive": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use progressive (interlace) scan"
+                                },
+                                "chromaSubsampling": {
+                                  "type": "string",
+                                  "default": "4:2:0",
+                                  "description": "set to '4:4:4' to prevent chroma subsampling otherwise defaults to '4:2:0' chroma subsampling"
+                                },
+                                "optimizeCoding": {
+                                  "type": "boolean",
+                                  "default": true,
+                                  "description": "optimize Huffman coding tables"
+                                },
+                                "mozjpeg": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use mozjpeg defaults, equivalent to { trellisQuantisation: true, overshootDeringing: true, optimizeScans: true, quantisationTable: 3 }"
+                                },
+                                "trellisQuantisation": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "apply trellis quantisation"
+                                },
+                                "overshootDeringing": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "apply overshoot deringing"
+                                },
+                                "optimizeScans": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "optimize progressive scans"
+                                },
+                                "quantisationTable": {
+                                  "type": "number",
+                                  "default": 0,
+                                  "description": "set quantization table (0-8)"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "quality": {
+                                  "type": "integer",
+                                  "default": 80,
+                                  "description": "quality, integer 1-100"
+                                },
+                                "alphaQuality": {
+                                  "type": "integer",
+                                  "default": 100,
+                                  "description": "quality of alpha layer, integer 1-100"
+                                },
+                                "lossless": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use lossless compression mode"
+                                },
+                                "nearLossless": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use near_lossless compression mode"
+                                },
+                                "smartSubsample": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use smart_subsample mode"
+                                },
+                                "preset": {
+                                  "type": "string",
+                                  "enum": [
+                                    "default",
+                                    "photo",
+                                    "picture",
+                                    "drawing",
+                                    "icon",
+                                    "text"
+                                  ],
+                                  "default": "default",
+                                  "description": "named preset for preprocessing/filtering, one of: default, photo, picture, drawing, icon, text"
+                                },
+                                "effort": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 6,
+                                  "default": 4,
+                                  "description": "CPU effort, between 0 (fastest) and 6 (slowest)"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "format"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "prompt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": {
+                            "type": "string"
+                          },
+                          "_meta": {}
+                        },
+                        "required": [
+                          "class_type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
+                    },
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "convert_output": {
+                      "type": "object",
+                      "properties": {
+                        "format": {
+                          "type": "string",
+                          "enum": [
+                            "jpeg",
+                            "webp"
+                          ],
+                          "description": "output format"
+                        },
+                        "options": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "quality": {
+                                  "type": "number",
+                                  "default": 80,
+                                  "description": "quality, integer 1-100"
+                                },
+                                "progressive": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use progressive (interlace) scan"
+                                },
+                                "chromaSubsampling": {
+                                  "type": "string",
+                                  "default": "4:2:0",
+                                  "description": "set to '4:4:4' to prevent chroma subsampling otherwise defaults to '4:2:0' chroma subsampling"
+                                },
+                                "optimizeCoding": {
+                                  "type": "boolean",
+                                  "default": true,
+                                  "description": "optimize Huffman coding tables"
+                                },
+                                "mozjpeg": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use mozjpeg defaults, equivalent to { trellisQuantisation: true, overshootDeringing: true, optimizeScans: true, quantisationTable: 3 }"
+                                },
+                                "trellisQuantisation": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "apply trellis quantisation"
+                                },
+                                "overshootDeringing": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "apply overshoot deringing"
+                                },
+                                "optimizeScans": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "optimize progressive scans"
+                                },
+                                "quantisationTable": {
+                                  "type": "number",
+                                  "default": 0,
+                                  "description": "set quantization table (0-8)"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "quality": {
+                                  "type": "integer",
+                                  "default": 80,
+                                  "description": "quality, integer 1-100"
+                                },
+                                "alphaQuality": {
+                                  "type": "integer",
+                                  "default": 100,
+                                  "description": "quality of alpha layer, integer 1-100"
+                                },
+                                "lossless": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use lossless compression mode"
+                                },
+                                "nearLossless": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use near_lossless compression mode"
+                                },
+                                "smartSubsample": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use smart_subsample mode"
+                                },
+                                "preset": {
+                                  "type": "string",
+                                  "enum": [
+                                    "default",
+                                    "photo",
+                                    "picture",
+                                    "drawing",
+                                    "icon",
+                                    "text"
+                                  ],
+                                  "default": "default",
+                                  "description": "named preset for preprocessing/filtering, one of: default, photo, picture, drawing, icon, text"
+                                },
+                                "effort": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 6,
+                                  "default": 4,
+                                  "description": "CPU effort, between 0 (fastest) and 6 (slowest)"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "format"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "prompt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow/text2img": {
+      "post": {
+        "summary": "text2img",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "default": "1de00b04-04af-4afc-b8bd-81f7fee08b2e"
+                  },
+                  "input": {
+                    "type": "object",
+                    "properties": {
+                      "prompt": {
+                        "type": "string",
+                        "description": "The positive prompt for image generation"
+                      },
+                      "width": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Width of the generated image"
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 256,
+                        "maximum": 2048,
+                        "default": 1024,
+                        "description": "Height of the generated image"
+                      },
+                      "seed": {
+                        "type": "integer",
+                        "default": 295583037416367,
+                        "description": "Seed for random number generation"
+                      },
+                      "steps": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "default": 20,
+                        "description": "Number of sampling steps"
+                      },
+                      "cfg_scale": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 20,
+                        "default": 1,
+                        "description": "Classifier-free guidance scale"
+                      },
+                      "sampler_name": {
+                        "type": "string",
+                        "enum": [
+                          "euler",
+                          "euler_cfg_pp",
+                          "euler_ancestral",
+                          "euler_ancestral_cfg_pp",
+                          "heun",
+                          "heunpp2",
+                          "dpm_2",
+                          "dpm_2_ancestral",
+                          "lms",
+                          "dpm_fast",
+                          "dpm_adaptive",
+                          "dpmpp_2s_ancestral",
+                          "dpmpp_2s_ancestral_cfg_pp",
+                          "dpmpp_sde",
+                          "dpmpp_sde_gpu",
+                          "dpmpp_2m",
+                          "dpmpp_2m_cfg_pp",
+                          "dpmpp_2m_sde",
+                          "dpmpp_2m_sde_gpu",
+                          "dpmpp_3m_sde",
+                          "dpmpp_3m_sde_gpu",
+                          "ddpm",
+                          "lcm",
+                          "ipndm",
+                          "ipndm_v",
+                          "deis",
+                          "ddim",
+                          "uni_pc",
+                          "uni_pc_bh2"
+                        ],
+                        "default": "euler",
+                        "description": "Name of the sampler to use"
+                      },
+                      "scheduler": {
+                        "type": "string",
+                        "enum": [
+                          "normal",
+                          "karras",
+                          "exponential",
+                          "sgm_uniform",
+                          "simple",
+                          "ddim_uniform",
+                          "beta",
+                          "linear_quadratic"
+                        ],
+                        "default": "simple",
+                        "description": "Type of scheduler to use"
+                      },
+                      "denoise": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 1,
+                        "description": "Denoising strength"
+                      },
+                      "guidance": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 10,
+                        "default": 3.5,
+                        "description": "Flux guidance scale"
+                      },
+                      "checkpoint": {
+                        "type": "string",
+                        "enum": [
+                          "flux1-dev-fp8.safetensors"
+                        ],
+                        "default": "flux1-dev-fp8.safetensors"
+                      }
+                    },
+                    "required": [
+                      "prompt"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "webhook": {
+                    "type": "string"
+                  },
+                  "convert_output": {
+                    "type": "object",
+                    "properties": {
+                      "format": {
+                        "type": "string",
+                        "enum": [
+                          "jpeg",
+                          "webp"
+                        ],
+                        "description": "output format"
+                      },
+                      "options": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "quality": {
+                                "type": "number",
+                                "default": 80,
+                                "description": "quality, integer 1-100"
+                              },
+                              "progressive": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use progressive (interlace) scan"
+                              },
+                              "chromaSubsampling": {
+                                "type": "string",
+                                "default": "4:2:0",
+                                "description": "set to '4:4:4' to prevent chroma subsampling otherwise defaults to '4:2:0' chroma subsampling"
+                              },
+                              "optimizeCoding": {
+                                "type": "boolean",
+                                "default": true,
+                                "description": "optimize Huffman coding tables"
+                              },
+                              "mozjpeg": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use mozjpeg defaults, equivalent to { trellisQuantisation: true, overshootDeringing: true, optimizeScans: true, quantisationTable: 3 }"
+                              },
+                              "trellisQuantisation": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "apply trellis quantisation"
+                              },
+                              "overshootDeringing": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "apply overshoot deringing"
+                              },
+                              "optimizeScans": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "optimize progressive scans"
+                              },
+                              "quantisationTable": {
+                                "type": "number",
+                                "default": 0,
+                                "description": "set quantization table (0-8)"
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "quality": {
+                                "type": "integer",
+                                "default": 80,
+                                "description": "quality, integer 1-100"
+                              },
+                              "alphaQuality": {
+                                "type": "integer",
+                                "default": 100,
+                                "description": "quality of alpha layer, integer 1-100"
+                              },
+                              "lossless": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use lossless compression mode"
+                              },
+                              "nearLossless": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use near_lossless compression mode"
+                              },
+                              "smartSubsample": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "use smart_subsample mode"
+                              },
+                              "preset": {
+                                "type": "string",
+                                "enum": [
+                                  "default",
+                                  "photo",
+                                  "picture",
+                                  "drawing",
+                                  "icon",
+                                  "text"
+                                ],
+                                "default": "default",
+                                "description": "named preset for preprocessing/filtering, one of: default, photo, picture, drawing, icon, text"
+                              },
+                              "effort": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 6,
+                                "default": 4,
+                                "description": "CPU effort, between 0 (fastest) and 6 (slowest)"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "format"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "input"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": {
+                            "type": "string"
+                          },
+                          "_meta": {}
+                        },
+                        "required": [
+                          "class_type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
+                    },
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "convert_output": {
+                      "type": "object",
+                      "properties": {
+                        "format": {
+                          "type": "string",
+                          "enum": [
+                            "jpeg",
+                            "webp"
+                          ],
+                          "description": "output format"
+                        },
+                        "options": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "quality": {
+                                  "type": "number",
+                                  "default": 80,
+                                  "description": "quality, integer 1-100"
+                                },
+                                "progressive": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use progressive (interlace) scan"
+                                },
+                                "chromaSubsampling": {
+                                  "type": "string",
+                                  "default": "4:2:0",
+                                  "description": "set to '4:4:4' to prevent chroma subsampling otherwise defaults to '4:2:0' chroma subsampling"
+                                },
+                                "optimizeCoding": {
+                                  "type": "boolean",
+                                  "default": true,
+                                  "description": "optimize Huffman coding tables"
+                                },
+                                "mozjpeg": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use mozjpeg defaults, equivalent to { trellisQuantisation: true, overshootDeringing: true, optimizeScans: true, quantisationTable: 3 }"
+                                },
+                                "trellisQuantisation": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "apply trellis quantisation"
+                                },
+                                "overshootDeringing": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "apply overshoot deringing"
+                                },
+                                "optimizeScans": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "optimize progressive scans"
+                                },
+                                "quantisationTable": {
+                                  "type": "number",
+                                  "default": 0,
+                                  "description": "set quantization table (0-8)"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "quality": {
+                                  "type": "integer",
+                                  "default": 80,
+                                  "description": "quality, integer 1-100"
+                                },
+                                "alphaQuality": {
+                                  "type": "integer",
+                                  "default": 100,
+                                  "description": "quality of alpha layer, integer 1-100"
+                                },
+                                "lossless": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use lossless compression mode"
+                                },
+                                "nearLossless": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use near_lossless compression mode"
+                                },
+                                "smartSubsample": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use smart_subsample mode"
+                                },
+                                "preset": {
+                                  "type": "string",
+                                  "enum": [
+                                    "default",
+                                    "photo",
+                                    "picture",
+                                    "drawing",
+                                    "icon",
+                                    "text"
+                                  ],
+                                  "default": "default",
+                                  "description": "named preset for preprocessing/filtering, one of: default, photo, picture, drawing, icon, text"
+                                },
+                                "effort": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 6,
+                                  "default": 4,
+                                  "description": "CPU effort, between 0 (fastest) and 6 (slowest)"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "format"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "input",
+                    "prompt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "input": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "prompt": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "inputs": {},
+                          "class_type": {
+                            "type": "string"
+                          },
+                          "_meta": {}
+                        },
+                        "required": [
+                          "class_type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "images": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "contentEncoding": "base64"
+                      }
+                    },
+                    "webhook": {
+                      "type": "string"
+                    },
+                    "convert_output": {
+                      "type": "object",
+                      "properties": {
+                        "format": {
+                          "type": "string",
+                          "enum": [
+                            "jpeg",
+                            "webp"
+                          ],
+                          "description": "output format"
+                        },
+                        "options": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "quality": {
+                                  "type": "number",
+                                  "default": 80,
+                                  "description": "quality, integer 1-100"
+                                },
+                                "progressive": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use progressive (interlace) scan"
+                                },
+                                "chromaSubsampling": {
+                                  "type": "string",
+                                  "default": "4:2:0",
+                                  "description": "set to '4:4:4' to prevent chroma subsampling otherwise defaults to '4:2:0' chroma subsampling"
+                                },
+                                "optimizeCoding": {
+                                  "type": "boolean",
+                                  "default": true,
+                                  "description": "optimize Huffman coding tables"
+                                },
+                                "mozjpeg": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use mozjpeg defaults, equivalent to { trellisQuantisation: true, overshootDeringing: true, optimizeScans: true, quantisationTable: 3 }"
+                                },
+                                "trellisQuantisation": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "apply trellis quantisation"
+                                },
+                                "overshootDeringing": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "apply overshoot deringing"
+                                },
+                                "optimizeScans": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "optimize progressive scans"
+                                },
+                                "quantisationTable": {
+                                  "type": "number",
+                                  "default": 0,
+                                  "description": "set quantization table (0-8)"
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "quality": {
+                                  "type": "integer",
+                                  "default": 80,
+                                  "description": "quality, integer 1-100"
+                                },
+                                "alphaQuality": {
+                                  "type": "integer",
+                                  "default": 100,
+                                  "description": "quality of alpha layer, integer 1-100"
+                                },
+                                "lossless": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use lossless compression mode"
+                                },
+                                "nearLossless": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use near_lossless compression mode"
+                                },
+                                "smartSubsample": {
+                                  "type": "boolean",
+                                  "default": false,
+                                  "description": "use smart_subsample mode"
+                                },
+                                "preset": {
+                                  "type": "string",
+                                  "enum": [
+                                    "default",
+                                    "photo",
+                                    "picture",
+                                    "drawing",
+                                    "icon",
+                                    "text"
+                                  ],
+                                  "default": "default",
+                                  "description": "named preset for preprocessing/filtering, one of: default, photo, picture, drawing, icon, text"
+                                },
+                                "effort": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 6,
+                                  "default": 4,
+                                  "description": "CPU effort, between 0 (fastest) and 6 (slowest)"
+                                }
+                              },
+                              "additionalProperties": false
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "format"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "input",
+                    "prompt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "{accessDomainName}",
+      "description": "Your server",
+      "variables": {
+        "accessDomainName": {
+          "default": "http://localhost:3000",
+          "description": "The domain name of the server, protocol included, port optional"
+        }
+      }
+    }
+  ]
+}
