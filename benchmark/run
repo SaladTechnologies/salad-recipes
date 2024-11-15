@@ -87,7 +87,8 @@ getContainerGroup $org $project $container_group | jq . > $test_config_output
 ./scripts/start-container-group-and-wait-for-replicas --org $org --project $project --container-group $container_group --replicas $replicas
 
 # Monitor the number of nodes in the container group in the background, outputting to a CSV file
-./scripts/monitor-node-count --org $org --project $project --container-group $container_group --output $node_count_output &
+nohup ./scripts/monitor-node-count --org $org --project $project --container-group $container_group --output $node_count_output &
+monitor_pid=$!
 
 # Run the benchmark
 k6 run --out json=$output $benchmark_file
@@ -99,3 +100,6 @@ stopContainerGroup $org $project $container_group
 # This also creates a summary.json file with the summary of the results
 processed_filename=$(echo $output | sed 's/\.jsonl$/.json/')
 node benchmark/process-results.js $output $processed_filename
+
+# Stop the node count monitor
+kill $monitor_pid
