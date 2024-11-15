@@ -42,6 +42,8 @@ export default function () {
     headers: {
       "Content-Type": "application/json",
     },
+    timeout: '100s',
+    discardResponseBodies: !saveImages,
   };
 
   if (SALAD_API_KEY) {

@@ -2,10 +2,11 @@ const fs = require("fs/promises");
 const path = require("path");
 
 const usage = `
-Usage: node benchmark/process-results.js <raw-results-file> [output-results-file]
+Usage: node benchmark/process-results.js <raw-results-file> [output-results-file] [price-file]
 
   raw-results-file: The file containing the raw results from the k6 run, in JSON Lines format
   [output-results-file]: The file to write the processed results to. Defaults to results.json in the same directory as the raw-results-file
+  [price-file]: The file containing the prices for the resources used in the test. Defaults to benchmark/prices.json
 `;
 
 const rawResultsFile = process.argv[2];
@@ -17,8 +18,13 @@ if (!rawResultsFile) {
 
 const outputResultsFile =
   process.argv[3] || rawResultsFile.replace(/\.jsonl?$/, ".json");
-
 const summaryFile = rawResultsFile.replace(/\.jsonl?$/, "-summary.json");
+const nodeCountCSV = rawResultsFile.replace(/\.jsonl?$/, "-node-count.csv");
+const testConfigFile = rawResultsFile.replace(/\.jsonl?$/, "-test-config.json");
+const priceFile = process.argv[3] || 'benchmark/prices.json';
+
+const vCPUPrice = 0.004;
+const memGBPrice = 0.001;
 
 function getRollingAverage(data, period, metric) {
   const rolling = [];
@@ -41,11 +47,52 @@ function getRollingAverage(data, period, metric) {
   return rolling;
 }
 
-async function processResults() {
-  const data = await fs.readFile(rawResultsFile, "utf-8");
-  const lines = data.split("\n");
+function getGPUNameByID(prices, id) {
+  return prices.items.find((item) => item.id === id).name;
+}
 
-  const allResults = lines
+function makePriceMap(prices) {
+  const priceMap = {};
+  for (const gpuObject of prices.items) {
+    const gpuName = gpuObject.name.toLowerCase();
+    priceMap[gpuName] = {};
+    for (const priceObject of gpuObject.prices) {
+      priceMap[gpuName][priceObject.priority] = parseFloat(priceObject.price);
+    }
+  }
+  return priceMap;
+}
+
+const getHourlyPrice = (priceMap, gpu, priority, vCPUs, memGB, maxNodes) => {
+  if (!priceMap[gpu]) {
+    throw new Error(`Unknown GPU: ${gpu}`);
+  }
+  if (!priceMap[gpu][priority]) {
+    throw new Error(`Unknown priority: ${priority}`);
+  }
+  const hourlyPrice =
+    (parseFloat(priceMap[gpu][priority]) +
+      vCPUs * vCPUPrice +
+      memGB * memGBPrice) *
+    maxNodes;
+  return hourlyPrice;
+};
+
+async function processResults() {
+  const rawData = await fs.readFile(rawResultsFile, "utf-8");
+  const rawLines = rawData.split("\n");
+
+  const nodeCounts = await fs.readFile(nodeCountCSV, "utf-8");
+  const nodeLines = nodeCounts.split("\n");
+
+  const testConfigContents = await fs.readFile(testConfigFile, "utf-8");
+  const testConfig = JSON.parse(testConfigContents);
+
+  const priceData = await fs.readFile(priceFile, "utf-8");
+  const prices = JSON.parse(priceData);
+  const priceMap = makePriceMap(prices);
+
+  const allResults = rawLines
     .map((line) => {
       if (!line) {
         return null;
@@ -54,7 +101,24 @@ async function processResults() {
     })
     .filter(Boolean);
 
-  const metrics = ["http_req_duration", "http_req_failed", "vus"];
+  const nodeResults = nodeLines.map((line) => {
+    if (!line) {
+      return null;
+    }
+    const [time, count] = line.split(",");
+    return {
+      type: "Point",
+      metric: "node_count",
+      data: {
+        time: new Date(time * 1000).toISOString(),
+        value: parseInt(count),
+      },
+    };
+  }).filter(Boolean);
+
+  allResults.push(...nodeResults);
+
+  const metrics = ["http_req_duration", "http_req_failed", "vus", "node_count"];
   const rawResults = allResults
     .filter(
       (result) =>
@@ -62,7 +126,7 @@ async function processResults() {
         result.metric &&
         metrics.includes(result.metric)
     )
-    .sort((a, b) => a.data.time - b.data.time);
+    .sort((a, b) => new Date(a.data.time) - new Date(b.data.time));
 
   const firstTime = new Date(rawResults[0].data.time);
   const results = rawResults.map((result) => ({
@@ -72,6 +136,7 @@ async function processResults() {
   }));
 
   const smallResults = {
+    resources: testConfig.container.resources,
     metric: results.map((r) => r.metric),
     timeFromStart: results.map((r) => r.timeFromStart),
     value: results.map((r) => r.value),
@@ -139,7 +204,32 @@ async function processResults() {
     .filter((r, i) => vus[i - 1]?.value !== r.value)
     .map((r) => ({ ...r, timeFromStart: r.timeFromStart / 1000 }));
 
+  const minnodeCount = Math.min(...nodeResults.map((r) => r.data.value));
+  const maxnodeCount = Math.max(...nodeResults.map((r) => r.data.value));
+  const nodeCountFrequency = nodeResults.reduce((acc, val) => {
+    const count = acc[val.data.value] || 0;
+    acc[val.data.value] = count + 1;
+    return acc;
+  }, {});
+  const nodeCountMode = Object.entries(nodeCountFrequency).reduce(
+    (acc, [value, count]) => {
+      if (count > acc.count) {
+        return { value, count };
+      }
+      return acc;
+    },
+    { value: null, count: 0 }
+  );
+
+  const gpuName = getGPUNameByID(prices, testConfig.container.resources.gpu_classes[0]).toLowerCase();
+  const hourlyCost = getHourlyPrice(priceMap,  gpuName, "batch", testConfig.container.resources.cpu, testConfig.container.resources.memory / 1024, maxnodeCount);
+  console.log(`Hourly cost: $${hourlyCost}`);
+  const bestCostPerRequest = hourlyCost / (maxThroughput * 60 * 60);
+  const bestRequestsPerDollar = 1 / bestCostPerRequest;
+
   const summary = {
+    recipeName: path.basename(path.dirname(path.dirname(rawResultsFile))),
+    resources: {...testConfig.container.resources, gpu_classes: [gpuName]},
     lengthOfBenchmarkSeconds,
     numRequests,
     numFailedRequests,
@@ -150,10 +240,16 @@ async function processResults() {
     percentile90DurationSeconds,
     avgThroughput,
     maxThroughput,
-    timeOfMaxThroughput: timeOfMaxThroughputSeconds,
+    timeOfMaxThroughputSeconds,
     vusAtMaxThroughput,
+    minnodeCount,
+    maxnodeCount,
+    nodeCountMode: parseInt(nodeCountMode.value),
     minVUs,
     maxVUs,
+    requestsPerDollar: bestRequestsPerDollar,
+    hourlyCost,
+    bestCostPerRequest,
     vuTimeline,
   };
 

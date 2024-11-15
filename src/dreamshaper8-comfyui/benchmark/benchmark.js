@@ -9,9 +9,9 @@ export const options = {
       executor: "ramping-vus",
       startVUs: 10,
       stages: [
-        { duration: "15m", target: 10 }, // Stay at 10 users for 15 minutes
-        { duration: "15m", target: 18 }, // Ramp up to 18 users over 15 minutes
-        { duration: "30m", target: 18 }, // Stay at 18 users for 30 minutes
+        { duration: "15m", target: 10 }, 
+        { duration: "15m", target: 25 }, 
+        { duration: "30m", target: 25 },
       ],
     },
   },
@@ -36,6 +36,8 @@ export default function () {
     headers: {
       "Content-Type": "application/json",
     },
+    timeout: '100s',
+    discardResponseBodies: !saveImages,
   };
 
   if (SALAD_API_KEY) {

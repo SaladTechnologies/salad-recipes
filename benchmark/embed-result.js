@@ -56,6 +56,11 @@ function getPriorityLevels(priceMap) {
   return Object.keys(pricesByPriority);
 }
 
+function getGPUNameByID(prices, id) {
+  return prices.items.find((item) => item.id === id).name;
+}
+
+
 async function render({
   title,
   plotBackgroundColor = "#ffffff",
@@ -88,7 +93,7 @@ async function render({
     title = dataUrl;
   }
 
-  gpu = gpu.toLowerCase();
+  
   const [benchmarkData, pricesInfo] = await Promise.all([
     fetch(dataUrl),
     fetch(pricesUrl),
@@ -102,6 +107,7 @@ async function render({
   const vus = [];
   const duration = [];
   const allErrors = [];
+  const nodeCounts = [];
 
   for (let i = 0; i < results.timeFromStart.length; i++) {
     if (results.metric[i] === "vus") {
@@ -122,8 +128,25 @@ async function render({
         timeFromStart: results.timeFromStart[i],
         value: results.value[i],
       });
+    } else if (results.metric[i] === "node_count") {
+      nodeCounts.push({
+        timeFromStart: results.timeFromStart[i],
+        value: results.value[i],
+      });
     }
   }
+
+  if (nodeCounts.length > 0) {
+    maxNodes = Math.max(...nodeCounts.map((d) => d.value));
+  }
+
+  if (results.resources) {
+    vCPUs = results.resources.cpu;
+    memGB = results.resources.memory / 1024;
+    gpu = getGPUNameByID(priceData, results.resources.gpu_classes[0]);
+  }
+
+  gpu = gpu.toLowerCase();
 
   const rollingDuration = getRollingAverage(
     duration,
@@ -243,7 +266,19 @@ async function render({
     yaxis: "y3",
   };
 
-  const data = [vusLine, durationLine, throughputLine, errorsLine];
+  const nodeCountLine = {
+    x: nodeCounts.map((d) => d.timeFromStart),
+    y: nodeCounts.map((d) => d.value),
+    hovertemplate: `%{text} | %{y} Nodes`,
+    text: nodeCounts.map((d) => msToTime(d.timeFromStart)),
+    type: "scattergl",
+    mode: "lines",
+    name: "Node Count",
+    line: { color: "purple", width: lineWidth },
+    yaxis: "y5",
+  };
+
+  const data = [vusLine, durationLine, throughputLine, errorsLine, nodeCountLine];
 
   /**
    * Calculate summary statistics
@@ -272,13 +307,13 @@ async function render({
       vusLabel
     ];
   const sortedThroughput = rollingThroughput.map((d) => d[throughputLabel]).sort((a, b) => a - b);
-  const p90Throughput = sortedThroughput[Math.floor(sortedThroughput.length * 0.9)];
+  const p10Throughput = sortedThroughput[Math.floor(sortedThroughput.length * 0.1)];
 
 
 
   const subtitle = `Total Requests: ${numRequests}, Success Rate: ${(
     successRate * 100
-  ).toFixed(2)}%`;
+  ).toFixed(2)}%<br><a href="${dataUrl}" target="_blank">View Data</a>`;
 
   const getPerformanceAtNVUs = (numVUs, priority = defaultPriority) => {
     // We find the time slice during which the number of VUs equals numVUs
@@ -319,13 +354,13 @@ async function render({
     const p90ResponseTime = sortedDuration[Math.floor(sortedDuration.length * 0.9)];
 
     const sortedThroughput = throughputSlice.map((d) => d[throughputLabel]).sort((a, b) => a - b);
-    const p90Throughput = sortedThroughput[Math.floor(sortedThroughput.length * 0.9)];
+    const p10Throughput = sortedThroughput[Math.floor(sortedThroughput.length * 0.1)];
 
     return {
       avgResponseTime,
       p90ResponseTime,
       avgThroughput,
-      p90Throughput,
+      p10Throughput,
       costPerImage,
       imagesPerDollar,
     };
@@ -333,11 +368,13 @@ async function render({
 
   const tenMinutes = 10 * 60 * 1000;
 
+  const plotHeightScale = 1.3;
+
   /**
    * Plotly layout
    */
   const layout = {
-    title: { text: title, subtitle: { text: subtitle } },
+    title: { text: title, subtitle: { text: subtitle }, y: 0.97 },
 
     plot_bgcolor: plotBackgroundColor,
     font: { family: font, size: 14 },
@@ -370,7 +407,7 @@ async function render({
       title: vusLabel,
       side: "left",
       color: vusColor,
-      range: [0, Math.max(...vus.map((d) => d[vusLabel])) * 1.3],
+      range: [0, Math.max(...vus.map((d) => d[vusLabel])) * plotHeightScale],
       showgrid: false,
       linewidth: lineWidth,
     },
@@ -383,7 +420,7 @@ async function render({
       color: durationColor,
       range: [
         0,
-        Math.max(...rollingDuration.map((d) => d[durationLabel])) * 1.3,
+        Math.max(...rollingDuration.map((d) => d[durationLabel])) * plotHeightScale,
       ],
       showgrid: false,
       linewidth: lineWidth,
@@ -397,7 +434,7 @@ async function render({
       color: throughputColor,
       range: [
         0,
-        Math.max(...rollingThroughput.map((d) => d[throughputLabel])) * 1.3,
+        Math.max(...rollingThroughput.map((d) => d[throughputLabel])) * plotHeightScale,
       ],
       showgrid: false,
       linewidth: lineWidth,
@@ -413,6 +450,15 @@ async function render({
       showgrid: false,
       linewidth: lineWidth,
     },
+    yaxis5: {
+      title: "Node Count",
+      side: "left",
+      anchor: "free",
+      autoshift: true,
+      overlaying: "y",
+      color: "purple",
+      range: [0, Math.max(...nodeCounts.map((d) => d.value)) * plotHeightScale],
+    }
   };
   Plotly.newPlot(div, data, layout, { displayLogo: false, responsive: true });
 
@@ -438,6 +484,11 @@ async function render({
       const currentPriority =
         document.getElementById("prioritySelector")?.value || defaultPriority;
 
+      let worstTimeText = `Worst Response Time: ${worstResponseTime.toFixed(2)}s`
+      if (worstResponseTime.toFixed(2) === '100.00') {
+        worstTimeText += " (Timeout)";
+      }
+
       const summaryText = [
         `Max Running Nodes: ${maxNodes}`,
         `Total Cost of ${maxNodes} Replicas at "${currentPriority}" priority: $${getHourlyPrice(
@@ -445,7 +496,7 @@ async function render({
         ).toFixed(2)}/hr`,
         `Reliability: ${(successRate * 100).toFixed(3)}% of Requests Succeeded`,
         `Best Response Time: ${bestResponseTime.toFixed(2)}s`,
-        `Worst Response Time: ${worstResponseTime.toFixed(2)}s`,
+        worstTimeText,
         `Best Throughput: ${bestThroughput.toFixed(
           2
         )} req/s at ${vusAtMaxThroughput} VUs`,
@@ -468,7 +519,7 @@ async function render({
           `Average Response Time: ${performance.avgResponseTime.toFixed(2)}s`,
           `90th Percentile Response Time: ${performance.p90ResponseTime.toFixed(2)}s`,
           `Average Throughput: ${performance.avgThroughput.toFixed(2)} req/s`,
-          `90th Percentile Throughput: ${performance.p90Throughput.toFixed(2)} req/s`,
+          `10th Percentile Throughput: ${performance.p10Throughput.toFixed(2)} req/s`,
           `Cost per Image: $${performance.costPerImage.toFixed(5)}`,
           `Images per Dollar: ${performance.imagesPerDollar.toFixed(2)}`,
         ];
@@ -489,7 +540,7 @@ async function render({
         `Average Response Time: ${avgResponseTime.toFixed(2)}s`,
         `90th Percentile Response Time: ${p90ResponseTime.toFixed(2)}s`,
         `Average Throughput: ${avgThroughput.toFixed(2)} req/s`,
-        `90th Percentile Throughput: ${p90Throughput.toFixed(2)} req/s`,
+        `10th Percentile Throughput: ${p10Throughput.toFixed(2)} req/s`,
         `Cost per Image: $${(
           getHourlyPrice(currentPriority) /
           avgThroughput /

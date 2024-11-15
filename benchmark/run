@@ -4,6 +4,8 @@ set -e
 
 usage="Usage: ./$0 --org <org> --project <project> [--container-group <container-group>] --replicas <replicas> --recipe <recipe> [--output <output>]"
 
+
+# Parse command line arguments
 while [ "$1" != "" ]; do
   case $1 in
   --org)
@@ -43,6 +45,7 @@ if [ -z "$org" ] || [ -z "$project" ]  || [ -z "$replicas" ] || [ -z "$recipe" ]
   exit 1
 fi
 
+# Check that the SALAD_API_KEY environment variable is set
 if [ -z "$SALAD_API_KEY" ]; then
   echo "Please set the SALAD_API_KEY environment variable"
   exit 1
@@ -55,6 +58,7 @@ if [ ! -f "$benchmark_file" ]; then
   exit 1
 fi
 
+# Load the salad api utility functions
 source scripts/salad-api
 
 if [ -z "$output" ]; then
@@ -63,20 +67,35 @@ else
   output=$(dirname $benchmark_file)/$output
 fi
 
+node_count_output=$(echo $output | sed 's/\.jsonl$/-node-count.csv/')
+test_config_output=$(echo $output | sed 's/\.jsonl$/-test-config.json/')
+
+# If the container group is not specified, assume it is the same as the recipe name
 if [ -z "$container_group" ]; then
-  # Normalize recipe name to /[^a-z0-9]/ig, '-'
+  # Normalize recipe name to match container group name format
   container_group=$(echo $recipe | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')
+  echo "Assuming Container Group: $container_group"
 fi
 
 export ACCESS_DOMAIN_NAME="https://$(getAccessDomainName $org $project $container_group)"
 echo "Access domain name: $ACCESS_DOMAIN_NAME"
 
+# Get the container group configuration and save it to a file
+getContainerGroup $org $project $container_group | jq . > $test_config_output
+
+# Start the container group and wait for the replicas to be ready
 ./scripts/start-container-group-and-wait-for-replicas --org $org --project $project --container-group $container_group --replicas $replicas
 
+# Monitor the number of nodes in the container group in the background, outputting to a CSV file
+./scripts/monitor-node-count --org $org --project $project --container-group $container_group --output $node_count_output &
+
+# Run the benchmark
 k6 run --out json=$output $benchmark_file
 
+# Stop the container group
 stopContainerGroup $org $project $container_group
 
 # the jsonl file will be processed to a file with the same name, but .json
+# This also creates a summary.json file with the summary of the results
 processed_filename=$(echo $output | sed 's/\.jsonl$/.json/')
 node benchmark/process-results.js $output $processed_filename
