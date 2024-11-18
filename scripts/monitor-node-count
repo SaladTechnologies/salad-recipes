@@ -42,6 +42,9 @@ fi
 
 source scripts/salad-api
 
+# Reset the output file
+echo "" > $output
+
 # Loop until interrupted or the container group is stopped
 while true; do
   currentState=$(getCurrentStatus $org $project $container_group)

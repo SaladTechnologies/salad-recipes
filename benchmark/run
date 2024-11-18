@@ -90,6 +90,8 @@ getContainerGroup $org $project $container_group | jq . > $test_config_output
 nohup ./scripts/monitor-node-count --org $org --project $project --container-group $container_group --output $node_count_output &
 monitor_pid=$!
 
+trap "kill $monitor_pid" EXIT INT TERM
+
 # Run the benchmark
 k6 run --out json=$output $benchmark_file
 
@@ -101,5 +103,3 @@ stopContainerGroup $org $project $container_group
 processed_filename=$(echo $output | sed 's/\.jsonl$/.json/')
 node benchmark/process-results.js $output $processed_filename
 
-# Stop the node count monitor
-kill $monitor_pid
