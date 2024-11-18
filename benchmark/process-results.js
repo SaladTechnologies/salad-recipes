@@ -18,10 +18,11 @@ if (!rawResultsFile) {
 
 const outputResultsFile =
   process.argv[3] || rawResultsFile.replace(/\.jsonl?$/, ".json");
+
 const summaryFile = rawResultsFile.replace(/\.jsonl?$/, "-summary.json");
 const nodeCountCSV = rawResultsFile.replace(/\.jsonl?$/, "-node-count.csv");
 const testConfigFile = rawResultsFile.replace(/\.jsonl?$/, "-test-config.json");
-const priceFile = process.argv[3] || 'benchmark/prices.json';
+const priceFile = process.argv[4] || 'benchmark/prices.json';
 
 const vCPUPrice = 0.004;
 const memGBPrice = 0.001;
@@ -223,7 +224,6 @@ async function processResults() {
 
   const gpuName = getGPUNameByID(prices, testConfig.container.resources.gpu_classes[0]).toLowerCase();
   const hourlyCost = getHourlyPrice(priceMap,  gpuName, "batch", testConfig.container.resources.cpu, testConfig.container.resources.memory / 1024, maxnodeCount);
-  console.log(`Hourly cost: $${hourlyCost}`);
   const bestCostPerRequest = hourlyCost / (maxThroughput * 60 * 60);
   const bestRequestsPerDollar = 1 / bestCostPerRequest;
 
@@ -258,4 +258,7 @@ async function processResults() {
   await fs.writeFile(outputResultsFile, JSON.stringify(smallResults, null, 2));
 }
 
-processResults();
+processResults().catch((e) => {
+  console.error(e);
+  process.exit(1);
+})

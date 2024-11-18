@@ -1,0 +1,49 @@
+#! /bin/bash
+
+usage="Usage: $0 <summary-file> <blog-file>"
+
+if [ "$#" -ne 2 ]; then
+  echo $usage
+  exit 1
+fi
+summary_file=$1
+blog_file=$2
+
+api_url=https://api.anthropic.com/v1/messages
+api_key=$ANTHROPIC_API_KEY
+if [ -z "$api_key" ]; then
+  echo "Please set the ANTHROPIC_API_KEY environment variable"
+  exit 1
+fi
+model_id=claude-3-5-sonnet-20241022
+anthropic_version=2023-06-01
+
+system_prompt=$(jq -R -s '{"text": .}' benchmark/claude-prompt.md | jq .text)
+summary=$(jq @json < $summary_file)
+
+api_body=$(cat <<EOF
+{
+  "model": "$model_id",
+  "system": $system_prompt,
+  "max_tokens": 1024,
+  "temperature": 0,
+  "messages": [
+    {
+      "role": "user",
+      "content": $summary
+    }
+  ]
+}
+EOF
+)
+
+response=$(
+  curl -s -X POST \
+    -H "x-api-key: $api_key" \
+    -H "Content-Type: application/json" \
+    -H "anthropic-version: $anthropic_version" \
+    -d "$api_body" \
+    $api_url
+)
+
+echo $response | jq -r .content[0].text > $blog_file

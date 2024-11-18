@@ -69,6 +69,7 @@ fi
 
 node_count_output=$(echo $output | sed 's/\.jsonl$/-node-count.csv/')
 test_config_output=$(echo $output | sed 's/\.jsonl$/-test-config.json/')
+summary_output=$(echo $output | sed 's/\.jsonl$/-summary.json/')
 
 # If the container group is not specified, assume it is the same as the recipe name
 if [ -z "$container_group" ]; then
@@ -103,3 +104,9 @@ stopContainerGroup $org $project $container_group
 processed_filename=$(echo $output | sed 's/\.jsonl$/.json/')
 node benchmark/process-results.js $output $processed_filename
 
+if [ -z $ANTHROPIC_API_KEY ]; then
+  echo "Skipping writing blog post because ANTHROPIC_API_KEY environment variable is not set"
+  exit 0
+fi
+
+./benchmark/write-blog $summary_output "$(dirname $benchmark_file)/blog.md"
