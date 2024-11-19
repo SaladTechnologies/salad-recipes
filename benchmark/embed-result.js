@@ -507,10 +507,19 @@ async function render({
         statsText.appendChild(li);
       }
 
-      for (let numVUs of [minVUs, maxVUs]) {
+      const vuBuckets = [minVUs, maxVUs];
+      if (vusAtMaxThroughput !== minVUs && vusAtMaxThroughput !== maxVUs) {
+        vuBuckets.push(vusAtMaxThroughput);
+      }
+      vuBuckets.sort((a, b) => a - b);
+
+      for (let numVUs of vuBuckets) {
         const performance = getPerformanceAtNVUs(numVUs, currentPriority);
         const performanceTitle = document.createElement("li");
         performanceTitle.textContent = `Performance at ${numVUs} VUs`;
+        if (numVUs === vusAtMaxThroughput) {
+          performanceTitle.textContent += " (Best Throughput)";
+        }
         const performanceList = document.createElement("ul");
         performanceTitle.appendChild(performanceList);
         statsText.appendChild(performanceTitle);
