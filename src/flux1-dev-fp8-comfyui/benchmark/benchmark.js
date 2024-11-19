@@ -6,11 +6,17 @@ export const options = {
   scenarios: {
     ramp_up_users: {
       executor: "ramping-vus",
-      startVUs: 10,
+      startVUs: 7,
       stages: [
-        { duration: "30m", target: 10 },
-        { duration: "1m", target: 11 },
-        { duration: "29m", target: 11 },
+        { duration: "20m", target: 8 },
+        { duration: "3m", target: 9 },
+        { duration: "20m", target: 9 },
+        { duration: "3m", target: 10 },
+        { duration: "20m", target: 10 },
+        { duration: "3m", target: 11 },
+        { duration: "20m", target: 11 },
+        { duration: "3m", target: 12 },
+        { duration: "20m", target: 12 },
       ],
     },
   },
