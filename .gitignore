@@ -2,3 +2,6 @@
 comfyui-api
 **/benchmark/*.jsonl
 **/benchmark/images/
+**/benchmark/*.csv
+**/benchmark/*-test-config.json
+nohup.out

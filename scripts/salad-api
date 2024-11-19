@@ -13,10 +13,7 @@ function getCurrentStatus() {
   org=$1
   project=$2
   container_group=$3
-  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
-  cg=$(curl -s -X GET \
-    -H "Salad-Api-Key: $SALAD_API_KEY" \
-    $baseURL)
+  cg=$(getContainerGroup $org $project $container_group)
   status=$(echo $cg | jq -r '.current_state.status')
   echo $status
 }
@@ -45,12 +42,7 @@ function getConfiguredReplicas() {
   org=$1
   project=$2
   container_group=$3
-  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
-  cg=$(
-    curl -s -X GET \
-      -H "Salad-Api-Key: $SALAD_API_KEY" \
-      $baseURL
-  )
+  cg=$(getContainerGroup $org $project $container_group)
   replicas=$(echo $cg | jq -r '.replicas')
   echo $replicas
 }
@@ -74,12 +66,7 @@ function getRunningReplicas() {
   org=$1
   project=$2
   container_group=$3
-  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
-  cg=$(
-    curl -s -X GET \
-      -H "Salad-Api-Key: $SALAD_API_KEY" \
-      $baseURL
-  )
+  cg=$(getContainerGroup $org $project $container_group)
   running=$(echo $cg | jq -r '.current_state.instance_status_counts.running_count')
   echo $running
 }
@@ -88,12 +75,7 @@ function getAccessDomainName() {
   org=$1
   project=$2
   container_group=$3
-  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
-  cg=$(
-    curl -s -X GET \
-      -H "Salad-Api-Key: $SALAD_API_KEY" \
-      $baseURL
-  )
+  cg=$(getContainerGroup $org $project $container_group)
   dns=$(echo $cg | jq -r '.networking.dns')
   echo $dns
 }
@@ -106,5 +88,22 @@ function getAllPrices() {
       -H "Salad-Api-Key: $SALAD_API_KEY" \
       $baseURL
   )
+  echo $data
+}
+
+function getContainerGroup() {
+  org=$1
+  project=$2
+  container_group=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers/${container_group}"
+  data=$(
+    curl -s -X GET \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      $baseURL
+  )
+  if [ -z "$data" ]; then
+    echo "Container group $container_group not found"
+    exit 1
+  fi
   echo $data
 }

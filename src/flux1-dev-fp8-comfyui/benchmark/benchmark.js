@@ -6,10 +6,17 @@ export const options = {
   scenarios: {
     ramp_up_users: {
       executor: "ramping-vus",
-      startVUs: 10,
+      startVUs: 7,
       stages: [
-        { duration: "30m", target: 10 },
-        { duration: "30m", target: 11 },
+        { duration: "20m", target: 8 },
+        { duration: "3m", target: 9 },
+        { duration: "20m", target: 9 },
+        { duration: "3m", target: 10 },
+        { duration: "20m", target: 10 },
+        { duration: "3m", target: 11 },
+        { duration: "20m", target: 11 },
+        { duration: "3m", target: 12 },
+        { duration: "20m", target: 12 },
       ],
     },
   },
@@ -19,12 +26,11 @@ export const options = {
 const { SALAD_API_KEY, ACCESS_DOMAIN_NAME, SAVE_IMAGES } = __ENV;
 
 const saveImages = SAVE_IMAGES === "true";
-const url = `${ACCESS_DOMAIN_NAME}/workflow/sd3.5-large/txt2img`;
+const url = `${ACCESS_DOMAIN_NAME}/workflow/text2img`;
 
 const payload = JSON.stringify({
   input: {
     prompt: "a leafy green spaceship from the distant future",
-    steps: 20,
   },
 });
 

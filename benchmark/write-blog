@@ -1,0 +1,70 @@
+#! /bin/bash
+
+usage="Usage: $0 <summary-file> [summary-file2] <blog-file>"
+
+if [ "$#" -lt 2 ]; then
+  echo $usage
+  exit 1
+fi
+
+summaries=($@)
+blog_file=${summaries[-1]}
+unset summaries[-1]
+
+api_url=https://api.anthropic.com/v1/messages
+api_key=$ANTHROPIC_API_KEY
+if [ -z "$api_key" ]; then
+  echo "Please set the ANTHROPIC_API_KEY environment variable"
+  exit 1
+fi
+model_id=claude-3-5-sonnet-20241022
+anthropic_version=2023-06-01
+
+system_prompt=$(jq -R -s '{"text": .}' benchmark/claude-prompt.md | jq .text)
+summary="[]"
+for summary_file in "${summaries[@]}"; do
+  if [ ! -f "$summary_file" ]; then
+    echo "Error: Summary file not found: $summary_file" >&2
+    exit 1
+  fi
+
+  summary=$(jq --argjson file "$(cat "$summary_file")" '. + [$file]' <<<"$summary")
+done
+
+# Now we want to stringify it, pretty-printed
+summary=$(echo $summary | jq @json)
+
+api_body=$(
+  cat <<EOF
+{
+  "model": "$model_id",
+  "system": $system_prompt,
+  "max_tokens": 2048,
+  "temperature": 0.1,
+  "messages": [
+    {
+      "role": "user",
+      "content": $summary
+    }
+  ]
+}
+EOF
+)
+
+response=$(
+  curl -s -X POST \
+    -H "x-api-key: $api_key" \
+    -H "Content-Type: application/json" \
+    -H "anthropic-version: $anthropic_version" \
+    -d "$api_body" \
+    $api_url
+)
+
+# If there is no .content, .content[0] and .content[0].text field, then the API call failed
+if [ -z "$(echo $response | jq -r .content[0].text)" ]; then
+  echo "Error: API call failed" >&2
+  echo $response | jq . >&2
+  exit 1
+fi
+
+echo $response | jq -r .content[0].text > $blog_file
