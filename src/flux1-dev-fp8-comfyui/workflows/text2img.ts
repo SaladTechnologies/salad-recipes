@@ -183,6 +183,8 @@ function generateWorkflow(input: InputType): Record<string, ComfyNode> {
 const workflow: Workflow = {
   RequestSchema,
   generateWorkflow,
+  summary: "Text to Image",
+  description: "Generate an image from a text prompt",
 };
 
 export default workflow;

@@ -318,7 +318,7 @@
                   },
                   "id": {
                     "type": "string",
-                    "default": "8512694d-5f89-42cc-8f87-b321fd862841"
+                    "default": "8d6ac39c-a9dc-4bc8-8ce1-0477ed262660"
                   },
                   "webhook": {
                     "type": "string"
@@ -836,7 +836,8 @@
     },
     "/workflow/text2img": {
       "post": {
-        "summary": "text2img",
+        "summary": "Text to Image",
+        "description": "Generate an image from a text prompt",
         "requestBody": {
           "content": {
             "application/json": {
@@ -845,7 +846,7 @@
                 "properties": {
                   "id": {
                     "type": "string",
-                    "default": "1de00b04-04af-4afc-b8bd-81f7fee08b2e"
+                    "default": "2d0045c0-fda1-4afb-b5d8-d03f346e5922"
                   },
                   "input": {
                     "type": "object",
@@ -870,7 +871,7 @@
                       },
                       "seed": {
                         "type": "integer",
-                        "default": 295583037416367,
+                        "default": 704628542192078,
                         "description": "Seed for random number generation"
                       },
                       "steps": {
