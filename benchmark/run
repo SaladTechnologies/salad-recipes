@@ -70,6 +70,7 @@ fi
 node_count_output=$(echo $output | sed 's/\.jsonl$/-node-count.csv/')
 test_config_output=$(echo $output | sed 's/\.jsonl$/-test-config.json/')
 summary_output=$(echo $output | sed 's/\.jsonl$/-summary.json/')
+blog_output=$(echo $output | sed 's/\.jsonl$/.html/')
 
 # If the container group is not specified, assume it is the same as the recipe name
 if [ -z "$container_group" ]; then
@@ -109,4 +110,4 @@ if [ -z $ANTHROPIC_API_KEY ]; then
   exit 0
 fi
 
-./benchmark/write-blog $summary_output "$(dirname $benchmark_file)/blog.md"
+./benchmark/write-blog $summary_output $blog_output

@@ -51,6 +51,8 @@ api_body=$(
 EOF
 )
 
+echo "Writing blog with $model_id..."
+
 response=$(
   curl -s -X POST \
     -H "x-api-key: $api_key" \

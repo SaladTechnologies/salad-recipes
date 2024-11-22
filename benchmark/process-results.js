@@ -108,7 +108,7 @@ function condenseRawData(k6Lines, nodeCountLines) {
 
   allResults.push(...nodeResults);
 
-  const metrics = ["http_req_duration", "http_req_failed", "vus", "node_count"];
+  const metrics = ["http_req_duration", "http_req_failed", "vus", "node_count", "inputTokens", "outputTokens"];
   const rawResults = allResults
     .filter(
       (result) =>
@@ -307,7 +307,7 @@ async function processResults() {
   };
 
   console.log(`Writing data to ${outputResultsFile}`);
-  await fs.writeFile(outputResultsFile, JSON.stringify(smallResults, null, 2));
+  await fs.writeFile(outputResultsFile, JSON.stringify(smallResults));
 
   // Now we generate a summary that can be passed to an llm in order to generate
   // a blog post
