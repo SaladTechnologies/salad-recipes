@@ -117,7 +117,7 @@ trap "kill $monitor_pid" EXIT INT TERM
 k6 run --out json=$output $benchmark_file
 
 # Stop the container group
-# stopContainerGroup $org $project $container_group
+stopContainerGroup $org $project $container_group
 
 # the jsonl file will be processed to a file with the same name, but .json
 # This also creates a summary.json file with the summary of the results
