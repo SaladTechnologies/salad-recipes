@@ -12,7 +12,7 @@
         },
         "command": []
     },
-    "autostart_policy": false,
+    "autostart_policy": true,
     "restart_policy": "always",
     "replicas": 3,
     "networking": {
