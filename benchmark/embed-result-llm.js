@@ -240,7 +240,7 @@ async function render({
     y: vus.map((d) => d[vusLabel]),
     hovertemplate: `%{text} | %{y} VUs`,
     text: vus.map((d) => msToTime(d.timeFromStart)),
-    type: "scattergl",
+    type: "scatter",
     mode: "lines",
     name: vusLabel,
     line: { color: vusColor, width: lineWidth },
@@ -252,7 +252,7 @@ async function render({
     y: errors.map((d) => d.value),
     hovertemplate: `%{text} | %{y:.2f}`,
     text: errors.map((d) => msToTime(d.timeFromStart)),
-    type: "scattergl",
+    type: "scatter",
     mode: "lines",
     name: errorsLabel,
     line: { color: errorsColor, width: lineWidth },
@@ -264,7 +264,7 @@ async function render({
     y: rollingDuration.map((d) => d[durationLabel]),
     hovertemplate: `%{text} | %{y:.2f}s`,
     text: rollingDuration.map((d) => msToTime(d.timeFromStart)),
-    type: "scattergl",
+    type: "scatter",
     mode: "lines",
     name: durationLabel,
     line: { color: durationColor, width: lineWidth },
@@ -276,7 +276,7 @@ async function render({
     y: rollingThroughput.map((d) => d[throughputLabel]),
     hovertemplate: `%{text}`,
     text: rollingThroughput.map(getThroughputLabel),
-    type: "scattergl",
+    type: "scatter",
     mode: "lines",
     name: throughputLabel,
     line: { color: throughputColor, width: lineWidth },
@@ -288,7 +288,7 @@ async function render({
     y: nodeCounts.map((d) => d.value),
     hovertemplate: `%{text} | %{y} Nodes`,
     text: nodeCounts.map((d) => msToTime(d.timeFromStart)),
-    type: "scattergl",
+    type: "scatter",
     mode: "lines",
     name: "Node Count",
     line: { color: "purple", width: lineWidth },
@@ -376,8 +376,8 @@ async function render({
     const avgThroughput =
       throughputSlice.reduce((acc, d) => acc + d[throughputLabel], 0) /
       throughputSlice.length;
-    const costPerImage = getHourlyPrice(priority) / avgThroughput / 3600;
-    const tokensPerDollar = 1 / costPerImage;
+    const costPerToken = getHourlyPrice(priority) / avgThroughput / 3600;
+    const costPerMillionTokens = costPerToken * 1e6;
 
     const sortedDuration = durationSlice
       .map((d) => d[durationLabel])
@@ -396,8 +396,8 @@ async function render({
       p90ResponseTime,
       avgThroughput,
       p10Throughput,
-      costPerImage,
-      tokensPerDollar,
+      costPerToken,
+      costPerMillionTokens,
     };
   };
 
@@ -572,8 +572,7 @@ async function render({
           `10th Percentile Throughput: ${performance.p10Throughput.toFixed(
             2
           )} tok/s`,
-          `Cost per Token: $${performance.costPerImage.toFixed(8)}`,
-          `Tokens per Dollar: ${numberWithCommas(performance.tokensPerDollar.toFixed(2))}`,
+          `Cost per 1M Output Tokens: $${performance.costPerMillionTokens.toFixed(4)}`,
         ];
 
         for (const text of performanceItems) {
@@ -588,20 +587,13 @@ async function render({
       const overallPerfList = document.createElement("ul");
       overallPerfTitle.appendChild(overallPerfList);
       statsText.appendChild(overallPerfTitle);
+      const overallCostPerToken = getHourlyPrice(currentPriority) / avgThroughput / 3600;
       const overallPerfItems = [
         `Average Response Time: ${avgResponseTime.toFixed(2)}s`,
         `90th Percentile Response Time: ${p90ResponseTime.toFixed(2)}s`,
         `Average Throughput: ${avgThroughput.toFixed(2)} tok/s`,
         `10th Percentile Throughput: ${p10Throughput.toFixed(2)} tok/s`,
-        `Cost per Token: $${(
-          getHourlyPrice(currentPriority) /
-          avgThroughput /
-          3600
-        ).toFixed(8)}`,
-        `Tokens per Dollar: ${numberWithCommas((
-          1 /
-          (getHourlyPrice(currentPriority) / avgThroughput / 3600)
-        ).toFixed(2))}`,
+        `Cost per 1M Output Tokens: $${(overallCostPerToken * 1e6).toFixed(4)}`,
       ];
 
       for (const text of overallPerfItems) {
@@ -652,7 +644,7 @@ async function render({
       const option = document.createElement("option");
       option.value = format;
       option.text =
-        format === "tokPerDollar" ? "Tokens Per Dollar" : "Cost Per Token";
+        format === "tokPerDollar" ? "Output Tokens Per Dollar" : "Cost Per Output Token";
       priceFormat.appendChild(option);
     }
 
