@@ -63,7 +63,7 @@ function getOptions() {
   options.benchmark = options.benchmark || "benchmark.js";
   options.org = options.org || "salad-benchmarking";
 
-  options.gpus = options.gpus.split(",");
+  options.gpus = options.gpus.split(",").map(gpuId => gpuId.trim());
   options.cpus = options.cpus.split(",").map(parseInt);
   options.memory = options.memory.split(",").map(parseInt);
 
