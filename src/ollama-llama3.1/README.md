@@ -68,6 +68,6 @@ Make sure to save your new image into a container registry and update container 
 For production, we recommend setting the replica count to 5 or more to ensure coverage in case of node interruptions. Salad’s infrastructure ensures that your workloads are distributed across multiple GPU nodes, and interruptions are handled smoothly.
 
 ### Default Configuration
-Hardware: RTX 3060 with 12GB VRAM
+Hardware: RTX 3090 with 24GB VRAM
 System RAM: 8 GB
 vCPU: 8 vCPUs
