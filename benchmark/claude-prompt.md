@@ -22,6 +22,10 @@ The blog should have the following sections:
 </script>
 <script src="https://rawcdn.githack.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/embed-result.js" type="module"></script>
 
+The embed-result.js filename will be dependent on the type of model.
+- image gen: `embed-result-image-gen.js`
+- llms: `embed-result-llm.js`
+
 1. Conclusion. Brief observations, including highlighting the most impressive aspects of the benchmark. Possibly ideas for future improvements or areas of exploration.
 
 Write and format your answer in html, using a professional, technically proficient tone. Also keep in mind the need for good search engine optimization, so make sure to include the model name and other relevant keywords in your text.

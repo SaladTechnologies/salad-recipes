@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+</head>
+<body>
+<div id="benchmarkViz1"></div>
+<div id="vizInteractions1"></div>
+<div id="benchmarkViz2"></div>
+<div id="vizInteractions2"></div>
+<div id="benchmarkViz3"></div>
+<div id="vizInteractions3"></div>
+<div id="benchmarkViz4"></div>
+<div id="vizInteractions4"></div>
+<div id="benchmarkViz5"></div>
+<div id="vizInteractions5"></div>
+<div id="benchmarkViz6"></div>
+<div id="vizInteractions6"></div>
+<div id="benchmarkViz7"></div>
+<div id="vizInteractions7"></div>
+<div id="benchmarkViz8"></div>
+<div id="vizInteractions8"></div>
+<div id="benchmarkViz9"></div>
+<div id="vizInteractions9"></div>
+<script>
+
+  window.benchmarkViz1 = {
+    dataUrl: "./not-streaming-rtx-3060-12-gb-8cpu-8memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "RTX 3060 12 GB 8CPU 8MEMGB",
+    divId: "benchmarkViz1",
+    interactionsDivId: "vizInteractions1"
+  };
+  window.benchmarkViz2 = {
+    dataUrl: "./not-streaming-rtx-3080-10-gb-8cpu-8memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "RTX 3080 10 GB 8CPU 8MEMGB",
+    divId: "benchmarkViz2",
+    interactionsDivId: "vizInteractions2"
+  };
+  window.benchmarkViz3 = {
+    dataUrl: "./not-streaming-rtx-3080-ti-12-gb-8cpu-8memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "RTX 3080 TI 12 GB 8CPU 8MEMGB",
+    divId: "benchmarkViz3",
+    interactionsDivId: "vizInteractions3"
+  };
+  window.benchmarkViz4 = {
+    dataUrl: "./not-streaming-rtx-3090-24-gb-8cpu-8memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "RTX 3090 24 GB 8CPU 8MEMGB",
+    divId: "benchmarkViz4",
+    interactionsDivId: "vizInteractions4"
+  };
+  window.benchmarkViz5 = {
+    dataUrl: "./not-streaming-rtx-3090-ti-24-gb-8cpu-8memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "RTX 3090 TI 24 GB 8CPU 8MEMGB",
+    divId: "benchmarkViz5",
+    interactionsDivId: "vizInteractions5"
+  };
+  window.benchmarkViz6 = {
+    dataUrl: "./not-streaming-rtx-4060-ti-16-gb-8cpu-8memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "RTX 4060 TI 16 GB 8CPU 8MEMGB",
+    divId: "benchmarkViz6",
+    interactionsDivId: "vizInteractions6"
+  };
+  window.benchmarkViz7 = {
+    dataUrl: "./not-streaming-rtx-4070-12-gb-8cpu-8memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "RTX 4070 12 GB 8CPU 8MEMGB",
+    divId: "benchmarkViz7",
+    interactionsDivId: "vizInteractions7"
+  };
+  window.benchmarkViz8 = {
+    dataUrl: "./not-streaming-rtx-4070-ti-super-16-gb-8cpu-8memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "RTX 4070 TI SUPER 16 GB 8CPU 8MEMGB",
+    divId: "benchmarkViz8",
+    interactionsDivId: "vizInteractions8"
+  };
+  window.benchmarkViz9 = {
+    dataUrl: "./not-streaming-rtx-4090-24-gb-8cpu-8memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "RTX 4090 24 GB 8CPU 8MEMGB",
+    divId: "benchmarkViz9",
+    interactionsDivId: "vizInteractions9"
+  };
+</script>
+<script src="/benchmark/embed-result-llm.js" type="module"></script>
+</body>
+</html>

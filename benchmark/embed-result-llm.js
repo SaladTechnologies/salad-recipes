@@ -60,6 +60,9 @@ function getGPUNameByID(prices, id) {
   return prices.items.find((item) => item.id === id).name;
 }
 
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 async function render({
   title,
@@ -74,7 +77,7 @@ async function render({
   durationLabel = "Average Response Time (s)",
   durationColor = "green",
   durationPeriod = 5 * 60 * 1000, // 5 minutes,
-  throughputLabel = "Throughput (req/s)",
+  throughputLabel = "Throughput (tok/s out)",
   throughputColor = "blue",
   throughputPeriod = 60 * 1000, // 1 minute
   divId = "benchmarkViz",
@@ -93,7 +96,6 @@ async function render({
     title = dataUrl;
   }
 
-  
   const [benchmarkData, pricesInfo] = await Promise.all([
     fetch(dataUrl),
     fetch(pricesUrl),
@@ -108,6 +110,8 @@ async function render({
   const duration = [];
   const allErrors = [];
   const nodeCounts = [];
+  const inputTokens = [];
+  const outputTokens = [];
 
   for (let i = 0; i < results.timeFromStart.length; i++) {
     if (results.metric[i] === "vus") {
@@ -130,6 +134,16 @@ async function render({
       });
     } else if (results.metric[i] === "node_count") {
       nodeCounts.push({
+        timeFromStart: results.timeFromStart[i],
+        value: results.value[i],
+      });
+    } else if (results.metric[i] === "inputTokens") {
+      inputTokens.push({
+        timeFromStart: results.timeFromStart[i],
+        value: results.value[i],
+      });
+    } else if (results.metric[i] === "outputTokens") {
+      outputTokens.push({
         timeFromStart: results.timeFromStart[i],
         value: results.value[i],
       });
@@ -171,15 +185,18 @@ async function render({
       ).length,
   }));
 
-  // Throughput is the number of http_req_duration per second, taken in 1 minute intervals
-  const throughput = duration.map((d, i) => {
-    const { timeFromStart } = d;
-    const count = duration
-      .slice(i)
-      .filter((d) => d.timeFromStart - timeFromStart < throughputPeriod).length;
+  // Throughput is the number of outputTokens per second, within the throughputPeriod
+  const throughput = outputTokens.map((d, i) => {
+    const dataSlice = getBucket(
+      outputTokens,
+      "timeFromStart",
+      d.timeFromStart - throughputPeriod,
+      d.timeFromStart
+    );
+    const numTokens = dataSlice.reduce((acc, d) => acc + d.value, 0);
     return {
-      timeFromStart,
-      [throughputLabel]: count / (throughputPeriod / 1000),
+      timeFromStart: d.timeFromStart,
+      [throughputLabel]: numTokens / (throughputPeriod / 1000),
     };
   });
   const rollingThroughput = getRollingAverage(
@@ -200,22 +217,22 @@ async function render({
   const getThroughputLabel = (d) => {
     const time = msToTime(d.timeFromStart);
     const displayFormat =
-      document.getElementById("priceFormat")?.value || "reqPerDollar";
+      document.getElementById("priceFormat")?.value || "tokPerDollar";
     const currentPriority =
       document.getElementById("prioritySelector")?.value || defaultPriority;
     const hourlyPrice = getHourlyPrice(currentPriority);
-    const reqPerSecond = d[throughputLabel];
-    const reqPerHour = reqPerSecond * 3600;
-    const costPerRequest = hourlyPrice / reqPerHour;
+    const tokPerSecond = d[throughputLabel];
+    const tokPerHour = tokPerSecond * 3600;
+    const costPerToken = hourlyPrice / tokPerHour;
     let priceText = "";
-    if (displayFormat === "reqPerDollar") {
-      const reqPerDollar = 1 / costPerRequest;
-      priceText = `${reqPerDollar.toFixed(2)} req/$`;
+    if (displayFormat === "tokPerDollar") {
+      const tokPerDollar = 1 / costPerToken;
+      priceText = `${numberWithCommas(tokPerDollar.toFixed(2))} tok/$`;
     } else {
-      priceText = `$${costPerRequest.toFixed(5)}/req`;
+      priceText = `$${costPerToken.toFixed(8)}/tok`;
     }
 
-    return `${time} | ${reqPerSecond.toFixed(2)} req/s | ${priceText}`;
+    return `${time} | ${numberWithCommas(tokPerSecond.toFixed(2))} tok/s | ${priceText}`;
   };
 
   const vusLine = {
@@ -278,7 +295,13 @@ async function render({
     yaxis: "y5",
   };
 
-  const data = [vusLine, durationLine, throughputLine, errorsLine, nodeCountLine];
+  const data = [
+    vusLine,
+    durationLine,
+    throughputLine,
+    errorsLine,
+    nodeCountLine,
+  ];
 
   /**
    * Calculate summary statistics
@@ -291,14 +314,19 @@ async function render({
   const bestResponseTime = Math.min(...duration.map((d) => d[durationLabel]));
   const worstResponseTime = Math.max(...duration.map((d) => d[durationLabel]));
 
-  const sortedDuration = duration.map((d) => d[durationLabel]).sort((a, b) => a - b);
-  const p90ResponseTime = sortedDuration[Math.floor(sortedDuration.length * 0.9)];
+  const sortedDuration = duration
+    .map((d) => d[durationLabel])
+    .sort((a, b) => a - b);
+  const p90ResponseTime =
+    sortedDuration[Math.floor(sortedDuration.length * 0.9)];
   const minVUs = vus[0][vusLabel];
   const maxVUs = Math.max(...vus.map((d) => d[vusLabel]));
   const avgThroughput =
     throughput.reduce((acc, d) => acc + d[throughputLabel], 0) /
     throughput.length;
-  const bestThroughput = Math.max(...rollingThroughput.map((d) => d[throughputLabel]));
+  const bestThroughput = Math.max(
+    ...rollingThroughput.map((d) => d[throughputLabel])
+  );
   const timeAtBestThroughput = rollingThroughput.find(
     (d) => d[throughputLabel] === bestThroughput
   ).timeFromStart;
@@ -306,10 +334,11 @@ async function render({
     vus[vus.findIndex((r) => r.timeFromStart > timeAtBestThroughput) - 1][
       vusLabel
     ];
-  const sortedThroughput = rollingThroughput.map((d) => d[throughputLabel]).sort((a, b) => a - b);
-  const p10Throughput = sortedThroughput[Math.floor(sortedThroughput.length * 0.1)];
-
-
+  const sortedThroughput = rollingThroughput
+    .map((d) => d[throughputLabel])
+    .sort((a, b) => a - b);
+  const p10Throughput =
+    sortedThroughput[Math.floor(sortedThroughput.length * 0.1)];
 
   const subtitle = `Total Requests: ${numRequests}, Success Rate: ${(
     successRate * 100
@@ -347,22 +376,28 @@ async function render({
     const avgThroughput =
       throughputSlice.reduce((acc, d) => acc + d[throughputLabel], 0) /
       throughputSlice.length;
-    const costPerImage = getHourlyPrice(priority) / avgThroughput / 3600;
-    const imagesPerDollar = 1 / costPerImage;
+    const costPerToken = getHourlyPrice(priority) / avgThroughput / 3600;
+    const costPerMillionTokens = costPerToken * 1e6;
 
-    const sortedDuration = durationSlice.map((d) => d[durationLabel]).sort((a, b) => a - b);
-    const p90ResponseTime = sortedDuration[Math.floor(sortedDuration.length * 0.9)];
+    const sortedDuration = durationSlice
+      .map((d) => d[durationLabel])
+      .sort((a, b) => a - b);
+    const p90ResponseTime =
+      sortedDuration[Math.floor(sortedDuration.length * 0.9)];
 
-    const sortedThroughput = throughputSlice.map((d) => d[throughputLabel]).sort((a, b) => a - b);
-    const p10Throughput = sortedThroughput[Math.floor(sortedThroughput.length * 0.1)];
+    const sortedThroughput = throughputSlice
+      .map((d) => d[throughputLabel])
+      .sort((a, b) => a - b);
+    const p10Throughput =
+      sortedThroughput[Math.floor(sortedThroughput.length * 0.1)];
 
     return {
       avgResponseTime,
       p90ResponseTime,
       avgThroughput,
       p10Throughput,
-      costPerImage,
-      imagesPerDollar,
+      costPerToken,
+      costPerMillionTokens,
     };
   };
 
@@ -420,7 +455,8 @@ async function render({
       color: durationColor,
       range: [
         0,
-        Math.max(...rollingDuration.map((d) => d[durationLabel])) * plotHeightScale,
+        Math.max(...rollingDuration.map((d) => d[durationLabel])) *
+          plotHeightScale,
       ],
       showgrid: false,
       linewidth: lineWidth,
@@ -434,7 +470,8 @@ async function render({
       color: throughputColor,
       range: [
         0,
-        Math.max(...rollingThroughput.map((d) => d[throughputLabel])) * plotHeightScale,
+        Math.max(...rollingThroughput.map((d) => d[throughputLabel])) *
+          plotHeightScale,
       ],
       showgrid: false,
       linewidth: lineWidth,
@@ -458,7 +495,7 @@ async function render({
       overlaying: "y",
       color: "purple",
       range: [0, Math.max(...nodeCounts.map((d) => d.value)) * plotHeightScale],
-    }
+    },
   };
   Plotly.newPlot(div, data, layout, { displayLogo: false, responsive: true });
 
@@ -484,8 +521,10 @@ async function render({
       const currentPriority =
         document.getElementById("prioritySelector")?.value || defaultPriority;
 
-      let worstTimeText = `Worst Response Time: ${worstResponseTime.toFixed(2)}s`
-      if (worstResponseTime.toFixed(2) === '100.00') {
+      let worstTimeText = `Worst Response Time: ${worstResponseTime.toFixed(
+        2
+      )}s`;
+      if (worstResponseTime.toFixed(2) === "100.00") {
         worstTimeText += " (Timeout)";
       }
 
@@ -499,7 +538,7 @@ async function render({
         worstTimeText,
         `Best Throughput: ${bestThroughput.toFixed(
           2
-        )} req/s at ${vusAtMaxThroughput} VUs`,
+        )} tok/s at ${vusAtMaxThroughput} VUs`,
       ];
       for (const text of summaryText) {
         const li = document.createElement("li");
@@ -526,11 +565,14 @@ async function render({
 
         const performanceItems = [
           `Average Response Time: ${performance.avgResponseTime.toFixed(2)}s`,
-          `90th Percentile Response Time: ${performance.p90ResponseTime.toFixed(2)}s`,
-          `Average Throughput: ${performance.avgThroughput.toFixed(2)} req/s`,
-          `10th Percentile Throughput: ${performance.p10Throughput.toFixed(2)} req/s`,
-          `Cost per Image: $${performance.costPerImage.toFixed(5)}`,
-          `Images per Dollar: ${performance.imagesPerDollar.toFixed(2)}`,
+          `90th Percentile Response Time: ${performance.p90ResponseTime.toFixed(
+            2
+          )}s`,
+          `Average Throughput: ${performance.avgThroughput.toFixed(2)} tok/s`,
+          `10th Percentile Throughput: ${performance.p10Throughput.toFixed(
+            2
+          )} tok/s`,
+          `Cost per 1M Output Tokens: $${performance.costPerMillionTokens.toFixed(4)}`,
         ];
 
         for (const text of performanceItems) {
@@ -545,20 +587,13 @@ async function render({
       const overallPerfList = document.createElement("ul");
       overallPerfTitle.appendChild(overallPerfList);
       statsText.appendChild(overallPerfTitle);
+      const overallCostPerToken = getHourlyPrice(currentPriority) / avgThroughput / 3600;
       const overallPerfItems = [
         `Average Response Time: ${avgResponseTime.toFixed(2)}s`,
         `90th Percentile Response Time: ${p90ResponseTime.toFixed(2)}s`,
-        `Average Throughput: ${avgThroughput.toFixed(2)} req/s`,
-        `10th Percentile Throughput: ${p10Throughput.toFixed(2)} req/s`,
-        `Cost per Image: $${(
-          getHourlyPrice(currentPriority) /
-          avgThroughput /
-          3600
-        ).toFixed(5)}`,
-        `Images per Dollar: ${(
-          1 /
-          (getHourlyPrice(currentPriority) / avgThroughput / 3600)
-        ).toFixed(2)}`,
+        `Average Throughput: ${avgThroughput.toFixed(2)} tok/s`,
+        `10th Percentile Throughput: ${p10Throughput.toFixed(2)} tok/s`,
+        `Cost per 1M Output Tokens: $${(overallCostPerToken * 1e6).toFixed(4)}`,
       ];
 
       for (const text of overallPerfItems) {
@@ -605,15 +640,15 @@ async function render({
     priceFormat.style.fontFamily = font;
     priceFormat.style.margin = "10px";
     priceFormat.id = "priceFormat";
-    for (const format of ["reqPerDollar", "costPerReq"]) {
+    for (const format of ["tokPerDollar", "costPerTok"]) {
       const option = document.createElement("option");
       option.value = format;
       option.text =
-        format === "reqPerDollar" ? "Requests per Dollar" : "Cost per Request";
+        format === "tokPerDollar" ? "Output Tokens Per Dollar" : "Cost Per Output Token";
       priceFormat.appendChild(option);
     }
 
-    priceFormat.value = "reqPerDollar";
+    priceFormat.value = "tokPerDollar";
 
     const formatLabel = document.createElement("label");
     formatLabel.htmlFor = "priceFormat";
