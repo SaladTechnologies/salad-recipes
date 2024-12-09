@@ -7,3 +7,5 @@ node benchmark/run-matrix.js \
   --cpus 4 \
   --memory 38 \
   --benchmark benchmark.js
+
+node benchmark/multi-viz-generator.js src/sd3.5-medium-comfyui/benchmark
