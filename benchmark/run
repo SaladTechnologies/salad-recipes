@@ -129,4 +129,4 @@ if [ -z $ANTHROPIC_API_KEY ]; then
   exit 0
 fi
 
-./benchmark/write-blog $summary_output $blog_output
+# ./benchmark/write-blog $summary_output $blog_output
