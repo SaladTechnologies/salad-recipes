@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+</head>
+<body>
+<div id="benchmarkViz1"></div>
+<div id="vizInteractions1"></div>
+<div id="benchmarkViz2"></div>
+<div id="vizInteractions2"></div>
+<script>
+
+  window.benchmarkViz1 = {
+    dataUrl: "./benchmark-rtx-3090-24-gb-4cpu-38memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-3090-24-gb-4cpu-38memgb.json",
+    divId: "benchmarkViz1",
+    interactionsDivId: "vizInteractions1"
+  };
+  window.benchmarkViz2 = {
+    dataUrl: "./benchmark-rtx-4090-24-gb-4cpu-38memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-4090-24-gb-4cpu-38memgb.json",
+    divId: "benchmarkViz2",
+    interactionsDivId: "vizInteractions2"
+  };
+</script>
+<script src="/benchmark/embed-result.js" type="module"></script>
+</body>
+</html>
