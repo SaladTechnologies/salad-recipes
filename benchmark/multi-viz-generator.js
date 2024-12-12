@@ -50,7 +50,7 @@ files.forEach((file, index) => {
 // Close script section and add visualization script
 htmlContent += `
 </script>
-<script src="/benchmark/embed-result.js" type="module"></script>
+<script src="/benchmark/embed-result-llm.js" type="module"></script>
 </body>
 </html>`;
 
