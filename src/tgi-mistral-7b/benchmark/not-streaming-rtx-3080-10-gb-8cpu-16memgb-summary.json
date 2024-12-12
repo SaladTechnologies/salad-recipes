@@ -1,0 +1,284 @@
+{
+  "recipeName": "tgi-mistral-7b",
+  "resources": {
+    "cpu": 8,
+    "memory": 16384,
+    "gpu_classes": [
+      "rtx 3080 (10 gb)"
+    ],
+    "storage_amount": 26843545600
+  },
+  "lengthOfBenchmarkSeconds": 3929.629,
+  "numRequests": 4969,
+  "numFailedRequests": 3,
+  "successRate": 0.9993962567921111,
+  "duration": {
+    "min": 4.705709885,
+    "median": 13.26705784,
+    "mean": 17.511114013458016,
+    "p90": 26.705946951,
+    "max": 64.33324556000001
+  },
+  "throughput": {
+    "p10": 0.6532520325203253,
+    "median": 1.6649484536082484,
+    "mean": 1.2644959613235753,
+    "max": 2.075338753387535,
+    "timeAtMax": 3424.975,
+    "vusAtMax": 35
+  },
+  "nodeCounts": {
+    "numSamples": 128,
+    "min": 9,
+    "max": 10,
+    "mode": {
+      "value": 9,
+      "count": 126
+    },
+    "mean": 9.015625
+  },
+  "vus": {
+    "min": 2,
+    "max": 35
+  },
+  "cost": {
+    "perHour": 1.3800000000000001,
+    "perRequest": {
+      "median": 0.00023023735810113503,
+      "mean": 0.0003031510934460321,
+      "min": 0.00018470880125359094
+    },
+    "requestsPerDollar": {
+      "median": 4343.343792021518,
+      "mean": 3298.685116496283,
+      "max": 5413.927182750091
+    }
+  },
+  "vuTimeline": [
+    {
+      "metric": "vus",
+      "value": 10,
+      "timeFromStart": 0.787
+    },
+    {
+      "metric": "vus",
+      "value": 11,
+      "timeFromStart": 984.749
+    },
+    {
+      "metric": "vus",
+      "value": 12,
+      "timeFromStart": 1068.747
+    },
+    {
+      "metric": "vus",
+      "value": 13,
+      "timeFromStart": 1152.743
+    },
+    {
+      "metric": "vus",
+      "value": 14,
+      "timeFromStart": 1236.74
+    },
+    {
+      "metric": "vus",
+      "value": 15,
+      "timeFromStart": 1320.736
+    },
+    {
+      "metric": "vus",
+      "value": 16,
+      "timeFromStart": 1404.733
+    },
+    {
+      "metric": "vus",
+      "value": 17,
+      "timeFromStart": 1488.73
+    },
+    {
+      "metric": "vus",
+      "value": 18,
+      "timeFromStart": 1572.727
+    },
+    {
+      "metric": "vus",
+      "value": 19,
+      "timeFromStart": 1656.723
+    },
+    {
+      "metric": "vus",
+      "value": 20,
+      "timeFromStart": 1740.718
+    },
+    {
+      "metric": "vus",
+      "value": 21,
+      "timeFromStart": 1824.715
+    },
+    {
+      "metric": "vus",
+      "value": 22,
+      "timeFromStart": 1908.712
+    },
+    {
+      "metric": "vus",
+      "value": 23,
+      "timeFromStart": 1992.709
+    },
+    {
+      "metric": "vus",
+      "value": 24,
+      "timeFromStart": 2076.705
+    },
+    {
+      "metric": "vus",
+      "value": 25,
+      "timeFromStart": 2160.702
+    },
+    {
+      "metric": "vus",
+      "value": 26,
+      "timeFromStart": 2244.698
+    },
+    {
+      "metric": "vus",
+      "value": 27,
+      "timeFromStart": 2328.695
+    },
+    {
+      "metric": "vus",
+      "value": 28,
+      "timeFromStart": 2412.692
+    },
+    {
+      "metric": "vus",
+      "value": 29,
+      "timeFromStart": 2496.688
+    },
+    {
+      "metric": "vus",
+      "value": 30,
+      "timeFromStart": 2580.684
+    },
+    {
+      "metric": "vus",
+      "value": 31,
+      "timeFromStart": 2664.68
+    },
+    {
+      "metric": "vus",
+      "value": 32,
+      "timeFromStart": 2748.678
+    },
+    {
+      "metric": "vus",
+      "value": 33,
+      "timeFromStart": 2832.674
+    },
+    {
+      "metric": "vus",
+      "value": 34,
+      "timeFromStart": 2916.671
+    },
+    {
+      "metric": "vus",
+      "value": 35,
+      "timeFromStart": 3000.667
+    },
+    {
+      "metric": "vus",
+      "value": 33,
+      "timeFromStart": 3900.629
+    },
+    {
+      "metric": "vus",
+      "value": 31,
+      "timeFromStart": 3901.63
+    },
+    {
+      "metric": "vus",
+      "value": 30,
+      "timeFromStart": 3902.63
+    },
+    {
+      "metric": "vus",
+      "value": 28,
+      "timeFromStart": 3903.63
+    },
+    {
+      "metric": "vus",
+      "value": 26,
+      "timeFromStart": 3904.63
+    },
+    {
+      "metric": "vus",
+      "value": 25,
+      "timeFromStart": 3905.63
+    },
+    {
+      "metric": "vus",
+      "value": 23,
+      "timeFromStart": 3906.63
+    },
+    {
+      "metric": "vus",
+      "value": 19,
+      "timeFromStart": 3907.63
+    },
+    {
+      "metric": "vus",
+      "value": 18,
+      "timeFromStart": 3908.63
+    },
+    {
+      "metric": "vus",
+      "value": 17,
+      "timeFromStart": 3909.63
+    },
+    {
+      "metric": "vus",
+      "value": 15,
+      "timeFromStart": 3910.629
+    },
+    {
+      "metric": "vus",
+      "value": 13,
+      "timeFromStart": 3911.629
+    },
+    {
+      "metric": "vus",
+      "value": 12,
+      "timeFromStart": 3912.629
+    },
+    {
+      "metric": "vus",
+      "value": 10,
+      "timeFromStart": 3914.629
+    },
+    {
+      "metric": "vus",
+      "value": 8,
+      "timeFromStart": 3915.629
+    },
+    {
+      "metric": "vus",
+      "value": 7,
+      "timeFromStart": 3917.63
+    },
+    {
+      "metric": "vus",
+      "value": 5,
+      "timeFromStart": 3918.629
+    },
+    {
+      "metric": "vus",
+      "value": 3,
+      "timeFromStart": 3921.63
+    },
+    {
+      "metric": "vus",
+      "value": 2,
+      "timeFromStart": 3928.629
+    }
+  ]
+}

@@ -1,0 +1,289 @@
+{
+  "recipeName": "tgi-mistral-7b",
+  "resources": {
+    "cpu": 8,
+    "memory": 16384,
+    "gpu_classes": [
+      "rtx 3080 ti (12 gb)"
+    ],
+    "storage_amount": 26843545600
+  },
+  "lengthOfBenchmarkSeconds": 3927.543,
+  "numRequests": 4186,
+  "numFailedRequests": 8,
+  "successRate": 0.998088867654085,
+  "duration": {
+    "min": 3.7348803090000002,
+    "median": 21.7530428,
+    "mean": 20.82409784527616,
+    "p90": 30.129646237,
+    "max": 44.855601859000004
+  },
+  "throughput": {
+    "p10": 0.5489583333333333,
+    "median": 1.265131578947368,
+    "mean": 1.065806281433456,
+    "max": 1.7215686274509796,
+    "timeAtMax": 3700.491,
+    "vusAtMax": 35
+  },
+  "nodeCounts": {
+    "numSamples": 128,
+    "min": 7,
+    "max": 10,
+    "mode": {
+      "value": 8,
+      "count": 68
+    },
+    "mean": 8.3984375
+  },
+  "vus": {
+    "min": 1,
+    "max": 35
+  },
+  "cost": {
+    "perHour": 1.4800000000000002,
+    "perRequest": {
+      "median": 0.0003249552204310396,
+      "mean": 0.0003857277990125817,
+      "min": 0.0002388003037205772
+    },
+    "requestsPerDollar": {
+      "median": 3077.34708392603,
+      "mean": 2592.5017656489463,
+      "max": 4187.59936406995
+    }
+  },
+  "vuTimeline": [
+    {
+      "metric": "vus",
+      "value": 10,
+      "timeFromStart": 0.687
+    },
+    {
+      "metric": "vus",
+      "value": 11,
+      "timeFromStart": 984.646
+    },
+    {
+      "metric": "vus",
+      "value": 12,
+      "timeFromStart": 1068.644
+    },
+    {
+      "metric": "vus",
+      "value": 13,
+      "timeFromStart": 1152.64
+    },
+    {
+      "metric": "vus",
+      "value": 14,
+      "timeFromStart": 1236.636
+    },
+    {
+      "metric": "vus",
+      "value": 15,
+      "timeFromStart": 1320.632
+    },
+    {
+      "metric": "vus",
+      "value": 16,
+      "timeFromStart": 1404.629
+    },
+    {
+      "metric": "vus",
+      "value": 17,
+      "timeFromStart": 1488.627
+    },
+    {
+      "metric": "vus",
+      "value": 18,
+      "timeFromStart": 1572.624
+    },
+    {
+      "metric": "vus",
+      "value": 19,
+      "timeFromStart": 1656.619
+    },
+    {
+      "metric": "vus",
+      "value": 20,
+      "timeFromStart": 1740.617
+    },
+    {
+      "metric": "vus",
+      "value": 21,
+      "timeFromStart": 1824.613
+    },
+    {
+      "metric": "vus",
+      "value": 22,
+      "timeFromStart": 1908.611
+    },
+    {
+      "metric": "vus",
+      "value": 23,
+      "timeFromStart": 1992.607
+    },
+    {
+      "metric": "vus",
+      "value": 24,
+      "timeFromStart": 2076.604
+    },
+    {
+      "metric": "vus",
+      "value": 25,
+      "timeFromStart": 2160.6
+    },
+    {
+      "metric": "vus",
+      "value": 26,
+      "timeFromStart": 2244.597
+    },
+    {
+      "metric": "vus",
+      "value": 27,
+      "timeFromStart": 2328.595
+    },
+    {
+      "metric": "vus",
+      "value": 28,
+      "timeFromStart": 2412.592
+    },
+    {
+      "metric": "vus",
+      "value": 29,
+      "timeFromStart": 2496.588
+    },
+    {
+      "metric": "vus",
+      "value": 30,
+      "timeFromStart": 2580.585
+    },
+    {
+      "metric": "vus",
+      "value": 31,
+      "timeFromStart": 2664.581
+    },
+    {
+      "metric": "vus",
+      "value": 32,
+      "timeFromStart": 2748.579
+    },
+    {
+      "metric": "vus",
+      "value": 33,
+      "timeFromStart": 2832.575
+    },
+    {
+      "metric": "vus",
+      "value": 34,
+      "timeFromStart": 2916.572
+    },
+    {
+      "metric": "vus",
+      "value": 35,
+      "timeFromStart": 3000.569
+    },
+    {
+      "metric": "vus",
+      "value": 32,
+      "timeFromStart": 3901.534
+    },
+    {
+      "metric": "vus",
+      "value": 31,
+      "timeFromStart": 3902.535
+    },
+    {
+      "metric": "vus",
+      "value": 30,
+      "timeFromStart": 3903.534
+    },
+    {
+      "metric": "vus",
+      "value": 27,
+      "timeFromStart": 3904.535
+    },
+    {
+      "metric": "vus",
+      "value": 26,
+      "timeFromStart": 3907.534
+    },
+    {
+      "metric": "vus",
+      "value": 25,
+      "timeFromStart": 3908.535
+    },
+    {
+      "metric": "vus",
+      "value": 23,
+      "timeFromStart": 3909.535
+    },
+    {
+      "metric": "vus",
+      "value": 21,
+      "timeFromStart": 3910.534
+    },
+    {
+      "metric": "vus",
+      "value": 20,
+      "timeFromStart": 3912.535
+    },
+    {
+      "metric": "vus",
+      "value": 18,
+      "timeFromStart": 3913.534
+    },
+    {
+      "metric": "vus",
+      "value": 15,
+      "timeFromStart": 3914.534
+    },
+    {
+      "metric": "vus",
+      "value": 13,
+      "timeFromStart": 3916.534
+    },
+    {
+      "metric": "vus",
+      "value": 12,
+      "timeFromStart": 3917.535
+    },
+    {
+      "metric": "vus",
+      "value": 10,
+      "timeFromStart": 3918.534
+    },
+    {
+      "metric": "vus",
+      "value": 8,
+      "timeFromStart": 3919.535
+    },
+    {
+      "metric": "vus",
+      "value": 7,
+      "timeFromStart": 3920.534
+    },
+    {
+      "metric": "vus",
+      "value": 6,
+      "timeFromStart": 3921.534
+    },
+    {
+      "metric": "vus",
+      "value": 5,
+      "timeFromStart": 3922.534
+    },
+    {
+      "metric": "vus",
+      "value": 4,
+      "timeFromStart": 3923.534
+    },
+    {
+      "metric": "vus",
+      "value": 1,
+      "timeFromStart": 3924.534
+    }
+  ]
+}

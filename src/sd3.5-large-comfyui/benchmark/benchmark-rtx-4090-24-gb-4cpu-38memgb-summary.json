@@ -1,0 +1,89 @@
+{
+  "recipeName": "sd3.5-large-comfyui",
+  "resources": {
+    "cpu": 4,
+    "memory": 38912,
+    "gpu_classes": [
+      "rtx 4090 (24 gb)"
+    ],
+    "storage_amount": 1073741824
+  },
+  "lengthOfBenchmarkSeconds": 3611.875,
+  "numRequests": 2809,
+  "numFailedRequests": 0,
+  "successRate": 1,
+  "duration": {
+    "min": 10.303562942000001,
+    "median": 12.451309704,
+    "mean": 12.830512825221778,
+    "p90": 15.238086485,
+    "max": 58.544654089000005
+  },
+  "throughput": {
+    "p10": 0.7753623188405799,
+    "median": 0.79421768707483,
+    "mean": 0.7777124069908289,
+    "max": 0.8234693877551024,
+    "timeAtMax": 2924.888,
+    "vusAtMax": 10
+  },
+  "nodeCounts": {
+    "numSamples": 118,
+    "min": 10,
+    "max": 10,
+    "mode": {
+      "value": 10,
+      "count": 118
+    },
+    "mean": 10
+  },
+  "vus": {
+    "min": 1,
+    "max": 10
+  },
+  "cost": {
+    "perHour": 2.3400000000000003,
+    "perRequest": {
+      "median": 0.0008184154175588865,
+      "mean": 0.0008357845318618727,
+      "min": 0.000789343246592317
+    },
+    "requestsPerDollar": {
+      "median": 1221.8733647305075,
+      "mean": 1196.4806261397366,
+      "max": 1266.8759811616958
+    }
+  },
+  "vuTimeline": [
+    {
+      "metric": "vus",
+      "value": 10,
+      "timeFromStart": 0.807
+    },
+    {
+      "metric": "vus",
+      "value": 8,
+      "timeFromStart": 3600.647
+    },
+    {
+      "metric": "vus",
+      "value": 5,
+      "timeFromStart": 3602.646
+    },
+    {
+      "metric": "vus",
+      "value": 3,
+      "timeFromStart": 3604.647
+    },
+    {
+      "metric": "vus",
+      "value": 2,
+      "timeFromStart": 3605.647
+    },
+    {
+      "metric": "vus",
+      "value": 1,
+      "timeFromStart": 3610.647
+    }
+  ]
+}

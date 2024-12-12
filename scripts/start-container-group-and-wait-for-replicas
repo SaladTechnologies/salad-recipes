@@ -44,8 +44,21 @@ source scripts/salad-api
 
 currentState=$(getCurrentStatus $org $project $container_group)
 echo "Current state: $currentState"
+
+# if it pending, poll until it's stopped, running, or failed
+while [[ "$currentState" == "pending" ]]; do
+  echo "Container group is pending. Waiting 10s..."
+  sleep 10
+  currentState=$(getCurrentStatus $org $project $container_group)
+done
+
+if [[ "$currentState" == "failed" ]]; then
+  echo "Container group failed to create. See portal for more information"
+  exit 1
+fi
+
 if [[ "$currentState" == "stopped" ]]; then
-  echo "Starting container group"
+  echo "Container group is stopped. Starting..."
   startContainerGroup $org $project $container_group
 fi
 

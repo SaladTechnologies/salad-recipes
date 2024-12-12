@@ -1,0 +1,9 @@
+#! /usr/bin/bash
+
+node benchmark/run-matrix.js \
+  --recipe ollama-llama3.1 \
+  --project ollama-llama31-benchmarking \
+  --gpus 43a49c0c-f860-40e9-a509-702d0dba0902,0798d5aa-2d17-42ee-81b8-ea92e3bc088e,9998fe42-04a5-4807-b3a5-849943f16c38,65247de0-746f-45c6-8537-650ba613966a,f1380143-51cd-4bad-80cb-1f86ee6b49fe,2b73eef8-be49-4667-8fc0-5c0cb127cfe0 \
+  --cpus 8 \
+  --memory 8 \
+  --benchmark not-streaming.js

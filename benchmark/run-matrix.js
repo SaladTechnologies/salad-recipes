@@ -63,7 +63,7 @@ function getOptions() {
   options.benchmark = options.benchmark || "benchmark.js";
   options.org = options.org || "salad-benchmarking";
 
-  options.gpus = options.gpus.split(",");
+  options.gpus = options.gpus.split(",").map(gpuId => gpuId.trim());
   options.cpus = options.cpus.split(",").map(parseInt);
   options.memory = options.memory.split(",").map(parseInt);
 
@@ -82,7 +82,7 @@ function getNormalizedGpuName(gpuId) {
 function getContainerGroupVariation(recipeConfig, gpu, cpus, memory, replicas) {
   const containerGroupVariation = JSON.parse(JSON.stringify(recipeConfig));
   const normalizedGpuName = getNormalizedGpuName(gpu);
-  containerGroupVariation.name = `${recipeConfig.name}-${normalizedGpuName}-${cpus}cpu-${memory}memgb`;
+  containerGroupVariation.name = `${recipeConfig.name}-${normalizedGpuName}-${cpus}cpu-${memory}memgb`.slice(0, 53);
   containerGroupVariation.display_name = containerGroupVariation.name;
   containerGroupVariation.container.resources.cpu = cpus;
   containerGroupVariation.container.resources.memory = memory * 1024;
