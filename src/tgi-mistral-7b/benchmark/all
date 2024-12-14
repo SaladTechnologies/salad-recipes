@@ -3,7 +3,7 @@
 node benchmark/run-matrix.js \
   --recipe tgi-mistral-7b \
   --project mistral-tgi-benchmarking \
-  --gpus 43a49c0c-f860-40e9-a509-702d0dba0902,0798d5aa-2d17-42ee-81b8-ea92e3bc088e,9998fe42-04a5-4807-b3a5-849943f16c38,65247de0-746f-45c6-8537-650ba613966a,f1380143-51cd-4bad-80cb-1f86ee6b49fe,2b73eef8-be49-4667-8fc0-5c0cb127cfe0 \
+  --gpus 0d062939-7c01-4aae-a2b1-30e315124e51,ed563892-aacd-40f5-80b7-90c9be6c759b,43a49c0c-f860-40e9-a509-702d0dba0902,0798d5aa-2d17-42ee-81b8-ea92e3bc088e,9998fe42-04a5-4807-b3a5-849943f16c38,65247de0-746f-45c6-8537-650ba613966a,f1380143-51cd-4bad-80cb-1f86ee6b49fe,2b73eef8-be49-4667-8fc0-5c0cb127cfe0 \
   --cpus 8 \
   --memory 16 \
-  --benchmark not-streaming.js
+  --benchmark not-streaming-bigger.js
