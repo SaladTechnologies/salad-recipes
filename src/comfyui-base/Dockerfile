@@ -20,7 +20,7 @@ RUN pip install -r requirements.txt
 ENV COMFY_HOME=/opt/ComfyUI
 RUN comfy --skip-prompt tracking disable
 RUN comfy --skip-prompt set-default ${COMFY_HOME}
-ENV CMD="comfy --workspace ${COMFY_HOME} launch"
+ENV CMD="comfy --workspace ${COMFY_HOME} launch -- --listen *"
 ENV BASE=""
 
 # We also need to copy the comfyui-api binary into the image, since ComfyUI
