@@ -1,0 +1,10 @@
+#! /usr/bin/bash
+
+model=meta-llama/Llama-3.1-8B-Instruct
+volume=$PWD/data # share a volume with the Docker container to avoid downloading weights every run
+
+docker run --rm --gpus all --shm-size 20g -v $volume:/data \
+    -e HF_TOKEN=$HF_TOKEN \
+    -p 8080:80 \
+    ghcr.io/huggingface/text-generation-inference:3.0.1 \
+    --model-id $model
