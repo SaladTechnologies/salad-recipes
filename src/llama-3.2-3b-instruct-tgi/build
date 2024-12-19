@@ -1,0 +1,42 @@
+#! /usr/bin/bash
+set -e
+
+image="saladtechnologies/text-generation-inference"
+usage="Usage: ./build --tgi-version <tgi-version> [--image <image> default: $image] [--push]"
+
+model_name="llama-3.2-1b-instruct"
+while [ "$1" != "" ]; do
+  case $1 in
+  --tgi-version)
+    shift
+    tgi_version=$1
+    ;;
+  --image)
+    shift
+    image=$1
+    ;;
+  --push)
+    push=true
+    ;;
+  *)
+    echo $usage
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+if [ -z "$tgi_version" ]; then
+  echo $usage
+  exit 1
+fi
+
+tag="$tgi_version-$model_name"
+echo "Building $image:$tag"
+docker build -t $image:$tag \
+  --build-arg tgi_version=$tgi_version \
+  .
+
+if [ "$push" = true ]; then
+  docker push $image:$tag
+fi
