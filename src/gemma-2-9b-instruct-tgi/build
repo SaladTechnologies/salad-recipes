@@ -4,7 +4,7 @@ set -e
 image="saladtechnologies/text-generation-inference"
 usage="Usage: ./build --tgi-version <tgi-version> [--image <image> default: $image] [--push]"
 
-model_name="mistral-7b-instruct-v0.3"
+model_name="gemma-2-9b-instruct"
 while [ "$1" != "" ]; do
   case $1 in
   --tgi-version)

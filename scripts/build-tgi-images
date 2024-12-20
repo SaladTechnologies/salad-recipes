@@ -1,0 +1,8 @@
+#! /usr/bin/bash
+
+# for each directory src/*-tgi
+for d in src/*-tgi; do
+  pushd $d
+  ./build $@
+  popd
+done
