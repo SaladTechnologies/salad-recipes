@@ -35,6 +35,7 @@ RUN chmod +x comfyui-api
 ENV MODEL_DIR=${COMFY_HOME}/models
 ENV OUTPUT_DIR=${COMFY_HOME}/output
 ENV INPUT_DIR=${COMFY_HOME}/input
+ENV WORKFLOW_DIR=/workflows
 
 # Startup can take a little longer with larger models.
 # This configures the worker binary's built-in health check.
