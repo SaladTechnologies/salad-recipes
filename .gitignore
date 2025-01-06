@@ -1,4 +1,5 @@
 *.safetensors
+*.ckpt
 comfyui-api
 **/benchmark/*.jsonl
 **/benchmark/images/
