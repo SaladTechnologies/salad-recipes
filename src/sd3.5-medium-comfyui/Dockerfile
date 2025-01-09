@@ -1,14 +1,20 @@
 # We're going to use this verified comfyui image as a base
-ARG comfy_version=0.3.7
-ARG api_version=1.6.1
+ARG comfy_version=0.3.10
+ARG api_version=1.7.0
 FROM saladtechnologies/comfyui:comfy${comfy_version}-api${api_version}-base
 
 ENV CHECKPOINT_DIR=${MODEL_DIR}/checkpoints
 ENV CLIP_DIR=${MODEL_DIR}/clip
 # https://huggingface.co/stabilityai/stable-diffusion-3.5-large
 COPY sd3.5_medium.safetensors ${CHECKPOINT_DIR}/
+
+# https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/clip_g.safetensors
 COPY clip_g.safetensors ${CLIP_DIR}/
+
+# https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/clip_l.safetensors
 COPY clip_l.safetensors ${CLIP_DIR}/
+
+# https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn_scaled.safetensors
 COPY t5xxl_fp8_e4m3fn.safetensors ${CLIP_DIR}/
 
 # The comfyui wrapper api supports a warmup mode, where it will run a provided workflow before starting the server.

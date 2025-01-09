@@ -1,5 +1,5 @@
 # This dockerfile includes env COMFY_HOME, WORKFLOW_DIR, MODEL_DIR, OUTPUT_DIR, INPUT_DIR
-FROM saladtechnologies/comfyui:comfy0.3.10-api1.6.1-base
+FROM saladtechnologies/comfyui:comfy0.3.10-api1.7.0-base
 
 RUN mkdir -p $MODEL_DIR/text_encoders
 

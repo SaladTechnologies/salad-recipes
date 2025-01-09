@@ -1,5 +1,7 @@
 # This dockerfile includes env COMFY_HOME, WORKFLOW_DIR, MODEL_DIR, OUTPUT_DIR, INPUT_DIR
-FROM saladtechnologies/comfyui:comfy0.3.10-api1.7.0-base
+ARG comfy_version=0.3.10
+ARG api_version=1.7.0
+FROM saladtechnologies/comfyui:comfy${comfy_version}-api${api_version}-base
 
 RUN apt-get update && apt-get install -y \
   libgl1 \
@@ -20,8 +22,13 @@ COPY AnimateLCM_sd15_t2v.ckpt ${MODEL_DIR}/animatediff_models/
 # https://civitai.com/models/4384/dreamshaper
 COPY dreamshaper_8.safetensors ${MODEL_DIR}/checkpoints/
 
+# https://huggingface.co/lllyasviel/control_v11p_sd15_openpose/resolve/main/diffusion_pytorch_model.fp16.safetensors
 COPY openpose-sd1.5-1.1.safetensors ${MODEL_DIR}/controlnet/
+
+# https://civitai.com/models/193225?modelVersionId=235847
 COPY jump_V2.safetensors ${MODEL_DIR}/loras/
+
+# https://huggingface.co/stabilityai/sd-vae-ft-mse-original/blob/main/vae-ft-mse-840000-ema-pruned.ckpt
 COPY vae-ft-mse-840000-ema-pruned.ckpt ${MODEL_DIR}/vae/
 
 

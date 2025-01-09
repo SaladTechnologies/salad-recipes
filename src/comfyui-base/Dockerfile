@@ -1,3 +1,6 @@
+# Use 'devel' to include the full cuda toolkit. required for some extensions and workflows,
+# including Hunyuan video
+ARG CUDA_BASE=runtime
 FROM pytorch/pytorch:2.5.0-cuda12.1-cudnn9-runtime
 ENV DEBIAN_FRONTEND=noninteractive
 

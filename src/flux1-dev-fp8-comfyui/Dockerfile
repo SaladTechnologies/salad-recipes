@@ -1,10 +1,10 @@
 # We're going to use this verified comfyui image as a base
-ARG comfy_version=0.3.7
-ARG api_version=1.6.1
+ARG comfy_version=0.3.10
+ARG api_version=1.7.0
 FROM saladtechnologies/comfyui:comfy${comfy_version}-api${api_version}-base
 
 ENV CHECKPOINT_DIR=${MODEL_DIR}/checkpoints
-# https://huggingface.co/Comfy-Org/flux1-schnell
+# https://huggingface.co/Comfy-Org/flux1-dev
 COPY flux1-dev-fp8.safetensors ${CHECKPOINT_DIR}/
 
 # The comfyui wrapper api supports a warmup mode, where it will run a provided workflow before starting the server.
