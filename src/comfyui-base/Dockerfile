@@ -1,7 +1,7 @@
 # Use 'devel' to include the full cuda toolkit. required for some extensions and workflows,
 # including Hunyuan video
 ARG CUDA_BASE=runtime
-FROM pytorch/pytorch:2.5.0-cuda12.1-cudnn9-runtime
+FROM pytorch/pytorch:2.5.0-cuda12.1-cudnn9-${CUDA_BASE}
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
@@ -29,9 +29,9 @@ ENV BASE=""
 # We also need to copy the comfyui-api binary into the image, since ComfyUI
 # is fully asyncronous by default, and has no convenient way to retrieve 
 # generated images. If you're adding a custom worker, you'll need to copy it in here.
-COPY comfyui-api .
+# COPY comfyui-api .
 ARG api_version=1.7.0
-# ADD https://github.com/SaladTechnologies/comfyui-api/releases/download/${api_version}/comfyui-api .
+ADD https://github.com/SaladTechnologies/comfyui-api/releases/download/${api_version}/comfyui-api .
 RUN chmod +x comfyui-api
 
 # Set up some environment variables for the worker

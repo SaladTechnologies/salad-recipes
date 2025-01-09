@@ -31,5 +31,9 @@ COPY jump_V2.safetensors ${MODEL_DIR}/loras/
 # https://huggingface.co/stabilityai/sd-vae-ft-mse-original/blob/main/vae-ft-mse-840000-ema-pruned.ckpt
 COPY vae-ft-mse-840000-ema-pruned.ckpt ${MODEL_DIR}/vae/
 
-
+# https://civitai.com/models/56307?modelVersionId=63973
 COPY poses/ $INPUT_DIR/
+
+# The comfyui wrapper api supports a warmup mode, where it will run a provided workflow before starting the server.
+COPY workflow.json .
+ENV WARMUP_PROMPT_FILE=workflow.json

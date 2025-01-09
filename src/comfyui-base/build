@@ -4,6 +4,7 @@ set -e
 image="saladtechnologies/comfyui"
 usage="Usage: ./build --comfy <comfy-version> --api <api-version> [--devel] [--image <image> default: $image] [--push]"
 
+model_name="base"
 cuda_base="runtime"
 while [ "$1" != "" ]; do
   case $1 in
@@ -38,7 +39,7 @@ if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
   exit 1
 fi
 
-tag="comfy$comfy_version-api$api_version-base"
+tag="comfy$comfy_version-api$api_version-$model_name"
 if [ "$cuda_base" = "devel" ]; then
   tag="$tag-devel"
 fi
