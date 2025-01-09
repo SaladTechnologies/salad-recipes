@@ -9,13 +9,6 @@ RUN apt-get update && apt-get install -y \
   libglib2.0-0 && \
   rm -rf /var/lib/apt/lists/*
 
-RUN comfy node registry-install comfyui-videohelpersuite
-RUN comfy node registry-install comfyui-animatediff-evolved
-RUN comfy node registry-install efficiency-nodes-comfyui
-RUN comfy node registry-install comfyui-advanced-controlnet
-
-RUN mkdir -p $MODEL_DIR/animatediff_models
-
 # https://huggingface.co/Lightricks/LTX-Video/blob/main/ltx-video-2b-v0.9.1.safetensors
 COPY ltx-video-2b-v0.9.1.safetensors $MODEL_DIR/checkpoints/
 

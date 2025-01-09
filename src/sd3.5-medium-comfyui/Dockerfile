@@ -5,7 +5,7 @@ FROM saladtechnologies/comfyui:comfy${comfy_version}-api${api_version}-base
 
 ENV CHECKPOINT_DIR=${MODEL_DIR}/checkpoints
 ENV CLIP_DIR=${MODEL_DIR}/clip
-# https://huggingface.co/stabilityai/stable-diffusion-3.5-large
+# https://huggingface.co/stabilityai/stable-diffusion-3.5-medium
 COPY sd3.5_medium.safetensors ${CHECKPOINT_DIR}/
 
 # https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/clip_g.safetensors
