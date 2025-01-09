@@ -1,7 +1,7 @@
 # Use 'devel' to include the full cuda toolkit. required for some extensions and workflows,
 # including Hunyuan video
-ARG CUDA_BASE=runtime
-FROM pytorch/pytorch:2.5.0-cuda12.1-cudnn9-${CUDA_BASE}
+ARG cuda_base=runtime
+FROM pytorch/pytorch:2.5.0-cuda12.1-cudnn9-${cuda_base}
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
