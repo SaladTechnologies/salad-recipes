@@ -15,6 +15,8 @@ Options:
   [--replicas <replicas>]    Number of replicas to run. Default 10
   [--benchmark <benchmark>]  Benchmark to run. Default benchmark.js
   [--org <org>]              Organization to use. Default salad-benchmarking
+  [--show-options]           Show options.
+  [--dry-run]                Do not create container groups or run benchmarks.
 `;
 
 const { SALAD_API_KEY } = process.env;
@@ -42,6 +44,12 @@ function getOptions() {
       case "--project":
         options[args[i].slice(2)] = args[++i];
         break;
+      case "--show-options":
+        options.showOptions = true;
+        break;
+      case "--dry-run":
+        options.dryRun = true;
+        break;
       default:
         console.error(`Unknown option: ${args[i]}`);
         console.log(usage);
@@ -64,8 +72,8 @@ function getOptions() {
   options.org = options.org || "salad-benchmarking";
 
   options.gpus = options.gpus.split(",").map(gpuId => gpuId.trim());
-  options.cpus = options.cpus.split(",").map(parseInt);
-  options.memory = options.memory.split(",").map(parseInt);
+  options.cpus = options.cpus.split(",").map(i => parseInt(i));
+  options.memory = options.memory.split(",").map(i => parseInt(i));
 
   return options;
 }
@@ -127,6 +135,9 @@ async function createContainerGroup(org, project, containerGroupDefinition) {
 
 async function main() {
   const options = getOptions();
+  if (options.showOptions) {
+    console.log(options);
+  }
   const recipeContainerGroupConfigPath = path.join(
     "src",
     options.recipe,
@@ -167,6 +178,10 @@ async function main() {
       console.log(`  - Container group ${containerGroup.name} already exists`);
     } catch (error) {
       console.log(`  - Creating container group ${containerGroup.name}`);
+      if (options.dryRun) {
+        console.log("    - Dry run, skipping");
+        continue;
+      }
       await createContainerGroup(options.org, options.project, containerGroup);
       console.log("    - Done");
     }
@@ -198,11 +213,19 @@ async function main() {
         }memgb.jsonl`,
       ];
       console.log(`  - Running benchmark for ${containerGroup.name}`);
+      if (options.showOptions) {
+        console.log(`    - ${cmd} ${args.join(" ")}`);
+      }
+      if (options.dryRun) {
+        console.log("    - Dry run, skipping");
+        return;
+      }
       // Let stdout and stderr display normally
       return new Promise((resolve, reject) => {
         const child = exec(`${cmd} ${args.join(" ")}`, {
           env: { ...process.env },
         });
+        child.setMaxListeners(Infinity);
         child.on("exit", (code) => {
           if (code === 0) {
             resolve();
