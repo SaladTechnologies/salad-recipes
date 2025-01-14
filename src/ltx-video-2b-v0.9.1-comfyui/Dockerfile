@@ -1,6 +1,6 @@
 # This dockerfile includes env COMFY_HOME, WORKFLOW_DIR, MODEL_DIR, OUTPUT_DIR, INPUT_DIR
 ARG comfy_version=0.3.10
-ARG api_version=1.7.0
+ARG api_version=1.7.1
 FROM saladtechnologies/comfyui:comfy${comfy_version}-api${api_version}-base-devel
 
 RUN apt-get update && apt-get install -y \

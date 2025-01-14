@@ -2,7 +2,7 @@
   "name": "hunyuanvideo-fp16-comfyui",
   "display_name": "hunyuanvideo-fp16-comfyui",
   "container": {
-    "image": "saladtechnologies/comfyui:comfy0.3.10-api1.7.0-hunyuanvideo-fp16",
+    "image": "saladtechnologies/comfyui:comfy0.3.10-api1.7.1-hunyuanvideo-fp16",
     "resources": {
       "cpu": 4,
       "memory": 38912,

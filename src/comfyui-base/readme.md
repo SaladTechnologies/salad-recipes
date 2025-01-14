@@ -22,7 +22,7 @@ To build the image, run the following from this directory:
 
 ```bash
 # Add --devel to build the devel image
-./build --comfy 0.3.10 --api 1.7.0
+./build --comfy 0.3.10 --api 1.7.1
 ```
 
 ## Run
@@ -31,5 +31,5 @@ To run the image, run the following:
 
 ```bash
 # Add --devel to run the devel image
-./run --comfy 0.3.10 --api 1.7.0
+./run --comfy 0.3.10 --api 1.7.1
 ```

@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Comfy Wrapper API",
-    "version": "1.7.0"
+    "version": "1.7.1"
   },
   "components": {
     "schemas": {}
@@ -23,7 +23,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.7.0"
+                        "1.7.1"
                       ]
                     },
                     "status": {
@@ -52,7 +52,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.7.0"
+                        "1.7.1"
                       ]
                     },
                     "status": {
@@ -89,7 +89,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.7.0"
+                        "1.7.1"
                       ]
                     },
                     "status": {
@@ -118,7 +118,7 @@
                     "version": {
                       "type": "string",
                       "enum": [
-                        "1.7.0"
+                        "1.7.1"
                       ]
                     },
                     "status": {

@@ -2,7 +2,7 @@
   "name": "sdxl-with-refiner-comfyui",
   "display_name": "sdxl-with-refiner-comfyui",
   "container": {
-    "image": "saladtechnologies/comfyui:comfy0.3.10-api1.7.0-sdxl-with-refiner",
+    "image": "saladtechnologies/comfyui:comfy0.3.10-api1.7.1-sdxl-with-refiner",
     "resources": {
       "cpu": 4,
       "memory": 30720,
