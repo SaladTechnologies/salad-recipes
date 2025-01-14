@@ -15,5 +15,7 @@ COPY ltx-video-2b-v0.9.1.safetensors $MODEL_DIR/checkpoints/
 # https://huggingface.co/comfyanonymous/flux_text_encoders/blob/main/t5xxl_fp16.safetensors
 COPY t5xxl_fp16.safetensors $MODEL_DIR/clip/
 
+RUN comfy node registry-install comfyui-videohelpersuite
+
 COPY workflow.json .
 ENV WARMUP_PROMPT_FILE=workflow.json
