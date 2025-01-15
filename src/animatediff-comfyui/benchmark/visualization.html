@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+</head>
+<body>
+<div id="benchmarkViz1"></div>
+<div id="vizInteractions1"></div>
+<div id="benchmarkViz2"></div>
+<div id="vizInteractions2"></div>
+<div id="benchmarkViz3"></div>
+<div id="vizInteractions3"></div>
+<div id="benchmarkViz4"></div>
+<div id="vizInteractions4"></div>
+<div id="benchmarkViz5"></div>
+<div id="vizInteractions5"></div>
+<div id="benchmarkViz6"></div>
+<div id="vizInteractions6"></div>
+<div id="benchmarkViz7"></div>
+<div id="vizInteractions7"></div>
+<div id="benchmarkViz8"></div>
+<div id="vizInteractions8"></div>
+<div id="benchmarkViz9"></div>
+<div id="vizInteractions9"></div>
+<div id="benchmarkViz10"></div>
+<div id="vizInteractions10"></div>
+<div id="benchmarkViz11"></div>
+<div id="vizInteractions11"></div>
+<div id="benchmarkViz12"></div>
+<div id="vizInteractions12"></div>
+<script>
+
+  window.benchmarkViz1 = {
+    dataUrl: "./benchmark-rtx-3090-24-gb-4cpu-24memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-3090-24-gb-4cpu-24memgb.json",
+    divId: "benchmarkViz1",
+    interactionsDivId: "vizInteractions1"
+  };
+  window.benchmarkViz2 = {
+    dataUrl: "./benchmark-rtx-3090-24-gb-4cpu-30memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-3090-24-gb-4cpu-30memgb.json",
+    divId: "benchmarkViz2",
+    interactionsDivId: "vizInteractions2"
+  };
+  window.benchmarkViz3 = {
+    dataUrl: "./benchmark-rtx-3090-24-gb-4cpu-38memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-3090-24-gb-4cpu-38memgb.json",
+    divId: "benchmarkViz3",
+    interactionsDivId: "vizInteractions3"
+  };
+  window.benchmarkViz4 = {
+    dataUrl: "./benchmark-rtx-3090-24-gb-8cpu-24memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-3090-24-gb-8cpu-24memgb.json",
+    divId: "benchmarkViz4",
+    interactionsDivId: "vizInteractions4"
+  };
+  window.benchmarkViz5 = {
+    dataUrl: "./benchmark-rtx-3090-24-gb-8cpu-30memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-3090-24-gb-8cpu-30memgb.json",
+    divId: "benchmarkViz5",
+    interactionsDivId: "vizInteractions5"
+  };
+  window.benchmarkViz6 = {
+    dataUrl: "./benchmark-rtx-3090-24-gb-8cpu-38memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-3090-24-gb-8cpu-38memgb.json",
+    divId: "benchmarkViz6",
+    interactionsDivId: "vizInteractions6"
+  };
+  window.benchmarkViz7 = {
+    dataUrl: "./benchmark-rtx-4090-24-gb-4cpu-24memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-4090-24-gb-4cpu-24memgb.json",
+    divId: "benchmarkViz7",
+    interactionsDivId: "vizInteractions7"
+  };
+  window.benchmarkViz8 = {
+    dataUrl: "./benchmark-rtx-4090-24-gb-4cpu-30memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-4090-24-gb-4cpu-30memgb.json",
+    divId: "benchmarkViz8",
+    interactionsDivId: "vizInteractions8"
+  };
+  window.benchmarkViz9 = {
+    dataUrl: "./benchmark-rtx-4090-24-gb-4cpu-38memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-4090-24-gb-4cpu-38memgb.json",
+    divId: "benchmarkViz9",
+    interactionsDivId: "vizInteractions9"
+  };
+  window.benchmarkViz10 = {
+    dataUrl: "./benchmark-rtx-4090-24-gb-8cpu-24memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-4090-24-gb-8cpu-24memgb.json",
+    divId: "benchmarkViz10",
+    interactionsDivId: "vizInteractions10"
+  };
+  window.benchmarkViz11 = {
+    dataUrl: "./benchmark-rtx-4090-24-gb-8cpu-30memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-4090-24-gb-8cpu-30memgb.json",
+    divId: "benchmarkViz11",
+    interactionsDivId: "vizInteractions11"
+  };
+  window.benchmarkViz12 = {
+    dataUrl: "./benchmark-rtx-4090-24-gb-8cpu-38memgb.json",
+    pricesUrl: "https://raw.githubusercontent.com/SaladTechnologies/salad-recipes/refs/heads/master/benchmark/prices.json",
+    title: "benchmark-rtx-4090-24-gb-8cpu-38memgb.json",
+    divId: "benchmarkViz12",
+    interactionsDivId: "vizInteractions12"
+  };
+</script>
+<script src="/benchmark/embed-result.js" type="module"></script>
+</body>
+</html>

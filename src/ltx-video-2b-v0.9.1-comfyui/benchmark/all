@@ -1,0 +1,12 @@
+#! /usr/bin/bash
+
+node benchmark/run-matrix.js \
+  --recipe ltx-video-2b-v0.9.1-comfyui \
+  --project ltx-video-testing \
+  --gpus ed563892-aacd-40f5-80b7-90c9be6c759b \
+  --cpus 4 \
+  --memory 38 \
+  --benchmark benchmark.js \
+  --replicas 9
+
+node benchmark/multi-viz-generator.js src/ltx-video-2b-v0.9.1-comfyui/benchmark

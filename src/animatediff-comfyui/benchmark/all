@@ -1,0 +1,11 @@
+#! /usr/bin/bash
+
+node benchmark/run-matrix.js \
+  --recipe animatediff-comfyui \
+  --project animatediff-benchmarking \
+  --gpus ed563892-aacd-40f5-80b7-90c9be6c759b,a5db5c50-cbcb-4596-ae80-6a0c8090d80f \
+  --cpus 4,8 \
+  --memory 24,30,38 \
+  --benchmark benchmark.js
+
+node benchmark/multi-viz-generator.js src/animatediff-comfyui/benchmark

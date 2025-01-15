@@ -1,8 +1,10 @@
 *.safetensors
+*.ckpt
 comfyui-api
 **/benchmark/*.jsonl
 **/benchmark/images/
 **/benchmark/*.csv
 **/benchmark/*-test-config.json
+src/cogvideox-2b-comfyui/CogVideo2B
 
 nohup.out
