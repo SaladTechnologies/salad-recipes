@@ -2,7 +2,7 @@
   "name": "sd3-5-large-comfyui",
   "display_name": "sd3-5-large-comfyui",
   "container": {
-    "image": "saladtechnologies/comfyui:comfy0.3.10-api1.7.1-sd3.5-large",
+    "image": "saladtechnologies/comfyui:comfy0.3.12-api1.8.0-sd3.5-large",
     "resources": {
       "cpu": 4,
       "memory": 38912,
