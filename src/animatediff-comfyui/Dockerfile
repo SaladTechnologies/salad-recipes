@@ -9,11 +9,6 @@ RUN apt-get update && apt-get install -y \
   libglib2.0-0 && \
   rm -rf /var/lib/apt/lists/*
 
-RUN comfy node registry-install comfyui-videohelpersuite
-RUN comfy node registry-install comfyui-animatediff-evolved
-RUN comfy node registry-install efficiency-nodes-comfyui
-RUN comfy node registry-install comfyui-advanced-controlnet
-
 RUN mkdir -p $MODEL_DIR/animatediff_models
 
 # https://huggingface.co/wangfuyun/AnimateLCM/resolve/b78bbce/AnimateLCM_sd15_t2v.ckpt
@@ -30,6 +25,11 @@ COPY jump_V2.safetensors ${MODEL_DIR}/loras/
 
 # https://huggingface.co/stabilityai/sd-vae-ft-mse-original/blob/main/vae-ft-mse-840000-ema-pruned.ckpt
 COPY vae-ft-mse-840000-ema-pruned.ckpt ${MODEL_DIR}/vae/
+
+RUN comfy node registry-install comfyui-videohelpersuite
+RUN comfy node registry-install comfyui-animatediff-evolved
+RUN comfy node registry-install efficiency-nodes-comfyui
+RUN comfy node registry-install comfyui-advanced-controlnet
 
 # https://civitai.com/models/56307?modelVersionId=63973
 COPY poses/ $INPUT_DIR/
