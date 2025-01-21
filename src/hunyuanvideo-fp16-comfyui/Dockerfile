@@ -15,5 +15,7 @@ COPY llava_llama3_fp8_scaled.safetensors ${MODEL_DIR}/text_encoders/
 # https://huggingface.co/Comfy-Org/HunyuanVideo_repackaged/tree/main/split_files/vae
 COPY hunyuan_video_vae_bf16.safetensors ${MODEL_DIR}/vae/
 
+RUN comfy node registry-install comfyui-videohelpersuite
+
 COPY workflow.json .
 ENV WARMUP_PROMPT_FILE=workflow.json
