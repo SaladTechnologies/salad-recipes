@@ -3,6 +3,12 @@ ARG comfy_version=0.3.12
 ARG api_version=1.8.1
 FROM ghcr.io/saladtechnologies/comfyui-api:comfy${comfy_version}-api${api_version}-torch2.5.0-cuda12.1-runtime
 
+RUN apt-get update && apt-get install -y \
+  libgl1 \
+  libgl1-mesa-glx \
+  libglib2.0-0 && \
+  rm -rf /var/lib/apt/lists/*
+
 RUN mkdir -p $MODEL_DIR/text_encoders
 
 # https://huggingface.co/Comfy-Org/HunyuanVideo_repackaged/tree/main/split_files/diffusion_models
