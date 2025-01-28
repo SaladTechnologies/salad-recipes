@@ -1,1 +1,0 @@
-wget -O /dev/null -q --show-progress https://testfile.org/1.3GBiconpng

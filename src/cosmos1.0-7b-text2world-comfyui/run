@@ -2,10 +2,9 @@
 
 
 image="saladtechnologies/comfyui"
-usage="Usage: ./run --comfy <comfy-version> --api <api-version> [--devel] [--image <image> default: $image]"
+usage="Usage: ./run --comfy <comfy-version> --api <api-version> [--image <image> default: $image]"
 
-model_name="base"
-cuda_base="runtime"
+model_name="cosmos1.0-7b-text2world"
 while [ "$1" != "" ]; do
   case $1 in
   --comfy)
@@ -19,9 +18,6 @@ while [ "$1" != "" ]; do
   --image)
     shift
     image=$1
-    ;;
-  --devel)
-    cuda_base="devel"
     ;;
   *)
     echo $usage
@@ -37,9 +33,6 @@ if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
 fi
 
 tag="comfy$comfy_version-api$api_version-$model_name"
-if [ "$cuda_base" = "devel" ]; then
-  tag="$tag-devel"
-fi
 
 docker run -it --rm --gpus all \
 -p 8188:8188 \

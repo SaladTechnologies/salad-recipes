@@ -2,7 +2,7 @@
   "name": "ltx-video-2b-v0-9-1-comfyui",
   "display_name": "ltx-video-2b-v0-9-1-comfyui",
   "container": {
-    "image": "saladtechnologies/comfyui:comfy0.3.10-api1.7.1-ltx-video-2b-v0.9.1",
+    "image": "saladtechnologies/comfyui:comfy0.3.12-api1.8.2-ltx-video-2b-v0.9.1",
     "resources": {
       "cpu": 4,
       "memory": 38912,

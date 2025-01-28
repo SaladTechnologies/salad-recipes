@@ -2,10 +2,9 @@
 set -e
 
 image="saladtechnologies/comfyui"
-usage="Usage: ./build --comfy <comfy-version> --api <api-version> [--devel] [--image <image> default: $image] [--push]"
+usage="Usage: ./build --comfy <comfy-version> --api <api-version> [--image <image> default: $image] [--push]"
 
-model_name="base"
-cuda_base="runtime"
+model_name="cosmos1.0-7b-text2world"
 while [ "$1" != "" ]; do
   case $1 in
   --comfy)
@@ -23,9 +22,6 @@ while [ "$1" != "" ]; do
   --push)
     push=true
     ;;
-  --devel)
-    cuda_base="devel"
-    ;;
   *)
     echo $usage
     exit 1
@@ -40,13 +36,8 @@ if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
 fi
 
 tag="comfy$comfy_version-api$api_version-$model_name"
-if [ "$cuda_base" = "devel" ]; then
-  tag="$tag-devel"
-fi
-
 echo "Building $image:$tag"
 docker build -t $image:$tag \
-  --build-arg cuda_base=$cuda_base \
   --build-arg comfy_version=$comfy_version \
   --build-arg api_version=$api_version \
   .
