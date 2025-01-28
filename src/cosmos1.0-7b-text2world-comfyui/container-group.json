@@ -2,7 +2,7 @@
   "name": "cosmos1-0-7b-text2world-comfyui",
   "display_name": "cosmos1-0-7b-text2world-comfyui",
   "container": {
-    "image": "saladtechnologies/comfyui:comfy0.3.12-api1.8.1-cosmos1.0-7b-text2world",
+    "image": "saladtechnologies/comfyui:comfy0.3.12-api1.8.2-cosmos1.0-7b-text2world",
     "resources": {
       "cpu": 4,
       "memory": 24576,
