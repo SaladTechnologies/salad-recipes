@@ -1,0 +1,50 @@
+{
+  "autostart_policy": true,
+  "container": {
+    "command": [],
+    "environment_variables": {
+      "API_KEY": "REQUIRED",
+      "NFT_TOKEN_ID": "REQUIRED",
+      "AUTO_DOWNLOAD_TO_MIN_MODEL_COUNT": "6"
+    },
+    "image": "sogni/sogni-stable-diffusion-worker:latest",
+    "priority": "high",
+    "resources": {
+      "cpu": 4,
+      "gpu_classes": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+      "memory": 30720,
+      "storage": 53687091200
+    }
+  },
+  "country_codes": [],
+  "display_name": "sogni-stable-diffusion-worker",
+  "liveness_probe": {
+    "failure_threshold": 6,
+    "http": {
+      "headers": [],
+      "path": "/liveness",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initial_delay_seconds": 90,
+    "period_seconds": 8,
+    "success_threshold": 1,
+    "timeout_seconds": 30
+  },
+  "name": "sogni-stable-diffusion-worker",
+  "replicas": 1,
+  "restart_policy": "always",
+  "startup_probe": {
+    "failure_threshold": 6,
+    "http": {
+      "headers": [],
+      "path": "/startup",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initial_delay_seconds": 90,
+    "period_seconds": 5,
+    "success_threshold": 1,
+    "timeout_seconds": 5
+  }
+}
