@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 
 docker run -it --rm --name tgi-downloader \
---env 'MODEL_ID=leon-se/Qwen2.5-VL-7B-Instruct-FP8-Dynamic' \
+--env 'MODEL_ID=Qwen/Qwen2.5-VL-7B-Instruct' \
 -v $(pwd)/data:/data \
 --gpus all \
 ghcr.io/huggingface/text-generation-inference:3.2.0
