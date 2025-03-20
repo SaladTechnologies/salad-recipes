@@ -23,6 +23,7 @@ const summaryFile = rawResultsFile.replace(/\.jsonl?$/, "-summary.json");
 const nodeCountCSV = rawResultsFile.replace(/\.jsonl?$/, "-node-count.csv");
 const testConfigFile = rawResultsFile.replace(/\.jsonl?$/, "-test-config.json");
 const priceFile = process.argv[4] || "benchmark/prices.json";
+const consoleFile = rawResultsFile.replace(/\.jsonl?$/, "-console.txt");
 
 const vCPUPrice = 0.004;
 const memGBPrice = 0.001;
@@ -99,7 +100,7 @@ function condenseRawData(k6Lines, nodeCountLines) {
         type: "Point",
         metric: "node_count",
         data: {
-          time: new Date(time * 1000).toISOString(),
+          time: new Date(int(time) * 1000).toISOString(),
           value: parseInt(count),
         },
       };
@@ -128,11 +129,10 @@ function condenseRawData(k6Lines, nodeCountLines) {
   return results;
 }
 
-function getPercentiles(data, percentiles) {
-  const sortedData = data.toSorted((a, b) => a.value - b.value);
+function getPercentilesFromSorted(sortedData, percentiles) {
   return percentiles.map((p) => {
-    const index = Math.floor(data.length * p);
-    if (index === data.length) {
+    const index = Math.floor(sortedData.length * p);
+    if (index === sortedData.length) {
       return sortedData[index - 1].value;
     }
     return sortedData[index].value;
@@ -146,20 +146,19 @@ function summarizeResults(results, prices, testConfig) {
   );
   const vus = results.filter((r) => r.metric === "vus");
 
-  // const lengthOfBenchmarkSeconds = Math.max(
-  //   ...results.map((r) => r.timeFromStart)
-  // ) / 1000;
   let lengthOfBenchmarkSeconds = 0;
   let i = results.length;
   while (i--) {
     lengthOfBenchmarkSeconds = Math.max(lengthOfBenchmarkSeconds, results[i].timeFromStart);
   }
   lengthOfBenchmarkSeconds /= 1000;
+
   const numRequests = durations.length;
   const numFailedRequests = failedRequests.length;
   const successRate = (numRequests - numFailedRequests) / numRequests;
 
-  const [minDurationSeconds, maxDurationSeconds, medianDurationSeconds, p90DurationSeconds] = getPercentiles(durations, [0, 1, 0.5, 0.9]).map((v) => v / 1000);
+  const sortedDurations = durations.toSorted((a, b) => a.value - b.value);
+  const [minDurationSeconds, maxDurationSeconds, medianDurationSeconds, p90DurationSeconds] = getPercentilesFromSorted(sortedDurations, [0, 1, 0.5, 0.9]).map((v) => v / 1000);
   const meanDurationSeconds = durations.reduce(
     (acc, val) => acc + val.value,
     0
@@ -181,9 +180,12 @@ function summarizeResults(results, prices, testConfig) {
     throughputPeriod,
     "value"
   );
+  const sortedRollingThroughput = rollingThroughput.toSorted(
+    (a, b) => a.value - b.value
+  );
 
   const meanThroughput = numRequests / lengthOfBenchmarkSeconds;
-  const [p10Throughput, medianThroughput, maxThroughput] = getPercentiles(rollingThroughput, [0.1, 0.5, 1]);
+  const [p10Throughput, medianThroughput, maxThroughput] = getPercentilesFromSorted(sortedRollingThroughput, [0.1, 0.5, 1]);
   const timeOfMaxThroughputSeconds =
     rollingThroughput.find((r) => r.value === maxThroughput).timeFromStart / 1000;
 
@@ -307,10 +309,10 @@ async function processResults() {
 
   const smallResults = {
     resources: testConfig.container.resources,
-    metric: results.map((r) => r.metric),
-    timeFromStart: results.map((r) => r.timeFromStart),
+    metric: Array.from(new Set(results.map((r) => r.metric))).sort(),
     value: results.map((r) => r.value),
   };
+  smallResults.timeFromStart = results.map((r, i) => ([smallResults.metric.indexOf(results[i].metric), r.timeFromStart])),
 
   console.log(`Writing data to ${outputResultsFile}`);
   await fs.writeFile(outputResultsFile, JSON.stringify(smallResults));

@@ -73,22 +73,13 @@ export default function () {
     stream: false
   });
 
-
   // Make the request
   const response = http.post(url, payload, params);
   check(response, {
     "status is 200": (r) => r.status === 200,
   });
 
-  let body;
-  try {
-    body = JSON.parse(response.body);
-  } catch (e) {
-    console.error("Failed to parse response body");
-    console.error(e);
-    console.error(response.body);
-    return;
-  }
+  const body = JSON.parse(response.body);
   const inputTokens = body.usage.prompt_tokens;
   const outputTokens = body.usage.completion_tokens;
   const caption = JSON.stringify(body.choices[0].message.content);
@@ -96,7 +87,6 @@ export default function () {
 
   inputTokensTrend.add(parseInt(inputTokens), { requestId: params.tags.requestId } );
   outputTokensTrend.add(parseInt(outputTokens), { requestId: params.tags.requestId } );
-
 
   
 }

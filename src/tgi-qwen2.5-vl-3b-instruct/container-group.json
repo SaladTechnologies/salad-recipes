@@ -1,0 +1,46 @@
+{
+  "name": "tgi-qwen2-5-vl-3b-instruct",
+  "display_name": "tgi-qwen2-5-vl-3b-instruct",
+  "container": {
+    "image": "saladtechnologies/text-generation-inference:3.2.0-qwen-2.5-vl-3b-instruct",
+    "resources": {
+      "cpu": 4,
+      "memory": 30720,
+      "gpu_classes": [
+        "a5db5c50-cbcb-4596-ae80-6a0c8090d80f"
+      ]
+    },
+    "command": [],
+    "priority": "high",
+    "environment_variables": {
+      "HOSTNAME": "::",
+      "PORT": "3000"
+    },
+    "image_caching": true
+  },
+  "autostart_policy": true,
+  "restart_policy": "always",
+  "replicas": 3,
+  "networking": {
+    "protocol": "http",
+    "port": 3000,
+    "auth": false,
+    "load_balancer": "least_number_of_connections",
+    "single_connection_limit": false,
+    "client_request_timeout": 100000,
+    "server_response_timeout": 100000
+  },
+  "startup_probe": {
+    "http": {
+      "path": "/health",
+      "port": 3000,
+      "scheme": "http",
+      "headers": []
+    },
+    "initial_delay_seconds": 0,
+    "period_seconds": 3,
+    "timeout_seconds": 10,
+    "success_threshold": 1,
+    "failure_threshold": 50
+  }
+}

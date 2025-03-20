@@ -22,16 +22,17 @@ export const options = {
 const inputTokensTrend = new Trend("inputTokens");
 const outputTokensTrend = new Trend("outputTokens");
 
-const allImageUrls = new SharedArray("imageUrls", function () {
-  return open("images.txt").split("\n").map((url) => url.trim()).filter((url) => url);
-})
+const allPrompts = new SharedArray("samplePrompts", function () {
+  return open("sample12b_5000.jsonl")
+    .split("\n")
+    .filter((prompt) => prompt)
+    .map((prompt) => JSON.parse(prompt));
+});
 
 // Request configuration
 const { SALAD_API_KEY, ACCESS_DOMAIN_NAME } = __ENV;
 
 const url = `${ACCESS_DOMAIN_NAME}/v1/chat/completions`;
-
-
 
 // Default function that will be called for each virtual user
 export default function () {
@@ -49,30 +50,9 @@ export default function () {
     params.headers["Salad-Api-Key"] = SALAD_API_KEY;
   }
 
-  const imageURL = allImageUrls[Math.floor(Math.random() * allImageUrls.length)]
+  const prompt = allPrompts[Math.floor(Math.random() * allPrompts.length)];
 
-  const payload = JSON.stringify({
-    messages: [
-      {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: "What is in this image? Include details.",
-          },
-          {
-            type: "image_url",
-            image_url: {
-              url: imageURL,
-            },
-          },
-        ],
-      },
-    ],
-    max_tokens: 512,
-    stream: false
-  });
-
+  const payload = JSON.stringify({...prompt, stream: false});
 
   // Make the request
   const response = http.post(url, payload, params);
@@ -94,9 +74,10 @@ export default function () {
   const caption = JSON.stringify(body.choices[0].message.content);
   console.log(`${imageURL}|${caption}`);
 
-  inputTokensTrend.add(parseInt(inputTokens), { requestId: params.tags.requestId } );
-  outputTokensTrend.add(parseInt(outputTokens), { requestId: params.tags.requestId } );
-
-
-  
+  inputTokensTrend.add(parseInt(inputTokens), {
+    requestId: params.tags.requestId,
+  });
+  outputTokensTrend.add(parseInt(outputTokens), {
+    requestId: params.tags.requestId,
+  });
 }
