@@ -6,8 +6,8 @@ openai_api_key = os.getenv("OPENAI_API_KEY", "-")
 client = OpenAI(
     base_url="http://localhost:3000/v1", api_key=openai_api_key)
 model = "tgi"
-client = OpenAI(api_key=openai_api_key)
-model = "gpt-4o-mini"
+# client = OpenAI(api_key=openai_api_key)
+# model = "gpt-4o-mini"
 
 chat = client.chat.completions.create(
     model=model,
