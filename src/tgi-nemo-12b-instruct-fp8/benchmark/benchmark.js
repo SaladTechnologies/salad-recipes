@@ -9,15 +9,14 @@ export const options = {
   scenarios: {
     ramp_up_users: {
       executor: "ramping-vus",
-      startVUs: 10,
+      startVUs: 30,
       stages: [
-        { duration: "1m", target: 10 },
-        { duration: "59m", target: 300 },
+        { duration: "1m", target: 30 },
+        { duration: "59m", target: 200 },
       ],
     },
   },
 };
-
 // Custom metrics
 const inputTokensTrend = new Trend("inputTokens");
 const outputTokensTrend = new Trend("outputTokens");
@@ -26,7 +25,22 @@ const allPrompts = new SharedArray("samplePrompts", function () {
   return open("sample12b_5000.jsonl")
     .split("\n")
     .filter((prompt) => prompt)
-    .map((prompt) => JSON.parse(prompt));
+    .map((promptText) => {
+      const prompt = JSON.parse(promptText);
+      delete prompt.completion;
+      let prev;
+      for (let i = prompt.messages.length - 1; i >= 0; i--) {
+        const role = prompt.messages[i].role;
+        if (role !== prev) {
+          prev = role;
+        } else {
+          // append content to previous message.content
+          prompt.messages[i - 1].content += ` ${prompt.messages[i].content}`;
+          prompt.messages.splice(i, 1);
+        }
+      }
+      return prompt;
+    });
 });
 
 // Request configuration
@@ -71,8 +85,6 @@ export default function () {
   }
   const inputTokens = body.usage.prompt_tokens;
   const outputTokens = body.usage.completion_tokens;
-  const caption = JSON.stringify(body.choices[0].message.content);
-  console.log(`${imageURL}|${caption}`);
 
   inputTokensTrend.add(parseInt(inputTokens), {
     requestId: params.tags.requestId,

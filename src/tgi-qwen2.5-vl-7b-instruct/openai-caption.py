@@ -1,21 +1,29 @@
 from openai import OpenAI
+import os
 
-client = OpenAI(base_url="http://localhost:3000/v1", api_key="-")
+openai_api_key = os.getenv("OPENAI_API_KEY", "-")
+
+client = OpenAI(
+    base_url="http://localhost:3000/v1", api_key=openai_api_key)
+model = "tgi"
+client = OpenAI(api_key=openai_api_key)
+model = "gpt-4o-mini"
 
 chat = client.chat.completions.create(
-    model="tgi",
+    model=model,
     messages=[
         {
-          "role": "user",
+            "role": "user",
             "content": [
                 {
                     "type": "text",
-                    "text": "What is in this image? Include details."
+                    "text": "Describe the image in detail using comma-separated descriptor tags, with more prominent features toward the front of the list"
                 },
                 {
                     "type": "image_url",
                     "image_url": {
-                        "url": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/transformers/rabbit.png"
+                        "url": "https://salad-benchmark-assets.download/coco2017/train2017/000000000094.jpg",
+                        "detail": "low"
                     }
                 }
             ]
@@ -26,3 +34,4 @@ chat = client.chat.completions.create(
 )
 
 print(chat.choices[0].message.content)
+print(chat.usage)
