@@ -6,5 +6,6 @@ comfyui-api
 **/benchmark/*.csv
 **/benchmark/*-test-config.json
 src/cogvideox-2b-comfyui/CogVideo2B
-
+src/tgi-*/data
+src/tgi-*/benchmark/*.txt
 nohup.out

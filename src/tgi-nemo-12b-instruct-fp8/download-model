@@ -1,0 +1,7 @@
+#! /usr/bin/bash
+
+docker run -it --rm --name tgi-downloader \
+--env 'MODEL_ID=context-labs/neuralmagic-mistral-nemo-12b-instruct-FP8' \
+-v $(pwd)/data:/data \
+--gpus all \
+ghcr.io/huggingface/text-generation-inference:3.2.1

@@ -1,0 +1,37 @@
+#! /usr/bin/bash
+
+
+image="saladtechnologies/text-generation-inference"
+usage="Usage: ./run --tgi-version <tgi-version> [--image <image> default: $image]"
+
+model_name="qwen-2.5-vl-7b-instruct"
+while [ "$1" != "" ]; do
+  case $1 in
+  --tgi-version)
+    shift
+    tgi_version=$1
+    ;;
+  --image)
+    shift
+    image=$1
+    ;;
+  *)
+    echo $usage
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+if [ -z "$tgi_version" ]; then
+  echo $usage
+  exit 1
+fi
+
+tag="$tgi_version-$model_name"
+
+docker run -it --rm --gpus all \
+-p 3000:3000 \
+--env 'PORT=3000' \
+--name tgi-$model_name \
+$image:$tag

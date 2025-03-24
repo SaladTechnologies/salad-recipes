@@ -88,6 +88,7 @@ node_count_output=$(echo $output | sed 's/\.jsonl$/-node-count.csv/')
 test_config_output=$(echo $output | sed 's/\.jsonl$/-test-config.json/')
 summary_output=$(echo $output | sed 's/\.jsonl$/-summary.json/')
 blog_output=$(echo $output | sed 's/\.jsonl$/.html/')
+console_output=$(echo $output | sed 's/\.jsonl$/-console.txt/')
 
 # If the container group is not specified, assume it is the same as the recipe name
 if [ -z "$container_group" ]; then
@@ -114,7 +115,7 @@ monitor_pid=$!
 trap "kill $monitor_pid" EXIT INT TERM
 
 # Run the benchmark
-k6 run --out json=$output $benchmark_file
+k6 run --out json=$output --console-output $console_output $benchmark_file
 
 # Stop the container group
 stopContainerGroup $org $project $container_group
@@ -122,7 +123,7 @@ stopContainerGroup $org $project $container_group
 # the jsonl file will be processed to a file with the same name, but .json
 # This also creates a summary.json file with the summary of the results
 processed_filename=$(echo $output | sed 's/\.jsonl$/.json/')
-node benchmark/process-results.js $output $processed_filename
+# node benchmark/process-results.js $output $processed_filename
 
 if [ -z $ANTHROPIC_API_KEY ]; then
   echo "Skipping writing blog post because ANTHROPIC_API_KEY environment variable is not set"
