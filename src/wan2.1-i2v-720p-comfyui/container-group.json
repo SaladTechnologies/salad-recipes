@@ -1,0 +1,60 @@
+{
+  "name": "wan2-1-comfyui",
+  "display_name": "wan2-1-comfyui",
+  "container": {
+    "image": "saladtechnologies/comfyui:comfy0.3.27-api1.8.2-wan2.1-i2v-720p-fp8",
+    "resources": {
+      "cpu": 4,
+      "memory": 30720,
+      "gpu_classes": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ]
+    },
+    "command": [],
+    "priority": "high",
+    "image_caching": true
+  },
+  "autostart_policy": true,
+  "restart_policy": "always",
+  "replicas": 3,
+  "networking": {
+    "protocol": "http",
+    "port": 3000,
+    "auth": false,
+    "load_balancer": "least_number_of_connections",
+    "single_connection_limit": false,
+    "client_request_timeout": 100000,
+    "server_response_timeout": 100000
+  },
+  "readiness_probe": {
+    "http": {
+      "path": "/ready",
+      "port": 3000,
+      "scheme": "http",
+      "headers": []
+    },
+    "initial_delay_seconds": 0,
+    "period_seconds": 1,
+    "timeout_seconds": 1,
+    "success_threshold": 1,
+    "failure_threshold": 3
+  },
+  "startup_probe": {
+    "http": {
+      "path": "/health",
+      "port": 3000,
+      "scheme": "http",
+      "headers": []
+    },
+    "initial_delay_seconds": 10,
+    "period_seconds": 2,
+    "timeout_seconds": 10,
+    "success_threshold": 1,
+    "failure_threshold": 100
+  },
+  "queue_connection": {
+    "path": "/prompt",
+    "port": 3000,
+    "queue_name": "wan-2-1-i2v-720p-comfyui-jobs"
+  }
+}
