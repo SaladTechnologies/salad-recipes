@@ -1,0 +1,11 @@
+#! /usr/bin/bash
+
+
+image="saladtechnologies/comfyui"
+tag="comfy0.3.27-api1.8.2-wan2.1-i2v-720p-fp8"
+
+docker run -it --rm --gpus all \
+-p 3000:3000 \
+-p 8188:8188 \
+--name comfy-wan2.1 \
+$image:$tag

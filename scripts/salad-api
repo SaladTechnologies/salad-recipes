@@ -107,3 +107,126 @@ function getContainerGroup() {
   fi
   echo $data
 }
+
+function createContainerGroup() {
+  org=$1
+  project=$2
+  request_body=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers"
+  data=$(
+    curl -s -X POST \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d "$request_body" \
+      $baseURL
+  )
+  if [ -z "$data" ]; then
+    echo "Failed to create container group"
+    exit 1
+  fi
+  echo $data
+}
+
+function createQueue() {
+  org=$1
+  project=$2
+  request_body=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/queues"
+  data=$(
+    curl -s -X POST \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d "$request_body" \
+      $baseURL
+  )
+  if [ -z "$data" ]; then
+    echo "Failed to create queue"
+    exit 1
+  fi
+  echo $data
+}
+
+function getQueue() {
+  org=$1
+  project=$2
+  queue=$3
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/queues/${queue}"
+  data=$(
+    curl -s -X GET \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      $baseURL
+  )
+  if [ -z "$data" ]; then
+    echo "Queue $queue not found"
+    exit 1
+  fi
+  echo $data
+}
+
+function getJob() {
+  org=$1
+  project=$2
+  queue_name=$3
+  job_id=$4
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/queues/${queue_name}/jobs/${job_id}"
+  data=$(
+    curl -s -X GET \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      $baseURL
+  )
+  if [ -z "$data" ]; then
+    echo "Job $job_id not found"
+    exit 1
+  fi
+  echo $data
+}
+
+function createJob() {
+  org=$1
+  project=$2
+  queue_name=$3
+  request_body=$4
+  baseURL="https://api.salad.com/api/public/organizations/${org}/projects/${project}/queues/${queue_name}/jobs"
+  data=$(
+    curl -s -X POST \
+      -H "Salad-Api-Key: $SALAD_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d "$request_body" \
+      $baseURL
+  )
+  if [ -z "$data" ]; then
+    echo "Failed to create job"
+    exit 1
+  fi
+  echo $data
+}
+
+function watchJob() {
+  org=$1
+  project=$2
+  queue_name=$3
+  job_id=$4
+  interval=${5:-5}
+  while true; do
+    job=$(getJob $org $project $queue_name $job_id)
+    clear
+    echo "Job ID: $job_id"
+    echo "Timestamp: $(date --utc)"
+    status=$(echo $job | jq -r '.status')
+    if [ "$status" == "succeeded" ]; then
+      echo "Job succeeded."
+      break
+    elif [ "$status" == "failed" ]; then
+      echo "Job failed. Exiting."
+      exit 1
+    elif [ "$status" == "cancelled" ]; then
+      echo "Job cancelled. Exiting."
+      exit 1
+    fi
+    echo "Job status: $status"
+    echo $job | jq '.events'
+    sleep $interval
+  done
+  echo $job | jq ".output" > "job-$job_id-output.json"
+  echo $job | jq ".output"
+}
