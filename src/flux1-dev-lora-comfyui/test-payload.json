@@ -1,0 +1,15 @@
+{
+  "input": {
+    "prompt": "Subject positioned precisely in center frame, professional headshot from shoulders up, genuine confident smile with direct eye contact. Perfect focus on eyes, natural but refined facial expression, subtle head tilt. Shot with 85mm at f/2.8 for ideal headshot compression. Premium skin texture and professional retouching. Professional headshot centered in frame, shoulders and head composition, genuine smile with direct eye contact. Wearing bespoke navy windowpane suit, crisp white shirt, slate blue silk tie. Shot in corner office, soft diffused window light, blurred Manhattan skyline. Ultra-premium medium format look, Hasselblad quality, perfect exposure on skin tones. TOK",
+    "image_size": "landscape_4_3",
+    "loras": [
+      {
+        "path": "https://v2.fal.media/files/763f153f87f1485984869854def1b134_pytorch_lora_weights.safetensors",
+        "scale": 1
+      }
+    ]
+  },
+  "convert_output": {
+    "format": "jpeg"
+  }
+}
