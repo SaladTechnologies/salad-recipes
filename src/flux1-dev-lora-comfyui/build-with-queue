@@ -1,0 +1,58 @@
+#! /usr/bin/bash
+set -e
+
+image="saladtechnologies/comfyui"
+usage="Usage: $0 --comfy <comfy-version> --api <api-version> --torch<pytorch-version> --cuda <cuda-version> [--image <image> default: $image] [--push]"
+
+model_name="flux1-dev-lora"
+while [ "$1" != "" ]; do
+  case $1 in
+  --comfy)
+    shift
+    comfy_version=$1
+    ;;
+  --api)
+    shift
+    api_version=$1
+    ;;
+  --torch)
+    shift
+    torch_version=$1
+    ;;
+  --cuda)
+    shift
+    cuda_version=$1
+    ;;
+  --image)
+    shift
+    image=$1
+    ;;
+  --push)
+    push=true
+    ;;
+  *)
+    echo $usage
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+if [ -z "$comfy_version" ] || [ -z "$api_version" ] || [ -z "$torch_version" ] || [ -z "$cuda_version" ]; then
+  echo $usage
+  exit 1
+fi
+
+tag="comfy$comfy_version-api$api_version-torch$torch_version-cuda$cuda_version-$model_name-queue-worker"
+echo "Building $image:$tag"
+docker build -t $image:$tag \
+  --build-arg comfy_version=$comfy_version \
+  --build-arg api_version=$api_version \
+  --build-arg torch_version=$torch_version \
+  --build-arg cuda_version=$cuda_version \
+  -f queue.dockerfile \
+  .
+
+if [ "$push" = true ]; then
+  docker push $image:$tag
+fi

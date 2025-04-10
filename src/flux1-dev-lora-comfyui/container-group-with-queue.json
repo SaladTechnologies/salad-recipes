@@ -1,0 +1,52 @@
+{
+  "name": "flux1-dev-lora-queue-worker",
+  "display_name": "flux1-dev-lora-queue-worker",
+  "container": {
+    "command": [],
+    "image": "saladtechnologies/comfyui:comfy0.3.27-api1.8.2-torch2.6.0-cuda12.4-flux1-dev-lora-queue-worker",
+    "image_caching": true,
+    "resources": {
+      "cpu": 4,
+      "memory": 30720,
+      "gpu_classes": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "storage_amount": 10737418240
+    },
+    "priority": "high"
+  },
+  "autostart_policy": true,
+  "restart_policy": "always",
+  "replicas": 1,
+  "readiness_probe": {
+    "failure_threshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/ready",
+      "port": 3000,
+      "scheme": "http"
+    },
+    "initial_delay_seconds": 0,
+    "period_seconds": 1,
+    "success_threshold": 1,
+    "timeout_seconds": 1
+  },
+  "startup_probe": {
+    "failure_threshold": 20,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 3000,
+      "scheme": "http"
+    },
+    "initial_delay_seconds": 10,
+    "period_seconds": 5,
+    "success_threshold": 1,
+    "timeout_seconds": 10
+  },
+  "queue_connection": {
+    "path": "/workflow/fal-ai-flux-lora",
+    "port": 3000,
+    "queue_name": "flux-lora-jobs"
+  }
+}

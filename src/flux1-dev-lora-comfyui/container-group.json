@@ -1,0 +1,56 @@
+{
+  "name": "flux1-dev-lora-comfyui",
+  "display_name": "flux1-dev-lora-comfyui",
+  "container": {
+    "command": [],
+    "image": "saladtechnologies/comfyui:comfy0.3.27-api1.8.2-torchnightly-cuda12.8-flux1-dev-lora",
+    "image_caching": true,
+    "resources": {
+      "cpu": 4,
+      "memory": 30720,
+      "gpu_classes": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "storage_amount": 10737418240
+    },
+    "priority": "high"
+  },
+  "autostart_policy": true,
+  "restart_policy": "always",
+  "replicas": 3,
+  "networking": {
+    "auth": true,
+    "client_request_timeout": 100000,
+    "load_balancer": "least_number_of_connections",
+    "port": 3000,
+    "protocol": "http",
+    "server_response_timeout": 100000,
+    "single_connection_limit": false
+  },
+  "readiness_probe": {
+    "failure_threshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/ready",
+      "port": 3000,
+      "scheme": "http"
+    },
+    "initial_delay_seconds": 0,
+    "period_seconds": 1,
+    "success_threshold": 1,
+    "timeout_seconds": 1
+  },
+  "startup_probe": {
+    "failure_threshold": 120,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 3000,
+      "scheme": "http"
+    },
+    "initial_delay_seconds": 10,
+    "period_seconds": 2,
+    "success_threshold": 1,
+    "timeout_seconds": 10
+  }
+}
