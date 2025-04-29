@@ -1,0 +1,18 @@
+FROM saladtechnologies/ai-toolkit:cuda12.8
+
+# Smaller layers compress and decompress faster, so we break this thing up
+RUN mkdir -p /model
+COPY model/scheduler /model/scheduler
+COPY model/text_encoder /model/text_encoder
+COPY model/text_encoder_2/*.json /model/text_encoder_2/
+COPY model/text_encoder_2/model-00001-of-00002.safetensors /model/text_encoder_2/
+COPY model/text_encoder_2/model-00002-of-00002.safetensors /model/text_encoder_2/
+COPY model/tokenizer /model/tokenizer
+COPY model/tokenizer_2 /model/tokenizer_2
+COPY model/transformer/*json /model/transformer/
+COPY model/transformer/diffusion_pytorch_model-00001-of-00003.safetensors /model/transformer/
+COPY model/transformer/diffusion_pytorch_model-00002-of-00003.safetensors /model/transformer/
+COPY model/transformer/diffusion_pytorch_model-00003-of-00003.safetensors /model/transformer/
+COPY model/vae /model/vae
+COPY model/ae.safetensors /model/ae.safetensors
+COPY model/model_index.json /model/model_index.json

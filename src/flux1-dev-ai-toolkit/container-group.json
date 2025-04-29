@@ -1,0 +1,29 @@
+{
+  "name": "flux1-dev-ai-toolkit",
+  "display_name": "flux1-dev-ai-toolkit",
+  "container": {
+    "command": [],
+    "environment_variables": {
+      "KELPIE_API_KEY": "REQUIRED",
+      "AWS_ACCESS_KEY_ID": "REQUIRED",
+      "AWS_SECRET_ACCESS_KEY": "REQUIRED",
+      "AWS_ENDPOINT_URL": "optional",
+      "AWS_DEFAULT_REGION": "optional",
+      "KELPIE_API_URL": "https://kelpie.saladexamples.com"
+    },
+    "image": "saladtechnologies/ai-toolkit:cuda12.8-flux1-dev-kelpie",
+    "image_caching": true,
+    "resources": {
+      "cpu": 4,
+      "memory": 30720,
+      "gpu_classes": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "storage_amount": 53687091200
+    },
+    "priority": "high"
+  },
+  "autostart_policy": true,
+  "restart_policy": "always",
+  "replicas": 3
+}
