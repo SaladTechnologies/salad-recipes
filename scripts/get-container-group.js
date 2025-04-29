@@ -52,8 +52,7 @@ async function main() {
   delete container.hash;
   container.priority = "high";
 
-  delete networking.dns;
- 
+  
   const newDef = {
     name: recipeName,
     display_name: recipeName,
@@ -61,10 +60,13 @@ async function main() {
     autostart_policy: true,
     restart_policy,
     replicas: 3,
-    networking,
     readiness_probe,
     startup_probe,
     liveness_probe,
+  }
+  if (networking){
+    delete networking.dns;
+    newDef.networking = networking;
   }
 
   fs.writeFileSync(output, JSON.stringify(newDef, null, 2));

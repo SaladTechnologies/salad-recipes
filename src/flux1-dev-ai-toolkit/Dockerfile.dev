@@ -1,0 +1,10 @@
+FROM saladtechnologies/ai-toolkit:cuda12.8-flux1-dev
+
+RUN curl -Lk 'https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64' -o vscode_cli.tar.gz && \
+    tar -xf vscode_cli.tar.gz && \
+    mv code /usr/local/bin/code && \
+    rm vscode_cli.tar.gz
+
+RUN echo ". /opt/venv/bin/activate" >> "/root/.bashrc"
+
+CMD ["bash", "-c", "code tunnel --accept-server-license-terms --name $SALAD_CONTAINER_GROUP_ID --tunnel-id $TUNNEL_ID --host-token $ACCESS_TOKEN"]

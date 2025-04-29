@@ -1,0 +1,43 @@
+FROM python:3.13-slim
+
+RUN apt update -y && apt install -y \
+    wget \
+    curl \
+    git \
+    unzip \
+    libgl1 \
+    libglib2.0-0 \
+    build-essential \
+    cmake \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN . /opt/venv/bin/activate
+
+RUN pip install --no-cache-dir --upgrade pip setuptools
+
+# Set the working directory
+WORKDIR /app
+
+# Clone AI-Toolkit repository
+RUN git clone https://github.com/ostris/ai-toolkit.git
+
+# Set the working directory to the cloned repository
+WORKDIR /app/ai-toolkit
+
+# Install dependencies
+RUN git submodule update --init --recursive
+
+# Remove any already installed torch packages from the requirements.txt, we must use the nightly build
+RUN sed -i '/torch/d' requirements.txt
+RUN pip install --no-cache-dir --index-url https://download.pytorch.org/whl/nightly/cu128 \
+    torch \
+    torchvision \
+    torchao
+RUN pip install --no-cache-dir --exists-action i -r requirements.txt
+RUN pip install --no-cache-dir open-clip-torch pytorch_fid pytorch-wavelets
+
+ENV HF_HUB_ENABLE_HF_TRANSFER=true
+
+CMD ["sleep", "infinity"]

@@ -8,4 +8,5 @@ comfyui-api
 src/cogvideox-2b-comfyui/CogVideo2B
 src/tgi-*/data
 src/tgi-*/benchmark/*.txt
+src/flux1*/data/**/
 nohup.out
