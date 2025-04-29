@@ -75,6 +75,8 @@ If deploying manually, make sure to set the following options:
   - `KELPIE_API_KEY`: Your Kelpie API key
   - AWS Credentials that can access your storage.
 
+> Note this configuration costs $.496/hour/replica, plus any costs associated with your storage provider. In light testing, we found that a training job with 36 examples, 2000 training steps, and a batch size of 1 completed in just under an hour.
+
 You can also deploy using the API. To do this, you will need to create a container group using the `container-group.json` file in this directory. Modify `container-group.json` with your environment variables. You can use the following command to create the container group:
 
 ```bash
