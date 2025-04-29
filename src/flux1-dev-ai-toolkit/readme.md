@@ -12,6 +12,7 @@ This recipe provides an example implementation for using [AI Toolkit](https://gi
   - [Deploying Your Training Cluster](#deploying-your-training-cluster)
   - [Uploading Data And Queuing Jobs](#uploading-data-and-queuing-jobs)
   - [Monitoring the Job](#monitoring-the-job)
+  - [Autoscaling](#autoscaling)
   - [Guide To Recipe Files](#guide-to-recipe-files)
     - [Dockerfiles](#dockerfiles)
     - [Scripts](#scripts)
@@ -140,6 +141,34 @@ Make sure to replace `{job_id}` with the job id of the kelpie job, and `<kelpie-
 This will return a JSON object with the details of the job, including the status, which machine had the job most recently, and how many heartbeats have been received.
 
 You can also customize the `prepare-and-queue-jobs.py` script to include a webhook to be notified when the job completes.
+
+## Autoscaling
+
+Kelpie has an optional autoscaling feature that automates adjusting replica count based on the number of queued jobs, including scale-to-zero when the queue is empty. This feature works through the Salad API, and requires adding the Kelpie user to your Salad Organization to grant the required API access. Currently that is me (shawn.rushefsky@salad.com).
+
+To enable autoscaling, you can submit a request to the Kelpie API to establish scaling rules for your container group.
+
+```bash
+curl -X POST \
+  --url https://kelpie.saladexamples.com/scaling-rules \
+  --header 'Content-Type: application/json' \
+  --header 'X-Kelpie-Key: <kelpie-api-key>' \
+  --data '{
+    "min_replicas": 0,
+    "max_replicas": 10,
+    "container_group_id": "<container-group-id>"
+}'
+```
+
+Make sure to replace `<kelpie-api-key>` with your Kelpie API key, and `<container-group-id>` with the id of your container group.
+This will create a scaling rule that will scale the container group to a minimum of 0 replicas and a maximum of 10 replicas. The scaling rules will be applied to all jobs submitted to the container group.
+
+The Kelpie scaling algorithm works as follows:
+
+- Every 5 minutes, all scaling rules are evaluated.
+- The number of replicas in a container group is set to equal the number of queued or running jobs, up to the maximum number of replicas, and down to the minimum number of replicas.
+- If the desired number of replicas is 0, the container group will be stopped.
+- If the desired number of replicas is greater than 0 and the container group is not currently running, the container group will be started.
 
 ## Guide To Recipe Files
 
