@@ -2,7 +2,7 @@
 
 ## Use AI Toolkit to train Flux1-Dev LoRAs
 
-This recipe provides an example implementation for using [AI Toolkit](https://github.com/ostris/ai-toolkit) to train LoRA models for the [Flux1-Dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) image generation model. Note that this model is not licensed for commercial use, so please ensure you have the appropriate rights to use it for your intended purpose.
+This recipe provides an example implementation for using [AI Toolkit](https://github.com/ostris/ai-toolkit) to train LoRA models for the [Flux1-Dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) image generation model. Note that this model is [not licensed for commercial use](https://github.com/black-forest-labs/flux/blob/main/model_licenses/LICENSE-FLUX1-dev), so please ensure you have the appropriate rights to use it for your intended purpose.
 
 - [Flux Training](#flux-training)
   - [Use AI Toolkit to train Flux1-Dev LoRAs](#use-ai-toolkit-to-train-flux1-dev-loras)
@@ -11,11 +11,12 @@ This recipe provides an example implementation for using [AI Toolkit](https://gi
     - [Captioning Your Dataset](#captioning-your-dataset)
   - [Deploying Your Training Cluster](#deploying-your-training-cluster)
   - [Uploading Data And Queuing Jobs](#uploading-data-and-queuing-jobs)
+  - [Monitoring the Job](#monitoring-the-job)
   - [Guide To Recipe Files](#guide-to-recipe-files)
     - [Dockerfiles](#dockerfiles)
     - [Scripts](#scripts)
     - [Config](#config)
-
+  - [License](#license)
 
 ## Requirements
 
@@ -98,7 +99,7 @@ This will return a JSON object with the details of the container group, includin
 
 ## Uploading Data And Queuing Jobs
 
-While our container group warms up, we can upload our dataset to S3-compatible storage and queue jobs to the Kelpie API. The `prepare-and-queue-jobs.py` script will do this for you. You will need appropriate AWS credentials to access your S3-compatible storage, as well as your Kelpie API key set in the environment variable `KELPIE_API_KEY`.
+While our container group warms up, we can upload our dataset to S3-compatible storage and queue jobs to the Kelpie API. The `prepare-and-queue-jobs.py` script will do this for you. You will need appropriate AWS credentials to access your S3-compatible storage, as well as your Kelpie API key set in the environment variable `KELPIE_API_KEY`. See the [Kelpie Docs](https://kelpie.saladexamples.com/docs) for more information about the Kelpie API.
 
 ```bash
 python prepare-and-queue-jobs.py \
@@ -123,6 +124,23 @@ Briefly, a kelpie job consists of a `command`, some `arguments`, optional `envir
 - When the job completes, kelpie will upload the following files:
   - The final model weights
 
+## Monitoring the Job
+
+You can monitor the job using the Kelpie API. You can use the following command to get the status of the job:
+
+```bash
+curl -X GET \
+  --url https://kelpie.saladexamples.com/jobs/{job_id} \
+  --header 'Content-Type: application/json' \
+  --header 'X-Kelpie-Key: <kelpie-api-key>'
+```
+
+Make sure to replace `{job_id}` with the job id of the kelpie job, and `<kelpie-api-key>` with your Kelpie API key.
+
+This will return a JSON object with the details of the job, including the status, which machine had the job most recently, and how many heartbeats have been received.
+
+You can also customize the `prepare-and-queue-jobs.py` script to include a webhook to be notified when the job completes.
+
 ## Guide To Recipe Files
 
 ### Dockerfiles
@@ -145,3 +163,7 @@ This recipe is built in layers from several docker files.
 
 - `container-group.json`: This file contains the configuration for the container group that will be created in Salad Cloud. It includes the number of nodes, the type of nodes, and other configuration options. You can modify this file to change the configuration of your training cluster.
 - `requirements.txt`: This file contains python requirements for running the scripts. It is not otherwise related to the training process.
+
+## License
+
+This recipe is licensed under the [MIT License](https://opensource.org/license/mit), as is the [AI Toolkit](https://github.com/ostris/ai-toolkit). However, the model weights for the Flux1-Dev model are [not licensed for commercial use](https://github.com/black-forest-labs/flux/blob/main/model_licenses/LICENSE-FLUX1-dev). Please ensure you have the appropriate rights to use the model for your intended purpose.
