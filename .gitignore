@@ -10,3 +10,4 @@ src/tgi-*/data
 src/tgi-*/benchmark/*.txt
 src/flux1*/data/**/
 nohup.out
+venv
