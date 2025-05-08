@@ -29,7 +29,6 @@ COPY model/model-00023-of-00025.safetensors /model/
 COPY model/model-00024-of-00025.safetensors /model/
 COPY model/model-00025-of-00025.safetensors /model/
 
-ENV MODEL_ID="/model"
-ENV QUANTIZE="fp8"
-ENV HOSTNAME="::"
-ENV PORT="3000"
+ENV MODEL_ID=/model
+ENV QUANTIZE=fp8
+ENV PORT=3000

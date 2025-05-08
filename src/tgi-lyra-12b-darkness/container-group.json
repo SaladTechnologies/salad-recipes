@@ -3,7 +3,9 @@
   "display_name": "tgi-lyra-12b-darkness",
   "container": {
     "command": [],
-    "environment_variables": {},
+    "environment_variables": {
+      "HOSTNAME": "::"
+    },
     "image": "saladtechnologies/text-generation-inference:3.2.3-lyra-12b-darkness",
     "image_caching": true,
     "resources": {
