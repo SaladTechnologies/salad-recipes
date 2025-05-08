@@ -1,0 +1,31 @@
+{
+  "name": "tgi-lyra-12b-darkness",
+  "display_name": "tgi-lyra-12b-darkness",
+  "container": {
+    "command": [],
+    "environment_variables": {},
+    "image": "saladtechnologies/text-generation-inference:3.2.3-lyra-12b-darkness",
+    "image_caching": true,
+    "resources": {
+      "cpu": 4,
+      "memory": 30720,
+      "gpu_classes": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "storage_amount": 5368709120
+    },
+    "priority": "high"
+  },
+  "autostart_policy": true,
+  "restart_policy": "always",
+  "replicas": 3,
+  "networking": {
+    "auth": false,
+    "client_request_timeout": 100000,
+    "load_balancer": "least_number_of_connections",
+    "port": 3000,
+    "protocol": "http",
+    "server_response_timeout": 100000,
+    "single_connection_limit": false
+  }
+}
