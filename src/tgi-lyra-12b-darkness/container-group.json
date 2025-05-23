@@ -6,13 +6,13 @@
     "environment_variables": {
       "HOSTNAME": "::"
     },
-    "image": "saladtechnologies/text-generation-inference:3.2.3-lyra-12b-darkness",
+    "image": "saladtechnologies/text-generation-inference:3.3.1-lyra-12b-darkness",
     "image_caching": true,
     "resources": {
       "cpu": 4,
       "memory": 30720,
       "gpu_classes": [
-        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+        "851399fb-7329-4195-a042-d6514b28cf33"
       ],
       "storage_amount": 5368709120
     },
@@ -29,5 +29,18 @@
     "protocol": "http",
     "server_response_timeout": 100000,
     "single_connection_limit": false
+  },
+  "startup_probe": {
+    "http": {
+      "path": "/health",
+      "port": 3000,
+      "scheme": "http",
+      "headers": []
+    },
+    "initial_delay_seconds": 0,
+    "period_seconds": 3,
+    "timeout_seconds": 10,
+    "success_threshold": 1,
+    "failure_threshold": 50
   }
 }
