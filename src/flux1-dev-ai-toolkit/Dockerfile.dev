@@ -5,6 +5,8 @@ RUN curl -Lk 'https://code.visualstudio.com/sha/download?build=stable&os=cli-alp
     mv code /usr/local/bin/code && \
     rm vscode_cli.tar.gz
 
-RUN echo ". /opt/venv/bin/activate" >> "/root/.bashrc"
+RUN apt update -y && apt install -y zip
+
+RUN echo "source /opt/venv/bin/activate" >> "/root/.bashrc"
 
 CMD ["bash", "-c", "code tunnel --accept-server-license-terms --name $SALAD_CONTAINER_GROUP_ID --tunnel-id $TUNNEL_ID --host-token $ACCESS_TOKEN"]
