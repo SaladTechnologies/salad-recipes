@@ -15,6 +15,14 @@ while [ "$1" != "" ]; do
     shift
     api_version=$1
     ;;
+  --torch)
+    shift
+    torch_version=$1
+    ;;
+  --cuda)
+    shift
+    cuda_version=$1
+    ;;
   --image)
     shift
     image=$1
@@ -27,12 +35,12 @@ while [ "$1" != "" ]; do
   shift
 done
 
-if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
+if [ -z "$comfy_version" ] || [ -z "$api_version" ] || [ -z "$torch_version" ] || [ -z "$cuda_version" ]; then
   echo $usage
   exit 1
 fi
 
-tag="comfy$comfy_version-api$api_version-$model_name"
+tag="comfy$comfy_version-api$api_version-torch$torch_version-cuda$cuda_version-$model_name"
 
 docker run -it --rm --gpus all \
 -p 8188:8188 \
