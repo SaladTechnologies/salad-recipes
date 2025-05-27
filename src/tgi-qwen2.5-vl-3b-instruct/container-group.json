@@ -2,7 +2,7 @@
   "name": "tgi-qwen2-5-vl-3b-instruct",
   "display_name": "tgi-qwen2-5-vl-3b-instruct",
   "container": {
-    "image": "saladtechnologies/text-generation-inference:3.2.0-qwen-2.5-vl-3b-instruct",
+    "image": "saladtechnologies/text-generation-inference:3.3.0-qwen-2.5-vl-3b-instruct",
     "resources": {
       "cpu": 4,
       "memory": 30720,
