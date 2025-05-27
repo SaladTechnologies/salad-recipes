@@ -2,7 +2,7 @@
 
 
 image="saladtechnologies/comfyui"
-usage="Usage: ./run --comfy <comfy-version> --api <api-version> [--image <image> default: $image]"
+usage="Usage: ./run --comfy <comfy-version> --api <api-version> --torch <torch-version> --cuda <cuda-version> [--image <image> default: $image]"
 
 model_name="dreamshaper8"
 while [ "$1" != "" ]; do
