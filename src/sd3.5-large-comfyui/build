@@ -2,7 +2,7 @@
 set -e
 
 image="saladtechnologies/comfyui"
-usage="Usage: ./build --comfy <comfy-version> --api <api-version> [--image <image> default: $image] [--push]"
+usage="Usage: ./build --comfy <comfy-version> --api <api-version> --torch <torch-version> --cuda <cuda-version> [--image <image> default: $image] [--push]"
 
 model_name="sd3.5-large"
 while [ "$1" != "" ]; do
@@ -14,6 +14,14 @@ while [ "$1" != "" ]; do
   --api)
     shift
     api_version=$1
+    ;;
+  --torch)
+    shift
+    torch_version=$1
+    ;;
+  --cuda)
+    shift
+    cuda_version=$1
     ;;
   --image)
     shift
@@ -30,16 +38,18 @@ while [ "$1" != "" ]; do
   shift
 done
 
-if [ -z "$comfy_version" ] || [ -z "$api_version" ]; then
+if [ -z "$comfy_version" ] || [ -z "$api_version" ] || [ -z "$torch_version" ] || [ -z "$cuda_version" ]; then
   echo $usage
   exit 1
 fi
 
-tag="comfy$comfy_version-api$api_version-$model_name"
+tag="comfy$comfy_version-api$api_version-torch$torch_version-cuda$cuda_version-$model_name"
 echo "Building $image:$tag"
 docker build -t $image:$tag \
   --build-arg comfy_version=$comfy_version \
   --build-arg api_version=$api_version \
+  --build-arg torch_version=$torch_version \
+  --build-arg cuda_version=$cuda_version \
   .
 
 if [ "$push" = true ]; then
