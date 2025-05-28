@@ -1,8 +1,8 @@
 {
-  "name": "tgi-mistral7b-instruct",
-  "display_name": "tgi-mistral7b-instruct",
+  "name": "tgi-llama-3-2-11b-vision-instruct",
+  "display_name": "tgi-llama-3-2-11b-vision-instruct",
   "container": {
-    "image": "saladtechnologies/text-generation-inference:3.3.0-llama-3.1-8b-instruct",
+    "image": "saladtechnologies/text-generation-inference:3.3.0-llama-3.2-11b-vision-instruct",
     "resources": {
       "cpu": 4,
       "memory": 30720,

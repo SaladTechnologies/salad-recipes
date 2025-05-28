@@ -1,0 +1,5 @@
+#! /usr/bin/bash
+
+huggingface-cli download \
+  --local-dir ./model \
+  Qwen/Qwen3-8B

@@ -1,8 +1,8 @@
 {
-  "name": "tgi-llama-3-1-8b-instruct",
-  "display_name": "tgi-llama-3-1-8b-instruct",
+  "name": "tgi-qwen3-8b",
+  "display_name": "tgi-qwen3-8b",
   "container": {
-    "image": "saladtechnologies/text-generation-inference:3.3.0-llama-3.1-8b-instruct",
+    "image": "saladtechnologies/text-generation-inference:3.3.0-qwen3-8b",
     "resources": {
       "cpu": 4,
       "memory": 30720,
