@@ -2,4 +2,5 @@
 
 huggingface-cli download \
   --local-dir ./model \
-  meta-llama/Llama-3.1-8B-Instruct
+  meta-llama/Llama-3.1-8B-Instruct \
+  --exclude "original/*"
