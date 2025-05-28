@@ -1,4 +1,4 @@
-FROM ghcr.io/huggingface/text-generation-inference:3.2.3
+FROM ghcr.io/huggingface/text-generation-inference:3.3.1
 
 # huggingface-cli download --local-dir ./model DavidAU/MN-GRAND-Gutenberg-Lyra4-Lyra-12B-DARKNESS
 # We're copying each file as its own layer to keep layer size smaller
@@ -29,6 +29,5 @@ COPY model/model-00023-of-00025.safetensors /model/
 COPY model/model-00024-of-00025.safetensors /model/
 COPY model/model-00025-of-00025.safetensors /model/
 
-ENV MODEL_ID=/model
-ENV QUANTIZE=fp8
 ENV PORT=3000
+ENV MODEL_ID=/model

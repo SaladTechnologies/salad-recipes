@@ -1,22 +1,18 @@
 {
-  "name": "tgi-qwen2-5-vl-3b-instruct",
-  "display_name": "tgi-qwen2-5-vl-3b-instruct",
+  "name": "tgi-llama-3-2-11b-vision-instruct",
+  "display_name": "tgi-llama-3-2-11b-vision-instruct",
   "container": {
-    "image": "saladtechnologies/text-generation-inference:3.3.0-qwen-2.5-vl-3b-instruct",
+    "image": "saladtechnologies/text-generation-inference:3.3.0-llama-3.2-11b-vision-instruct",
     "resources": {
       "cpu": 4,
       "memory": 30720,
-      "gpu_classes": [
-        "0d062939-7c01-4aae-a2b1-30e315124e51"
-      ]
+      "gpu_classes": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"]
     },
     "command": [],
-    "priority": "high",
     "environment_variables": {
-      "HOSTNAME": "::",
-      "PORT": "3000"
-    },
-    "image_caching": true
+      "PORT": "3000",
+      "HOSTNAME": "::"
+    }
   },
   "autostart_policy": true,
   "restart_policy": "always",

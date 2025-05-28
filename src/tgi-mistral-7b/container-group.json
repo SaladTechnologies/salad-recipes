@@ -1,47 +1,42 @@
 {
-    "name": "tgi-mistral7b-instruct",
-    "display_name": "tgi-mistral7b-instruct",
-    "container": {
-        "image": "saladtechnologies/tgi-mistral-7b-instruct-recipe:1.0.0",
-        "resources": {
-            "cpu": 8,
-            "memory": 16384,
-            "gpu_classes": [
-                "43a49c0c-f860-40e9-a509-702d0dba0902"
-            ],
-            "storage_amount": 26843545600
-        },
-        "command": [],
-        "environment_variables": {
-            "PORT": "3000",
-            "HOSTNAME": "::"
-        }
+  "name": "tgi-mistral7b-instruct",
+  "display_name": "tgi-mistral7b-instruct",
+  "container": {
+    "image": "saladtechnologies/text-generation-inference:3.3.0-mistral-7b-0.3-instruct",
+    "resources": {
+      "cpu": 4,
+      "memory": 30720,
+      "gpu_classes": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"]
     },
-    "autostart_policy": true,
-    "restart_policy": "always",
-    "replicas": 3,
-    "networking": {
-        "protocol": "http",
-        "port": 3000,
-        "auth": false,
-        "load_balancer": "least_number_of_connections",
-        "single_connection_limit": false,
-        "client_request_timeout": 100000,
-        "server_response_timeout": 100000
-
-    },
-
-    "readiness_probe": {
-        "http": {
-            "path": "/health",
-            "port": 3000,
-            "scheme": "http",
-            "headers": []
-        },
-        "initial_delay_seconds": 0,
-        "period_seconds": 10,
-        "timeout_seconds": 10,
-        "success_threshold": 1,
-        "failure_threshold": 3
+    "command": [],
+    "environment_variables": {
+      "PORT": "3000",
+      "HOSTNAME": "::"
     }
+  },
+  "autostart_policy": true,
+  "restart_policy": "always",
+  "replicas": 3,
+  "networking": {
+    "protocol": "http",
+    "port": 3000,
+    "auth": false,
+    "load_balancer": "least_number_of_connections",
+    "single_connection_limit": false,
+    "client_request_timeout": 100000,
+    "server_response_timeout": 100000
+  },
+  "startup_probe": {
+    "http": {
+      "path": "/health",
+      "port": 3000,
+      "scheme": "http",
+      "headers": []
+    },
+    "initial_delay_seconds": 0,
+    "period_seconds": 3,
+    "timeout_seconds": 10,
+    "success_threshold": 1,
+    "failure_threshold": 50
+  }
 }
