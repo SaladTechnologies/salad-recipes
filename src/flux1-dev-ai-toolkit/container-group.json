@@ -4,12 +4,11 @@
   "container": {
     "command": [],
     "environment_variables": {
-      "KELPIE_API_KEY": "REQUIRED",
       "AWS_ACCESS_KEY_ID": "REQUIRED",
       "AWS_SECRET_ACCESS_KEY": "REQUIRED",
       "AWS_ENDPOINT_URL": "optional",
       "AWS_DEFAULT_REGION": "optional",
-      "KELPIE_API_URL": "https://kelpie.saladexamples.com"
+      "SALAD_PROJECT": "REQUIRED"
     },
     "image": "saladtechnologies/ai-toolkit:cuda12.8-flux1-dev-kelpie",
     "image_caching": true,
