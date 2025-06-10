@@ -165,7 +165,7 @@ curl -X POST \
 }'
 ```
 
-Make sure to replace `<kelpie-api-key>` with your Kelpie API key, and `<container-group-id>` with the id of your container group.
+Make sure to replace the placeholders with your Salad API key, organization name, project name, and the ID of the container group you created earlier.
 This will create a scaling rule that will scale the container group to a minimum of 0 replicas and a maximum of 10 replicas. The scaling rules will be applied to all jobs submitted to the container group.
 
 The Kelpie scaling algorithm works as follows:
