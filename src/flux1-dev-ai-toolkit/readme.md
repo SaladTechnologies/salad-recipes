@@ -22,7 +22,6 @@ This recipe provides an example implementation for using [AI Toolkit](https://gi
 ## Requirements
 
 - Salad Cloud Account - [Sign up here](https://portal.salad.com/)
-- Kelpie API Key - [More Info Here](https://github.com/SaladTechnologies/kelpie)
 - S3-Compatible Storage - We're using [Cloudflare R2](https://www.cloudflare.com/products/r2/) in this example because it does not charge for egress, but you can use any S3-compatible storage solution.
 - Python 3.10+
 
