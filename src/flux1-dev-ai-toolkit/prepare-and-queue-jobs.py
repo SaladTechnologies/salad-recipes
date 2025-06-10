@@ -6,8 +6,16 @@ import json
 import threading
 
 
-kelpie_api_key = os.getenv("KELPIE_API_KEY")
-kelpie_base_url = os.getenv("KELPIE_API_URL")
+# CUSTOMIZE THIS SCRIPT
+salad_org = "salad-benchmarking"
+salad_project = "flux-training"
+
+
+salad_api_key = os.getenv("SALAD_API_KEY")
+kelpie_base_url = "https://kelpie.saladexamples.com"
+if not salad_api_key:
+    print("Please set the SALAD_API_KEY environment variable.")
+    sys.exit(1)
 usage = f"Usage: python {sys.argv[0]} <data-directory> <s3-url> <container-group-id>"
 example = f"Example: python {sys.argv[0]} /path/to/data-directory s3://my-training-data/batch0001/ 97fe1413-0989-4d70-8bbb-426219001dd2"
 if len(sys.argv) != 4:
@@ -87,7 +95,9 @@ def queue_job_in_kelpie(job_id: str):
     """
     url = os.path.join(kelpie_base_url, "jobs")
     headers = {
-        "X-Kelpie-Key": kelpie_api_key,
+        "Salad-Api-Key": salad_api_key,
+        "Salad-Organization": salad_org,
+        "Salad-Project": salad_project,
         "Content-Type": "application/json"
     }
     data = {

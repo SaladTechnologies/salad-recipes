@@ -29,7 +29,7 @@ This recipe provides an example implementation for using [AI Toolkit](https://gi
 ## Preparing Your Dataset
 
 1. Create a folder inside the `data` directory named for a job id like `job-00001`.
-2. Inside that folder, create a `dataset` folder and place your training images inside, along with a `.txt` file for each image that contains a caption for the image of the same name. For example, if you have an image named `image1.jpg`, you should have a file named `image1.txt` with the caption for that image. 
+2. Inside that folder, create a `dataset` folder and place your training images inside, along with a `.txt` file for each image that contains a caption for the image of the same name. For example, if you have an image named `image1.jpg`, you should have a file named `image1.txt` with the caption for that image.
 3. Copy [this config file](https://github.com/ostris/ai-toolkit/blob/main/config/examples/train_lora_flux_24gb.yaml) to `data/job-00001/train.yaml` and make the following updates:
    - Update `.config.name` to your job id (e.g., `job-00001`).
    - Update `.config.datasets[0].folder_path` to `./dataset`
@@ -72,7 +72,7 @@ If deploying manually, make sure to set the following options:
 - **GPU**: RTX 5090
 - **Storage**: 50GB
 - **Environment Variables**:
-  - `KELPIE_API_KEY`: Your Kelpie API key
+  - `SALAD_PROJECT`: Your Salad project name.
   - AWS Credentials that can access your storage.
 
 > Note this configuration costs $.496/hour/replica, plus any costs associated with your storage provider. In light testing, we found that a training job with 36 examples, 2000 training steps, and a batch size of 1 completed in just under an hour.
@@ -102,7 +102,7 @@ This will return a JSON object with the details of the container group, includin
 
 ## Uploading Data And Queuing Jobs
 
-While our container group warms up, we can upload our dataset to S3-compatible storage and queue jobs to the Kelpie API. The `prepare-and-queue-jobs.py` script will do this for you. You will need appropriate AWS credentials to access your S3-compatible storage, as well as your Kelpie API key set in the environment variable `KELPIE_API_KEY`. See the [Kelpie Docs](https://kelpie.saladexamples.com/docs) for more information about the Kelpie API.
+While our container group warms up, we can upload our dataset to S3-compatible storage and queue jobs to the Kelpie API. The `prepare-and-queue-jobs.py` script will do this for you. Modify the script to include your salad org and project name. You will need appropriate AWS credentials to access your S3-compatible storage, as well as your Salad API Key set in the environment variable `SALAD_API_KEY`. See the [Kelpie Docs](https://kelpie.saladexamples.com/docs) for more information about the Kelpie API.
 
 ```bash
 python prepare-and-queue-jobs.py \
@@ -135,10 +135,12 @@ You can monitor the job using the Kelpie API. You can use the following command 
 curl -X GET \
   --url https://kelpie.saladexamples.com/jobs/{job_id} \
   --header 'Content-Type: application/json' \
-  --header 'X-Kelpie-Key: <kelpie-api-key>'
+  --header 'Salad-Api-Key: <salad-api-key>' \
+  --header 'Salad-Organization: <organization-name>' \
+  --header 'Salad-Project: <project-name>'
 ```
 
-Make sure to replace `{job_id}` with the job id of the kelpie job, and `<kelpie-api-key>` with your Kelpie API key.
+Make sure to replace `{job_id}` with the job id of the kelpie job, and `<salad-api-key>` with your Salad API key.
 
 This will return a JSON object with the details of the job, including the status, which machine had the job most recently, and how many heartbeats have been received.
 
@@ -154,7 +156,9 @@ To enable autoscaling, you can submit a request to the Kelpie API to establish s
 curl -X POST \
   --url https://kelpie.saladexamples.com/scaling-rules \
   --header 'Content-Type: application/json' \
-  --header 'X-Kelpie-Key: <kelpie-api-key>' \
+  --header 'Salad-Api-Key: <salad-api-key>' \
+  --header 'Salad-Organization: <organization-name>' \
+  --header 'Salad-Project: <project-name>' \
   --data '{
     "min_replicas": 0,
     "max_replicas": 10,
