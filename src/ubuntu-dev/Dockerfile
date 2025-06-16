@@ -48,7 +48,7 @@ ENV JUPYTERLAB_DIR="/workspace/jupyterlab"
 ENV JUPYTERLAB_PORT=8888
 RUN mkdir -p /workspace/jupyterlab
 RUN jupyter lab --generate-config && \
-    echo "c.ServerApp.ip = '*'" >> /root/.jupyter/jupyter_server_config.py
+    echo "c.ServerApp.ip = '::'" >> /root/.jupyter/jupyter_server_config.py
 RUN jupyter lab build
 
 
