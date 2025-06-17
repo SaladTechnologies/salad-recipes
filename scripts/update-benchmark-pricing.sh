@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source scripts/salad-api
+source scripts/salad-api.sh
 
 org=${1:-"salad-benchmarking"}
 
