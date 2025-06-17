@@ -67,14 +67,14 @@ if [ -z "$SALAD_API_KEY" ]; then
 fi
 
 # Check that the recipe exists and has a benchmark file
-benchmark_file="src/$recipe/benchmark/$benchmark_filename"
+benchmark_file="recipes/$recipe/benchmark/$benchmark_filename"
 if [ ! -f "$benchmark_file" ]; then
   echo "Benchmark file $benchmark_file not found"
   exit 1
 fi
 
 # Load the salad api utility functions
-source scripts/salad-api
+source scripts/salad-api.sh
 
 # benchmark name is the name of the benchmark file, no extension
 benchmark_name=$(basename $benchmark_file | sed 's/\.js$//')
@@ -86,8 +86,6 @@ fi
 
 node_count_output=$(echo $output | sed 's/\.jsonl$/-node-count.csv/')
 test_config_output=$(echo $output | sed 's/\.jsonl$/-test-config.json/')
-summary_output=$(echo $output | sed 's/\.jsonl$/-summary.json/')
-blog_output=$(echo $output | sed 's/\.jsonl$/.html/')
 console_output=$(echo $output | sed 's/\.jsonl$/-console.txt/')
 
 # If the container group is not specified, assume it is the same as the recipe name
@@ -119,15 +117,3 @@ k6 run --out json=$output --console-output $console_output $benchmark_file
 
 # Stop the container group
 stopContainerGroup $org $project $container_group
-
-# the jsonl file will be processed to a file with the same name, but .json
-# This also creates a summary.json file with the summary of the results
-processed_filename=$(echo $output | sed 's/\.jsonl$/.json/')
-# node benchmark/process-results.js $output $processed_filename
-
-if [ -z $ANTHROPIC_API_KEY ]; then
-  echo "Skipping writing blog post because ANTHROPIC_API_KEY environment variable is not set"
-  exit 0
-fi
-
-# ./benchmark/write-blog $summary_output $blog_output

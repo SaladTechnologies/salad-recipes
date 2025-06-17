@@ -117,3 +117,50 @@ Usage: ./scripts/monitor-node-count.sh \
 --output <output-file.csv>
 ```
 
+#### `scripts/run-container-gateway-benchmark.sh`
+
+This script runs a Graphana K6 benchmark against a container group that is set up with access via the container gateway. It requires the `SALAD_API_KEY` environment variable to be set, and a valid benchmark javascript file for K6 to run.
+
+```text
+Usage: ./scripts/run-container-gateway-benchmark.sh --org <org> --project <project> --replicas <replicas> --recipe <recipe> [--container-group <container-group>] [--output <output>]
+
+Options:
+  --org <org>               The organization name
+  --project <project>       The project name
+  [--container-group <container-group>] The container group name. If not specified, it is assumed to be the same as the recipe name
+  --replicas <replicas>     The number of replicas to start
+  --recipe <recipe>         The recipe name
+  [--output <output>]         The output file name (default: <benchmark-name>-results.jsonl)
+  [--benchmark <benchmark>] The benchmark file (default: benchmark.js, means benchmark name of "benchmark")
+```
+
+Running the script will start the container group, wait for the specified number of replicas to be running, and then run the benchmark against the container group. When completed, it will stop the container group.
+
+Several output files will be generated, all named based on the `<benchmark-name>`.
+
+- `-node-count.csv`: Contains the number of running replicas over time.
+- `-test-config.json`: Contains the container group configuration at the time of the benchmark.
+- `-console.txt`: Contains the console output from the benchmark run.
+- `-results.jsonl`: contains the K6 output in JSON lines format.
+
+#### `scripts/run-benchmark-matrix.js`
+
+This script runs a benchmark for each combination of settings provided.
+
+```text
+Usage: ./benchmark/run-matrix.js [options]
+
+Options:
+  -h, --help                 Show this help message and exit.
+  --recipe <recipe>          Recipe to run. Required.
+  --project <project>        Project that will contain all container groups. Required.
+  --gpus <gpus>              Comma-separated list of GPU ids to use. Required.
+  --cpus <cpus>              Comma-separated list of CPU numbers to use. Required.
+  --memory <memory>          Comma-separated list of memory sizes to use in GB. Required.
+  [--replicas <replicas>]    Number of replicas to run. Default 10
+  [--benchmark <benchmark>]  Benchmark to run. Default benchmark.js
+  [--org <org>]              Organization to use. Default salad-benchmarking
+  [--show-options]           Show options.
+  [--dry-run]                Do not create container groups or run benchmarks.
+```
+

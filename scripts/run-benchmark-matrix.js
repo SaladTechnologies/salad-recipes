@@ -1,6 +1,8 @@
+#! /usr/bin/env node
+
 const fs = require("fs/promises");
 const path = require("path");
-const gpuPrices = require("./prices.json");
+const gpuPrices = require("../benchmark/prices.json");
 const exec = require("child_process").exec;
 
 const usage = `Usage: benchmark/run-matrix.js [options]
@@ -139,7 +141,7 @@ async function main() {
     console.log(options);
   }
   const recipeContainerGroupConfigPath = path.join(
-    "src",
+    "recipes",
     options.recipe,
     "container-group.json"
   );
@@ -190,7 +192,7 @@ async function main() {
   console.log("Running benchmark matrix");
   const outcomes = await Promise.allSettled(
     containerGroups.map(async (containerGroup) => {
-      const cmd = "benchmark/run";
+      const cmd = "scripts/run-container-gateway-benchmark.sh";
       const benchmarkName = options.benchmark.split(".")[0];
       const args = [
         "--org",
