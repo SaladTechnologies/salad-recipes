@@ -207,6 +207,7 @@ The recommended flow for developing recipes is:
 7. Fill out the readme files in the recipe directory, including `container_template.readme.mdx` and `form.description.mdx`.
 8. If your recipe has multiple variants, or configuration options, extend `patches.json` to include the necessary patches, and create additional readme files as needed.
 9. Use the `./scripts/recipe-tool.js export recipes/<your-recipe> recipes/<your-recipe>/recipe.json` command to export your recipe to a single file format, which is what we ultimately publish to the SaladCloud Portal.
+10. Finally, create a pull request with your changes, and ensure that the Salad team reviews and approves your recipe.
 
 Explore the other recipes in the `recipes/` directory to see how they are structured and what files they include.
 
