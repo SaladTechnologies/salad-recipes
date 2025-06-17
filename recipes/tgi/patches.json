@@ -1,0 +1,143 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/networking_auth",
+      "path": "/output/networking/auth"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "llama318binstruct"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/text-generation-inference:3.3.0-llama-3.1-8b-instruct"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_hf_token",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "mistral7b03instruct"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/text-generation-inference:3.3.0-mistral-7b-0.3-instruct"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_hf_token",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "llama3211bvisioninstruct"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/text-generation-inference:3.3.0-llama-3.2-11b-vision-instruct"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_hf_token",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/QUANTIZE",
+      "value": "fp8"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "qwen38b"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/text-generation-inference:3.3.0-qwen3-8b"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "qwen25vl7binstruct"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/text-generation-inference:3.3.0-qwen-2.5-vl-7b-instruct"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "qwen25vl3binstruct"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/text-generation-inference:3.3.0-qwen-2.5-vl-3b-instruct"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "custom"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "ghcr.io/huggingface/text-generation-inference:3.3.0"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_model_id",
+      "path": "/output/container/environmentVariables/MODEL_ID"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_hf_token",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_quantize",
+      "path": "/output/container/environmentVariables/QUANTIZE"
+    }
+  ]
+]

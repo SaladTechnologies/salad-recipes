@@ -1,0 +1,47 @@
+{
+  "autostartPolicy": true,
+  "container": {
+    "environmentVariables": {},
+    "image": "",
+    "imageCaching": true,
+    "priority": "high",
+    "resources": {
+      "cpu": 4,
+      "gpuClasses": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "memory": 30720,
+      "storageAmount": 53687091200
+    }
+  },
+  "livenessProbe": {
+    "failureThreshold": 6,
+    "http": {
+      "headers": [],
+      "path": "/liveness",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 90,
+    "periodSeconds": 10,
+    "successThreshold": 1,
+    "timeoutSeconds": 30
+  },
+  "name": "",
+  "replicas": 1,
+  "restartPolicy": "always",
+  "readme": "$replace",
+  "startupProbe": {
+    "failureThreshold": 120,
+    "http": {
+      "headers": [],
+      "path": "/startup",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 90,
+    "periodSeconds": 5,
+    "successThreshold": 2,
+    "timeoutSeconds": 5
+  }
+}

@@ -1,0 +1,7 @@
+# AI Toolkit: Flux 1 Dev
+
+This recipe provides an example implementation for using [AI Toolkit](https://github.com/ostris/ai-toolkit) to train LoRA models for the [Flux1-Dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) image generation model. Note that this model is [not licensed for commercial use](https://github.com/black-forest-labs/flux/blob/main/model_licenses/LICENSE-FLUX1-dev), so please ensure you have the appropriate rights to use it for your intended purpose.
+
+This recipe uses [Kelpie](https://github.com/SaladTechnologies/kelpie) and the [Kelpie API](https://kelpie.saladexamples.com/docs) to manage the training jobs. Kelpie is a job queueing system that allows you to run long-running jobs on Salad's infrastructure, as well as manage data transfer between servers and s3-compatible storage.
+
+Kelpie has an optional autoscaling feature that automates adjusting replica count based on the number of queued jobs, including scale-to-zero when the queue is empty.

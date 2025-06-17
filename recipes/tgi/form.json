@@ -1,0 +1,154 @@
+{
+  "title": "🤗 Text Generation Inference",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "container_image_model",
+    "networking_auth"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+      "default": ""
+    },
+    "container_image_model": {
+      "title": "Model",
+      "type": "string",
+      "enum": [
+        "llama318binstruct",
+        "mistral7b03instruct",
+        "llama3211bvisioninstruct",
+        "qwen38b",
+        "qwen25vl7binstruct",
+        "qwen25vl3binstruct",
+        "custom"
+      ],
+      "default": "qwen38b"
+    },
+    "networking_auth": {
+      "title": "Require Container Gateway Authentication",
+      "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "dependencies": {
+    "container_image_model": {
+      "oneOf": [
+        {
+          "required": [
+            "container_environment_hf_token"
+          ],
+          "properties": {
+            "container_image_model": {
+              "enum": [
+                "llama318binstruct"
+              ]
+            },
+            "container_environment_hf_token": {
+              "title": "HuggingFace Token",
+              "description": "Must begin with \"hf_\" or \"api_org_\".",
+              "type": "string",
+              "maxLength": 42,
+              "minLength": 37,
+              "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
+              "default": ""
+            }
+          }
+        },
+        {
+          "required": [
+            "container_environment_hf_token"
+          ],
+          "properties": {
+            "container_image_model": {
+              "enum": [
+                "mistral7b03instruct"
+              ]
+            },
+            "container_environment_hf_token": {
+              "title": "HuggingFace Token",
+              "description": "Must begin with \"hf_\" or \"api_org_\".",
+              "type": "string",
+              "maxLength": 42,
+              "minLength": 37,
+              "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
+              "default": ""
+            }
+          }
+        },
+        {
+          "required": [
+            "container_environment_hf_token"
+          ],
+          "properties": {
+            "container_image_model": {
+              "enum": [
+                "llama3211bvisioninstruct"
+              ]
+            },
+            "container_environment_hf_token": {
+              "title": "HuggingFace Token",
+              "description": "Must begin with \"hf_\" or \"api_org_\".",
+              "type": "string",
+              "maxLength": 42,
+              "minLength": 37,
+              "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
+              "default": ""
+            }
+          }
+        },
+        {
+          "required": [
+            "container_environment_model_id"
+          ],
+          "properties": {
+            "container_image_model": {
+              "enum": [
+                "custom"
+              ]
+            },
+            "container_environment_model_id": {
+              "title": "HuggingFace Model ID",
+              "type": "string",
+              "maxLength": 1000,
+              "minLength": 1,
+              "default": ""
+            },
+            "container_environment_hf_token": {
+              "title": "HuggingFace Token",
+              "description": "Must begin with \"hf_\" or \"api_org_\".",
+              "type": "string",
+              "maxLength": 42,
+              "minLength": 37,
+              "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
+              "default": ""
+            },
+            "container_environment_quantize": {
+              "title": "Quantization",
+              "description": "If (num parameters * 2 bytes) is greater than 80% of the available VRAM, make sure to use quantization to shrink the VRAM footprint.",
+              "type": "string",
+              "enum": [
+                "disabled",
+                "bitsandbytes",
+                "gptq",
+                "awq",
+                "marlin",
+                "exl2",
+                "eetq",
+                "fp8"
+              ],
+              "default": "disabled"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+Run popular LLMs and VLMs with [🤗 Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index), a production-ready inference server that powers HuggingChat. Model weights are included in the container, except for custom variants.
+
+<Callout variation="warning">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>
+
+TGI has many [configuration options](https://huggingface.co/docs/text-generation-inference/reference/launcher) that you can set as environment variables in advanced configuration, but it usually does a reasonable job of detecting the hardware and setting defaults automatically.
+
+Supports [OpenAI Messages API](https://huggingface.co/docs/text-generation-inference/reference/api_reference), streaming output, JSON mode and more.
+
+
+## Custom
+
+While we have several containers with the model weights included, you can deploy TGI with any supported model using the Custom option for this recipe.
+
+- [See supported models](https://huggingface.co/docs/text-generation-inference/supported_models)
+- Make sure your model fits in the vRAM limits of your GPU. This recipe uses RTX 4090 by default, which has 24GB vRAM. You can estimate the vRAM usage of a model by multiplying the number of parameters by the parameter size (2 bytes for fp16, 1 byte for fp8, etc). For example, a 7B parameter model in fp16 would use approximately 14GB of vRAM for the model weights alone, plus additional vram dependent on context length and batch size. You would want a 24GB GPU for a model of that size.
+- [configuration options](https://huggingface.co/docs/text-generation-inference/reference/launcher)

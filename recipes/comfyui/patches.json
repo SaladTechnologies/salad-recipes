@@ -1,0 +1,109 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/networking_auth",
+      "path": "/output/networking/auth"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "dreamshaper8"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-dreamshaper8"
+    },
+    {
+      "op": "add",
+      "path": "/output/readme",
+      "value": "$replace"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "stablediffusionxl"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-sdxl-with-refiner"
+    },
+    {
+      "op": "add",
+      "path": "/output/readme",
+      "value": "$replace"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "flux1schnell"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-flux1-schnell-fp8"
+    },
+    {
+      "op": "add",
+      "path": "/output/readme",
+      "value": "$replace"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "flux1dev"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-flux1-dev-fp8"
+    },
+    {
+      "op": "add",
+      "path": "/output/readme",
+      "value": "$replace"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "stablediffusion35medium"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-sd3.5-medium"
+    },
+    {
+      "op": "add",
+      "path": "/output/readme",
+      "value": "$replace"
+    }
+  ]
+]

@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/tutorials/ubuntu-image",
+  "short_description": "Deploy a basic Ubuntu environment with JupyterLab and VS Code.",
+  "workload_types": []
+}

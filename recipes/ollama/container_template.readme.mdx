@@ -1,0 +1,14 @@
+# Ollama
+
+- [API Docs](https://github.com/ollama/ollama/blob/main/docs/api.md)
+
+## Curl Example
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/api/chat \\
+    -X POST \\
+    -H 'Content-Type: application/json' \\
+    -H 'Salad-Api-Key: ${props.apiKey}' \\
+    -d '{"model": "${props.container.environmentVariables.OLLAMA_MODEL_NAME}","messages": [{"role": "system","content": "You are a helpful assistant."},{"role": "user","content": "What is deep learning?"}],"stream": true,"max_tokens": 128}'
+`}</CodeBlock>

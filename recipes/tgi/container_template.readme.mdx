@@ -1,0 +1,18 @@
+# 🤗 Text Generation Inference
+
+## Resources
+
+- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)
+- [🤗 Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index)
+- [Additional Configuration](https://huggingface.co/docs/text-generation-inference/reference/launcher)
+
+### Curl Example
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/chat/completions \\
+    -X POST \\
+    -H 'Content-Type: application/json' \\
+    -H 'Salad-Api-Key: ${props.apiKey}' \\
+    -d '{"model": "tgi","messages": [{"role": "system","content": "You are a helpful assistant."},{"role": "user","content": "What is deep learning?"}],"stream": true,"max_tokens": 20}'
+`}</CodeBlock>

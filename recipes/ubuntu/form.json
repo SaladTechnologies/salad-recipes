@@ -1,0 +1,31 @@
+{
+  "title": "Ubuntu",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+      "default": ""
+    },
+    "tunnel_id": {
+      "title": "Tunnel ID",
+      "description": "The Tunnel ID of the devtunnel to use for VS Code. If not specified, VS Code will not be available.",
+      "type": "string",
+      "default": ""
+    },
+    "access_token": {
+      "title": "Access Token",
+      "description": "The access token to use for the devtunnel. If not specified, VS Code will not be available.",
+      "type": "string",
+      "default": ""
+    }
+  }
+}

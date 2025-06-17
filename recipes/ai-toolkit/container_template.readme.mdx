@@ -1,0 +1,132 @@
+# AI Toolkit: Flux 1 Dev
+
+This recipe provides an example implementation for using [AI Toolkit](https://github.com/ostris/ai-toolkit) to train LoRA models for the [Flux1-Dev](https://huggingface.co/black-forest-labs/FLUX.1-dev) image generation model. Note that this model is [not licensed for commercial use](https://github.com/black-forest-labs/flux/blob/main/model_licenses/LICENSE-FLUX1-dev), so please ensure you have the appropriate rights to use it for your intended purpose.
+
+## Resources
+
+- [AI Toolkit](https://github.com/ostris/ai-toolkit)
+- [Kelpie API](https://kelpie.saladexamples.com/docs)
+- [Kelpie Worker Binary](https://github.com/SaladTechnologies/kelpie)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/ai-toolkit/)
+
+## Preparing Your Dataset
+
+To train a LoRA model using the AI Toolkit, you need to prepare your dataset in a specific structure, and upload that data to S3-compatible storage. The following steps outline how to set up your dataset for training:
+
+1. Create a directory named `data` in your project root.
+2. Create a folder inside the `data` directory named for a job id like `job-00001`.
+3. Inside that folder, create a `dataset` folder and place your training images inside, along with a `.txt` file for each image that contains a caption for the image of the same name. For example, if you have an image named `image1.jpg`, you should have a file named `image1.txt` with the caption for that image.
+4. Copy [this config file](https://github.com/ostris/ai-toolkit/blob/main/config/examples/train_lora_flux_24gb.yaml) to `data/job-00001/train.yaml` and make the following updates:
+   - Update `.config.name` to your job id (e.g., `job-00001`).
+   - Update `.config.datasets[0].folder_path` to `./dataset`
+   - Update `.model.name_or_path` to `/model`, as the model weights are included in the docker image we will be using.
+   - Update `.sample.prompts` to include the prompts you want to use for sampling. This is optional, but it can help you evaluate the quality of your model during training.
+   - Update `.config.save.max_step_saves_to_keep` to `2` to save only the most recent progress checkpoint, plus one backup in case of file corruption.
+
+The folder structure should look like this:
+
+```text
+data
+└── job-00001
+    ├── dataset
+    │   ├── 00001.jpg
+    │   ├── 00001.txt
+    │   ├── 00002.jpg
+    │   └── 00002.txt
+    └── train.yml
+```
+
+### Captioning Your Dataset
+
+If you don't have captions for your dataset, you can use any vision-language model to generate the captions. In this example we use OpenAI's GPT-4.1-Nano model, (their least expensive model) to generate captions for our dataset. You can use the [generate-captions.py](https://github.com/SaladTechnologies/salad-recipes/blob/master/src/flux1-dev-ai-toolkit/generate-captions.py) script to generate captions for your dataset. The script will take a folder of images and generate captions for each image using the GPT-4.1-Nano model. The generated captions will be saved in the same folder as the images with the same name as the image, but with a `.txt` extension. You will need your OpenAI API key to use this script. You can set the `OPENAI_API_KEY` environment variable to your OpenAI API key.
+
+```bash
+python generate-captions.py data/job-00001/dataset
+```
+
+## Getting Your Container Group ID
+
+```bash
+curl -X GET \
+  --url https://api.salad.com/api/public/organizations/{organization_name}/projects/{project_name}/containers/{container_group_name} \
+  --header 'Content-Type: application/json' \
+  --header 'Salad-Api-Key: <api-key>'
+```
+
+This will return a JSON object with the details of the container group, including the `.id` field.
+
+## Uploading Data And Queuing Jobs
+
+You must upload your dataset to S3-compatible storage and queue jobs to the Kelpie API. The [prepare-and-queue-jobs.py](https://github.com/SaladTechnologies/salad-recipes/blob/master/src/flux1-dev-ai-toolkit/prepare-and-queue-jobs.py) script will do this for you. Modify the script to include your salad org and project name. You will need appropriate AWS credentials to access your S3-compatible storage, as well as your Salad API Key set in the environment variable `SALAD_API_KEY`. See the [Kelpie Docs](https://kelpie.saladexamples.com/docs) for more information about the Kelpie API.
+
+```bash
+python prepare-and-queue-jobs.py \
+  data \
+  s3://my-bucket/some-prefix \
+  $container_group_id
+```
+
+This will upload the dataset to your S3-compatible storage, and queue jobs to the Kelpie API. The script will also create a `kelpie_job.json` file in each job folder that contains the kelpie job id (different from your local job id, `job-00001`) and other information about the job.
+
+You are encouraged to read the script to understand how it works, and how a kelpie job is structured.
+
+Briefly, a kelpie job consists of a `command`, some `arguments`, optional `environment` variables, and a `sync` configuration. The `sync` configuration tells kelpie what to download before starting a job, what to upload while the job executes, and what to upload when the job completes. In our case, this looks like this:
+
+- Before starting the job, kelpie will download the following files:
+  - The training config file
+  - The dataset folder
+  - Any previously uploaded progress checkpoints
+- While the job is running, kelpie will upload the following files:
+  - The training progress checkpoints
+  - Any images sampled during training
+- When the job completes, kelpie will upload the following files:
+  - The final model weights
+
+## Monitoring the Job
+
+You can monitor the job using the Kelpie API. You can use the following command to get the status of the job:
+
+```bash
+curl -X GET \
+  --url https://kelpie.saladexamples.com/jobs/{job_id} \
+  --header 'Content-Type: application/json' \
+  --header 'Salad-Api-Key: <salad-api-key>' \
+  --header 'Salad-Organization: <organization-name>' \
+  --header 'Salad-Project: <project-name>'
+```
+
+Make sure to replace `{job_id}` with the job id of the kelpie job, and `<salad-api-key>` with your Salad API key.
+
+This will return a JSON object with the details of the job, including the status, which machine had the job most recently, and how many heartbeats have been received.
+
+You can also customize the `prepare-and-queue-jobs.py` script to include a webhook to be notified when the job completes.
+
+## Autoscaling
+
+Kelpie has an optional autoscaling feature that automates adjusting replica count based on the number of queued jobs, including scale-to-zero when the queue is empty. This feature works through the Salad API, and requires adding the Kelpie user to your Salad Organization to grant the required API access. Currently that is me (shawn.rushefsky@salad.com).
+
+To enable autoscaling, you can submit a request to the Kelpie API to establish scaling rules for your container group.
+
+```bash
+curl -X POST \
+  --url https://kelpie.saladexamples.com/scaling-rules \
+  --header 'Content-Type: application/json' \
+  --header 'Salad-Api-Key: <salad-api-key>' \
+  --header 'Salad-Organization: <organization-name>' \
+  --header 'Salad-Project: <project-name>' \
+  --data '{
+    "min_replicas": 0,
+    "max_replicas": 10,
+    "container_group_id": "<container-group-id>"
+}'
+```
+
+Make sure to replace the placeholders with your Salad API key, organization name, project name, and the ID of the container group you created earlier.
+This will create a scaling rule that will scale the container group to a minimum of 0 replicas and a maximum of 10 replicas. The scaling rules will be applied to all jobs submitted to the container group.
+
+The Kelpie scaling algorithm works as follows:
+
+- Every 5 minutes, all scaling rules are evaluated.
+- The number of replicas in a container group is set to equal the number of queued or running jobs, up to the maximum number of replicas, and down to the minimum number of replicas.
+- If the desired number of replicas is 0, the container group will be stopped.
+- If the desired number of replicas is greater than 0 and the container group is not currently running, the container group will be started.

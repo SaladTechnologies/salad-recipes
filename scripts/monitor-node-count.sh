@@ -40,10 +40,10 @@ if [ -z "$SALAD_API_KEY" ]; then
   exit 1
 fi
 
-source scripts/salad-api
+source scripts/salad-api.sh
 
 # Reset the output file
-echo "" > $output
+echo "currentTime,runningReplicas" > $output
 
 # Loop until interrupted or the container group is stopped
 while true; do

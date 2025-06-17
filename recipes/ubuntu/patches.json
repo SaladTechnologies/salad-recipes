@@ -1,0 +1,29 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/tunnel_id",
+      "path": "/output/container/environmentVariables/TUNNEL_ID"
+    },
+    {
+      "op": "copy",
+      "from": "/input/access_token",
+      "path": "/output/container/environmentVariables/ACCESS_TOKEN"
+    }
+  ]
+]

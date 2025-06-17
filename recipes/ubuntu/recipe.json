@@ -1,0 +1,92 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {},
+      "image": "saladtechnologies/misc:ubuntu24-dev",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 4,
+        "gpuClasses": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"],
+        "memory": 16384,
+        "storageAmount": 10737418240
+      }
+    },
+    "name": "",
+    "replicas": 1,
+    "restartPolicy": "always",
+    "readme": "# Ubuntu 24.04\n\n[Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/src/ubuntu-dev)\n\n## Access\n\n- <Link url={`https://${props.networking.dns}/lab`}>JupyterLab</Link>\n- <Link url={`https://vscode.dev/tunnel/${props.id}/workspace`}>VS Code</Link>, if configured.\n- Click on a running instance to access a browser-based terminal.\n\nKeep in mind that SaladCloud instances are ephemeral and can be reallocated at any time, resetting to a fresh Ubuntu image. Make sure to persist any important data to a remote location, such as S3 or a database, to avoid losing it when the instance is reset.\n\n",
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8888,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "Ubuntu",
+    "description": "A basic Ubuntu 24 image run on a RTX 3090 (24GB) to get started with SaladCloud.\n\nIncludes VS Code (Optional) and JupyterLab for easy access.\n\n[Learn how to set up VS Code over Devtunnel](https://docs.salad.com/tutorials/vscode-remote-development#create-a-tunnel-and-generate-access-tokens) and fill in your tunnel ID and token in the form below. If ommitted, you can still access JupyterLab and the web terminal, but the VS Code server will not be started.\n",
+    "type": "object",
+    "required": ["container_group_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "tunnel_id": {
+        "title": "Tunnel ID",
+        "description": "The Tunnel ID of the devtunnel to use for VS Code. If not specified, VS Code will not be available.",
+        "type": "string",
+        "default": ""
+      },
+      "access_token": {
+        "title": "Access Token",
+        "description": "The access token to use for the devtunnel. If not specified, VS Code will not be available.",
+        "type": "string",
+        "default": ""
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/tunnel_id",
+        "path": "/output/container/environmentVariables/TUNNEL_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/access_token",
+        "path": "/output/container/environmentVariables/ACCESS_TOKEN"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/tutorials/ubuntu-image",
+  "short_description": "Deploy a basic Ubuntu environment with JupyterLab and VS Code.",
+  "workload_types": []
+}

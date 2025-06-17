@@ -5,10 +5,11 @@ comfyui-api
 **/benchmark/images/
 **/benchmark/*.csv
 **/benchmark/*-test-config.json
-src/cogvideox-2b-comfyui/CogVideo2B
-src/tgi-*/data
-src/tgi-*/model
-src/tgi-*/benchmark/*.txt
-src/flux1*/data/**/
+**/cogvideox-2b-comfyui/CogVideo2B
+**/tgi-*/data
+**/tgi-*/model
+**/tgi-*/benchmark/*.txt
+**/flux1*/data/**/
 nohup.out
 venv
+node_modules

@@ -1,0 +1,46 @@
+{
+  "autostartPolicy": true,
+  "container": {
+    "environmentVariables": {
+      "HOSTNAME": "::",
+      "PORT": "3000"
+    },
+    "image": "",
+    "imageCaching": true,
+    "priority": "high",
+    "resources": {
+      "cpu": 4,
+      "gpuClasses": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "memory": 30720,
+      "storageAmount": 1073741824
+    }
+  },
+  "name": "",
+  "networking": {
+    "auth": true,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 3000,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  },
+  "replicas": 3,
+  "restartPolicy": "always",
+  "readme": "$replace",
+  "readinessProbe": {
+    "failureThreshold": 1,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 3000,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 0,
+    "periodSeconds": 3,
+    "successThreshold": 1,
+    "timeoutSeconds": 10
+  }
+}

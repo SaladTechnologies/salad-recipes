@@ -1,0 +1,73 @@
+{
+  "title": "Sogni Fast Worker",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "sogni_worker_type",
+    "sogni_api_key",
+    "sogni_nft_token_id"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+      "default": ""
+    },
+    "sogni_worker_type": {
+      "title": "Sogni Worker Type",
+      "type": "string",
+      "enum": [
+        "flux",
+        "stable_diffusion"
+      ],
+      "default": "flux"
+    },
+    "sogni_api_key": {
+      "title": "Sogni API Key",
+      "description": "Your Sogni account API key.",
+      "type": "string",
+      "maxLength": 1000,
+      "minLength": 1,
+      "default": ""
+    },
+    "sogni_nft_token_id": {
+      "title": "Sogni NFT Token ID",
+      "description": "The NFT Token ID for your Sogni worker.",
+      "type": "string",
+      "maxLength": 1000,
+      "minLength": 1,
+      "default": ""
+    }
+  },
+  "dependencies": {
+    "sogni_worker_type": {
+      "oneOf": [
+        {
+          "required": [
+            "download_model_count"
+          ],
+          "properties": {
+            "sogni_worker_type": {
+              "enum": [
+                "stable_diffusion"
+              ]
+            },
+            "download_model_count": {
+              "title": "Models to Download at Start",
+              "description": "The number of Stable Diffusion models to download when the worker starts.",
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 0,
+              "default": 6
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source scripts/salad-api
+source scripts/salad-api.sh
 
 org=${1:-"salad-benchmarking"}
 
@@ -9,4 +9,4 @@ if [ -z "$SALAD_API_KEY" ]; then
   exit 1
 fi
 
-getAllPrices $org | jq . > benchmark/prices.json
+getAllPrices $org | jq . > scripts/prices.json

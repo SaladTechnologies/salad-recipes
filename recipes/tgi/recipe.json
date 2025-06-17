@@ -1,0 +1,336 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {
+        "HOSTNAME": "::",
+        "PORT": "3000"
+      },
+      "image": "",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 4,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "memory": 30720,
+        "storageAmount": 1073741824
+      }
+    },
+    "name": "",
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 3000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    },
+    "replicas": 3,
+    "restartPolicy": "always",
+    "readme": "# 🤗 Text Generation Inference\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)\n- [🤗 Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index)\n- [Additional Configuration](https://huggingface.co/docs/text-generation-inference/reference/launcher)\n\n### Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\"model\": \"tgi\",\"messages\": [{\"role\": \"system\",\"content\": \"You are a helpful assistant.\"},{\"role\": \"user\",\"content\": \"What is deep learning?\"}],\"stream\": true,\"max_tokens\": 20}'\n`}</CodeBlock>\n",
+    "readinessProbe": {
+      "failureThreshold": 1,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 3000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 10
+    }
+  },
+  "form": {
+    "title": "🤗 Text Generation Inference",
+    "description": "Run popular LLMs and VLMs with [🤗 Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index), a production-ready inference server that powers HuggingChat. Model weights are included in the container, except for custom variants.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nTGI has many [configuration options](https://huggingface.co/docs/text-generation-inference/reference/launcher) that you can set as environment variables in advanced configuration, but it usually does a reasonable job of detecting the hardware and setting defaults automatically.\n\nSupports [OpenAI Messages API](https://huggingface.co/docs/text-generation-inference/reference/api_reference), streaming output, JSON mode and more.\n\n\n## Custom\n\nWhile we have several containers with the model weights included, you can deploy TGI with any supported model using the Custom option for this recipe.\n\n- [See supported models](https://huggingface.co/docs/text-generation-inference/supported_models)\n- Make sure your model fits in the vRAM limits of your GPU. This recipe uses RTX 4090 by default, which has 24GB vRAM. You can estimate the vRAM usage of a model by multiplying the number of parameters by the parameter size (2 bytes for fp16, 1 byte for fp8, etc). For example, a 7B parameter model in fp16 would use approximately 14GB of vRAM for the model weights alone, plus additional vram dependent on context length and batch size. You would want a 24GB GPU for a model of that size.\n- [configuration options](https://huggingface.co/docs/text-generation-inference/reference/launcher)\n",
+    "type": "object",
+    "required": ["container_group_name", "container_image_model", "networking_auth"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "container_image_model": {
+        "title": "Model",
+        "type": "string",
+        "enum": [
+          "llama318binstruct",
+          "mistral7b03instruct",
+          "llama3211bvisioninstruct",
+          "qwen38b",
+          "qwen25vl7binstruct",
+          "qwen25vl3binstruct",
+          "custom"
+        ],
+        "default": "qwen38b"
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
+        "type": "boolean",
+        "default": true
+      }
+    },
+    "dependencies": {
+      "container_image_model": {
+        "oneOf": [
+          {
+            "required": ["container_environment_hf_token"],
+            "properties": {
+              "container_image_model": {
+                "enum": ["llama318binstruct"]
+              },
+              "container_environment_hf_token": {
+                "title": "HuggingFace Token",
+                "description": "Must begin with \"hf_\" or \"api_org_\".",
+                "type": "string",
+                "maxLength": 42,
+                "minLength": 37,
+                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
+                "default": ""
+              }
+            }
+          },
+          {
+            "required": ["container_environment_hf_token"],
+            "properties": {
+              "container_image_model": {
+                "enum": ["mistral7b03instruct"]
+              },
+              "container_environment_hf_token": {
+                "title": "HuggingFace Token",
+                "description": "Must begin with \"hf_\" or \"api_org_\".",
+                "type": "string",
+                "maxLength": 42,
+                "minLength": 37,
+                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
+                "default": ""
+              }
+            }
+          },
+          {
+            "required": ["container_environment_hf_token"],
+            "properties": {
+              "container_image_model": {
+                "enum": ["llama3211bvisioninstruct"]
+              },
+              "container_environment_hf_token": {
+                "title": "HuggingFace Token",
+                "description": "Must begin with \"hf_\" or \"api_org_\".",
+                "type": "string",
+                "maxLength": 42,
+                "minLength": 37,
+                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
+                "default": ""
+              }
+            }
+          },
+          {
+            "required": ["container_environment_model_id"],
+            "properties": {
+              "container_image_model": {
+                "enum": ["custom"]
+              },
+              "container_environment_model_id": {
+                "title": "HuggingFace Model ID",
+                "type": "string",
+                "maxLength": 1000,
+                "minLength": 1,
+                "default": ""
+              },
+              "container_environment_hf_token": {
+                "title": "HuggingFace Token",
+                "description": "Must begin with \"hf_\" or \"api_org_\".",
+                "type": "string",
+                "maxLength": 42,
+                "minLength": 37,
+                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
+                "default": ""
+              },
+              "container_environment_quantize": {
+                "title": "Quantization",
+                "description": "If (num parameters * 2 bytes) is greater than 80% of the available VRAM, make sure to use quantization to shrink the VRAM footprint.",
+                "type": "string",
+                "enum": ["disabled", "bitsandbytes", "gptq", "awq", "marlin", "exl2", "eetq", "fp8"],
+                "default": "disabled"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/container_image_model",
+        "value": "llama318binstruct"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/image",
+        "value": "saladtechnologies/text-generation-inference:3.3.0-llama-3.1-8b-instruct"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_environment_hf_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/container_image_model",
+        "value": "mistral7b03instruct"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/image",
+        "value": "saladtechnologies/text-generation-inference:3.3.0-mistral-7b-0.3-instruct"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_environment_hf_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/container_image_model",
+        "value": "llama3211bvisioninstruct"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/image",
+        "value": "saladtechnologies/text-generation-inference:3.3.0-llama-3.2-11b-vision-instruct"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_environment_hf_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/QUANTIZE",
+        "value": "fp8"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/container_image_model",
+        "value": "qwen38b"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/image",
+        "value": "saladtechnologies/text-generation-inference:3.3.0-qwen3-8b"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/container_image_model",
+        "value": "qwen25vl7binstruct"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/image",
+        "value": "saladtechnologies/text-generation-inference:3.3.0-qwen-2.5-vl-7b-instruct"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/container_image_model",
+        "value": "qwen25vl3binstruct"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/image",
+        "value": "saladtechnologies/text-generation-inference:3.3.0-qwen-2.5-vl-3b-instruct"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/container_image_model",
+        "value": "custom"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/image",
+        "value": "ghcr.io/huggingface/text-generation-inference:3.3.0"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_environment_model_id",
+        "path": "/output/container/environmentVariables/MODEL_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_environment_hf_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_environment_quantize",
+        "path": "/output/container/environmentVariables/QUANTIZE"
+      }
+    ]
+  ],
+  "ui": {
+    "container_image_model": {
+      "ui:enumNames": [
+        "Llama 3.1 8B Instruct",
+        "Mistral 7B 0.3 Instruct",
+        "Llama 3.2 11B Vision-Instruct",
+        "Qwen3 8B",
+        "Qwen2.5 VL 7B Instruct",
+        "Qwen2.5 VL 3B Instruct",
+        "Custom Model"
+      ]
+    },
+    "networking_auth": {
+      "ui:placeholder": "Authentication"
+    },
+    "container_environment_quantize": {
+      "ui:enumNames": ["Disabled", "bits-and-bytes", "GPT-Q", "AWQ", "Marlin", "EXL2", "EETQ", "fp8"]
+    }
+  },
+  "documentation_url": "https://docs.salad.com/products/recipes/overview",
+  "short_description": "Run popular LLMs and VLMs with 🤗 Text Generation Inference.",
+  "workload_types": ["llm"]
+}
