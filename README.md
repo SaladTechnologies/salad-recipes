@@ -1,6 +1,6 @@
 # Salad Recipes
 
-Recipes are pre-configured container group templates that can be used to quickly deploy popular AI models and applications. Many of them are available directly from the [SaladCloud Portal](https://portal.salad.com/), and those that aren't can be deployed using the [SaladCloud API.](https://docs.salad.com/reference/api-usage)
+Recipes are pre-configured container group templates that can be used to quickly deploy popular AI models and applications. Those in the `recipes/` directory can be deployed directly from the [SaladCloud Portal](https://portal.salad.com/), and any others can be deployed using the [SaladCloud API.](https://docs.salad.com/reference/api-usage)
 
 ## Repository Structure
 
