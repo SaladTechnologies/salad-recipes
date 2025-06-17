@@ -17,7 +17,7 @@ Usage: node scripts/get-container-group.js <container-group-address> <output-fil
 Example:
 node scripts/get-container-group.js \
 organizations/salad-benchmarking/projects/recipe-staging/containers/dreamshaper8-comfyui \
-src/dreamshaper8-comfyui/container-group.json
+recipes/comfyui/container-group.json
 `
 
 function normalizeRecipeName(name) {
@@ -76,6 +76,7 @@ async function main() {
   let newDef = {
     name: recipeName,
     display_name: recipeName,
+    readme: "$replace",
     container,
     autostart_policy: true,
     restart_policy,
