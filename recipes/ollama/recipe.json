@@ -1,0 +1,128 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {},
+      "image": "saladtechnologies/ollama:0.9.1",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 4,
+        "gpuClasses": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"],
+        "memory": 30720,
+        "storageAmount": 53687091200
+      }
+    },
+    "name": "",
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 11434,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    },
+    "replicas": 3,
+    "restartPolicy": "always",
+    "readme": "# Ollama\n\n- [API Docs](https://github.com/ollama/ollama/blob/main/docs/api.md)\n\n## Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/api/chat \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\"model\": \"${props.container.environmentVariables.OLLAMA_MODEL_NAME}\",\"messages\": [{\"role\": \"system\",\"content\": \"You are a helpful assistant.\"},{\"role\": \"user\",\"content\": \"What is deep learning?\"}],\"stream\": true,\"max_tokens\": 128}'\n`}</CodeBlock>\n",
+    "startupProbe": {
+      "failureThreshold": 10,
+      "http": {
+        "headers": [],
+        "path": "/",
+        "port": 11434,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 1,
+      "periodSeconds": 1,
+      "successThreshold": 1,
+      "timeoutSeconds": 5
+    },
+    "livenessProbe": {
+      "failureThreshold": 2,
+      "http": {
+        "headers": [],
+        "path": "/",
+        "port": 11434,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 10,
+      "successThreshold": 1,
+      "timeoutSeconds": 30
+    },
+    "readinessProbe": {
+      "exec": {
+        "command": ["cat", "/tmp/ollama_model_ready"]
+      },
+      "failureThreshold": 1,
+      "initialDelaySeconds": 0,
+      "periodSeconds": 1,
+      "successThreshold": 1,
+      "timeoutSeconds": 1
+    }
+  },
+  "form": {
+    "title": "Ollama",
+    "description": "Run popular LLMs with [Ollama](https://ollama.com/), a free and open-source tool for running large language models easily on consumer GPUs.\nOllama supports many popular models.\n\n[See the full list here.](https://ollama.com/search)\n",
+    "type": "object",
+    "required": ["container_group_name", "model_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
+        "type": "boolean",
+        "default": true
+      },
+      "model_name": {
+        "title": "Model Name",
+        "description": "The name of the model to use, from the ollama library.",
+        "type": "string",
+        "default": "llama3.2"
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_name",
+        "path": "/output/container/environmentVariables/OLLAMA_MODEL_NAME"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://github.com/ollama/ollama/blob/main/docs/api.md",
+  "short_description": "Run popular LLMs with Ollama.",
+  "workload_types": ["llm"]
+}

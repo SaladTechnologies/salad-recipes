@@ -1,0 +1,174 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {},
+      "image": "",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 4,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "memory": 30720,
+        "storageAmount": 53687091200
+      }
+    },
+    "livenessProbe": {
+      "failureThreshold": 6,
+      "http": {
+        "headers": [],
+        "path": "/liveness",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 90,
+      "periodSeconds": 10,
+      "successThreshold": 1,
+      "timeoutSeconds": 30
+    },
+    "name": "",
+    "replicas": 1,
+    "restartPolicy": "always",
+    "readme": "SaladCloud will find a qualified node, and begin the process of downloading the container image to the host machine. It may take up to tens of minutes to download to some machines, depending on the network conditions of that particular node. Remember, these are privately owned PCs with gaming GPUs in a variety of networking conditions, and performance will vary across different nodes.\n\nEventually, you will see your instance enter the running state, and show a green checkmark in the \"Ready\" column. At this time the container group will be considered running.",
+    "startupProbe": {
+      "failureThreshold": 120,
+      "http": {
+        "headers": [],
+        "path": "/startup",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 90,
+      "periodSeconds": 5,
+      "successThreshold": 2,
+      "timeoutSeconds": 5
+    }
+  },
+  "form": {
+    "title": "Sogni Fast Worker",
+    "description": "Deploy Sogni Flux or Stable Diffusion workers for image generation. <Link url='https://docs.salad.com/products/recipes/sogni-flux-worker'><i className='fa-regular fa-fw fa-circle-question bg-transparent text-lg' /></Link>",
+    "type": "object",
+    "required": ["container_group_name", "sogni_worker_type", "sogni_api_key", "sogni_nft_token_id"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "sogni_worker_type": {
+        "title": "Sogni Worker Type",
+        "type": "string",
+        "enum": ["flux", "stable_diffusion"],
+        "default": "flux"
+      },
+      "sogni_api_key": {
+        "title": "Sogni API Key",
+        "description": "Your Sogni account API key.",
+        "type": "string",
+        "maxLength": 1000,
+        "minLength": 1,
+        "default": ""
+      },
+      "sogni_nft_token_id": {
+        "title": "Sogni NFT Token ID",
+        "description": "The NFT Token ID for your Sogni worker.",
+        "type": "string",
+        "maxLength": 1000,
+        "minLength": 1,
+        "default": ""
+      }
+    },
+    "dependencies": {
+      "sogni_worker_type": {
+        "oneOf": [
+          {
+            "required": ["download_model_count"],
+            "properties": {
+              "sogni_worker_type": {
+                "enum": ["stable_diffusion"]
+              },
+              "download_model_count": {
+                "title": "Models to Download at Start",
+                "description": "The number of Stable Diffusion models to download when the worker starts.",
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 0,
+                "default": 6
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/sogni_api_key",
+        "path": "/output/container/environmentVariables/API_KEY"
+      },
+      {
+        "op": "copy",
+        "from": "/input/sogni_nft_token_id",
+        "path": "/output/container/environmentVariables/NFT_TOKEN_ID"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/sogni_worker_type",
+        "value": "flux"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/image",
+        "value": "sogni/sogni-flux-worker:latest"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/sogni_worker_type",
+        "value": "stable_diffusion"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/image",
+        "value": "sogni/sogni-stable-diffusion-worker:latest"
+      },
+      {
+        "op": "copy",
+        "from": "/input/download_model_count",
+        "path": "/output/container/environmentVariables/AUTO_DOWNLOAD_TO_MIN_MODEL_COUNT"
+      }
+    ]
+  ],
+  "ui": {
+    "sogni_worker_type": {
+      "ui:enumNames": ["Flux", "Stable Diffusion"]
+    }
+  },
+  "documentation_url": "https://docs.salad.com/products/recipes/sogni-flux-worker",
+  "short_description": "Deploy Sogni Flux and Stable Diffusion fast workers for high-quality image generation.",
+  "workload_types": ["imageGen"]
+}
