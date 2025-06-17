@@ -1,0 +1,9 @@
+FROM ghcr.io/huggingface/text-generation-inference:3.3.0
+
+COPY models/mistral7b/*.json /model/
+COPY models/mistral7b/model-00001-of-00003.safetensors /model/
+COPY models/mistral7b/model-00002-of-00003.safetensors /model/
+COPY models/mistral7b/model-00003-of-00003.safetensors /model/
+COPY models/mistral7b/tokenizer.model* /model/
+
+ENV MODEL_ID="/model"

@@ -1,0 +1,11 @@
+FROM ghcr.io/huggingface/text-generation-inference:3.3.0
+
+COPY models/qwen38b/*.txt /model/
+COPY models/qwen38b/*.json /model/
+COPY models/qwen38b/model-00001-of-00005.safetensors /model/
+COPY models/qwen38b/model-00002-of-00005.safetensors /model/
+COPY models/qwen38b/model-00003-of-00005.safetensors /model/
+COPY models/qwen38b/model-00004-of-00005.safetensors /model/
+COPY models/qwen38b/model-00005-of-00005.safetensors /model/
+
+ENV MODEL_ID="/model"

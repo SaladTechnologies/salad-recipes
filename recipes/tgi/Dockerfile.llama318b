@@ -1,0 +1,10 @@
+FROM ghcr.io/huggingface/text-generation-inference:3.3.0
+
+COPY models/llama318b/LICENSE /model/
+COPY models/llama318b/*.json /model/
+COPY models/llama318b/model-00001-of-00004.safetensors /model/
+COPY models/llama318b/model-00002-of-00004.safetensors /model/
+COPY models/llama318b/model-00003-of-00004.safetensors /model/
+COPY models/llama318b/model-00004-of-00004.safetensors /model/
+
+ENV MODEL_ID="/model"
