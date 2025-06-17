@@ -2,7 +2,7 @@
 
 const fs = require("fs/promises");
 const path = require("path");
-const gpuPrices = require("../benchmark/prices.json");
+const gpuPrices = require("./prices.json");
 const exec = require("child_process").exec;
 
 const usage = `Usage: benchmark/run-matrix.js [options]

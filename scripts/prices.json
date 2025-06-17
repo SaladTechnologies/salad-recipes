@@ -1,0 +1,740 @@
+{
+  "items": [
+    {
+      "id": "43a49c0c-f860-40e9-a509-702d0dba0902",
+      "name": "RTX 3080 (10 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.18"
+        },
+        {
+          "priority": "medium",
+          "price": "0.15"
+        },
+        {
+          "priority": "low",
+          "price": "0.12"
+        },
+        {
+          "priority": "batch",
+          "price": "0.09"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "99305b63-f7cf-4b8d-ae33-2d6b6ff0b085",
+      "name": "RTX 3050 (8 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.07"
+        },
+        {
+          "priority": "medium",
+          "price": "0.058"
+        },
+        {
+          "priority": "low",
+          "price": "0.047"
+        },
+        {
+          "priority": "batch",
+          "price": "0.035"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "69071b6c-3d2c-4181-b3ce-de03aec04b9f",
+      "name": "RTX 3060 (8 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.08"
+        },
+        {
+          "priority": "medium",
+          "price": "0.067"
+        },
+        {
+          "priority": "low",
+          "price": "0.053"
+        },
+        {
+          "priority": "batch",
+          "price": "0.04"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "3eae6ce4-aa14-4c7d-b502-131730c9af48",
+      "name": "RTX 2060 (6 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.05"
+        },
+        {
+          "priority": "medium",
+          "price": "0.043"
+        },
+        {
+          "priority": "low",
+          "price": "0.037"
+        },
+        {
+          "priority": "batch",
+          "price": "0.03"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "de00c90b-904b-4d9e-8fc9-1d9a08eb0932",
+      "name": "RTX 4070 Ti (12 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.24"
+        },
+        {
+          "priority": "medium",
+          "price": "0.193"
+        },
+        {
+          "priority": "low",
+          "price": "0.147"
+        },
+        {
+          "priority": "batch",
+          "price": "0.1"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "ffc51032-64d2-4df3-855a-f3a649895c0f",
+      "name": "RTX 2080 (8 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.08"
+        },
+        {
+          "priority": "medium",
+          "price": "0.073"
+        },
+        {
+          "priority": "low",
+          "price": "0.067"
+        },
+        {
+          "priority": "batch",
+          "price": "0.06"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "0798d5aa-2d17-42ee-81b8-ea92e3bc088e",
+      "name": "RTX 4070 (12 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.22"
+        },
+        {
+          "priority": "medium",
+          "price": "0.18"
+        },
+        {
+          "priority": "low",
+          "price": "0.14"
+        },
+        {
+          "priority": "batch",
+          "price": "0.1"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "ce8950bc-a52a-4bef-ac64-1fe3c7078b5d",
+      "name": "GTX 1050 Ti (4 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.02"
+        },
+        {
+          "priority": "medium",
+          "price": "0.018"
+        },
+        {
+          "priority": "low",
+          "price": "0.017"
+        },
+        {
+          "priority": "batch",
+          "price": "0.015"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "6d3221b4-1fd0-4cc4-98cd-2c1895a18c2e",
+      "name": "RTX 2080 Ti (11 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.1"
+        },
+        {
+          "priority": "medium",
+          "price": "0.093"
+        },
+        {
+          "priority": "low",
+          "price": "0.087"
+        },
+        {
+          "priority": "batch",
+          "price": "0.08"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "f474c159-1600-460c-9f84-b7f585750be9",
+      "name": "GTX 1660 Super (6 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.04"
+        },
+        {
+          "priority": "medium",
+          "price": "0.037"
+        },
+        {
+          "priority": "low",
+          "price": "0.033"
+        },
+        {
+          "priority": "batch",
+          "price": "0.03"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "9998fe42-04a5-4807-b3a5-849943f16c38",
+      "name": "RTX 3090 Ti (24 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.28"
+        },
+        {
+          "priority": "medium",
+          "price": "0.23"
+        },
+        {
+          "priority": "low",
+          "price": "0.18"
+        },
+        {
+          "priority": "batch",
+          "price": "0.13"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "65247de0-746f-45c6-8537-650ba613966a",
+      "name": "RTX 3080 Ti (12 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.2"
+        },
+        {
+          "priority": "medium",
+          "price": "0.167"
+        },
+        {
+          "priority": "low",
+          "price": "0.133"
+        },
+        {
+          "priority": "batch",
+          "price": "0.1"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "d9fb0bd6-05c9-4cb9-b98e-9f7d1b5ba0e7",
+      "name": "RTX 3070 Ti (8 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.1"
+        },
+        {
+          "priority": "medium",
+          "price": "0.09"
+        },
+        {
+          "priority": "low",
+          "price": "0.08"
+        },
+        {
+          "priority": "batch",
+          "price": "0.07"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "951131f6-5acf-489c-b303-0906be8b26ef",
+      "name": "RTX 3070 (8 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.1"
+        },
+        {
+          "priority": "medium",
+          "price": "0.09"
+        },
+        {
+          "priority": "low",
+          "price": "0.08"
+        },
+        {
+          "priority": "batch",
+          "price": "0.07"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "cb6c1931-89b6-4f76-976f-54047320ccc6",
+      "name": "RTX 3060 Ti (8 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.08"
+        },
+        {
+          "priority": "medium",
+          "price": "0.067"
+        },
+        {
+          "priority": "low",
+          "price": "0.053"
+        },
+        {
+          "priority": "batch",
+          "price": "0.04"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "f1380143-51cd-4bad-80cb-1f86ee6b49fe",
+      "name": "RTX 4070 Ti Super (16 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.26"
+        },
+        {
+          "priority": "medium",
+          "price": "0.217"
+        },
+        {
+          "priority": "low",
+          "price": "0.173"
+        },
+        {
+          "priority": "batch",
+          "price": "0.13"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "0f60d6f5-642a-44a5-af51-3ac34d7602c1",
+      "name": "GTX 1650 (4 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.02"
+        },
+        {
+          "priority": "medium",
+          "price": "0.018"
+        },
+        {
+          "priority": "low",
+          "price": "0.017"
+        },
+        {
+          "priority": "batch",
+          "price": "0.015"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "6d4e9e99-d27e-4751-8d7d-393f7d8ea949",
+      "name": "RTX A5000 (24 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.25"
+        },
+        {
+          "priority": "medium",
+          "price": "0.20"
+        },
+        {
+          "priority": "low",
+          "price": "0.15"
+        },
+        {
+          "priority": "batch",
+          "price": "0.1"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "f51baccc-dc95-40fb-a5d1-6d0ee0db31d2",
+      "name": "RTX 3060 (12 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.08"
+        },
+        {
+          "priority": "medium",
+          "price": "0.073"
+        },
+        {
+          "priority": "low",
+          "price": "0.067"
+        },
+        {
+          "priority": "batch",
+          "price": "0.06"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "0ec75caa-1282-4546-a925-4b90c2c6b3fd",
+      "name": "GTX 1660 (6 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.04"
+        },
+        {
+          "priority": "medium",
+          "price": "0.037"
+        },
+        {
+          "priority": "low",
+          "price": "0.033"
+        },
+        {
+          "priority": "batch",
+          "price": "0.03"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "2aec4fc1-2270-4e40-b8cc-6e69fae61d4f",
+      "name": "RTX 2070 (8 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.06"
+        },
+        {
+          "priority": "medium",
+          "price": "0.05"
+        },
+        {
+          "priority": "low",
+          "price": "0.04"
+        },
+        {
+          "priority": "batch",
+          "price": "0.03"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "2b73eef8-be49-4667-8fc0-5c0cb127cfe0",
+      "name": "RTX 4060 Ti (16 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.22"
+        },
+        {
+          "priority": "medium",
+          "price": "0.18"
+        },
+        {
+          "priority": "low",
+          "price": "0.14"
+        },
+        {
+          "priority": "batch",
+          "price": "0.1"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "ed563892-aacd-40f5-80b7-90c9be6c759b",
+      "name": "RTX 4090 (24 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.3"
+        },
+        {
+          "priority": "medium",
+          "price": "0.26"
+        },
+        {
+          "priority": "low",
+          "price": "0.22"
+        },
+        {
+          "priority": "batch",
+          "price": "0.18"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "a5db5c50-cbcb-4596-ae80-6a0c8090d80f",
+      "name": "RTX 3090 (24 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.25"
+        },
+        {
+          "priority": "medium",
+          "price": "0.2"
+        },
+        {
+          "priority": "low",
+          "price": "0.15"
+        },
+        {
+          "priority": "batch",
+          "price": "0.1"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "b550790a-cc32-4c76-a0d8-e965c027fe02",
+      "name": "GTX 1060 (6 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.03"
+        },
+        {
+          "priority": "medium",
+          "price": "0.027"
+        },
+        {
+          "priority": "low",
+          "price": "0.023"
+        },
+        {
+          "priority": "batch",
+          "price": "0.02"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "0d062939-7c01-4aae-a2b1-30e315124e51",
+      "name": "RTX 4080 (16 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.28"
+        },
+        {
+          "priority": "medium",
+          "price": "0.23"
+        },
+        {
+          "priority": "low",
+          "price": "0.18"
+        },
+        {
+          "priority": "batch",
+          "price": "0.13"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "6b17a5e7-9a6a-4f1c-9782-243277f4fa00",
+      "name": "GTX 1070, 1080, 1080Ti (8 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.04"
+        },
+        {
+          "priority": "medium",
+          "price": "0.037"
+        },
+        {
+          "priority": "low",
+          "price": "0.033"
+        },
+        {
+          "priority": "batch",
+          "price": "0.03"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "851399fb-7329-4195-a042-d6514b28cf33",
+      "name": "RTX 5090 (32 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.450"
+        },
+        {
+          "priority": "medium",
+          "price": "0.390"
+        },
+        {
+          "priority": "low",
+          "price": "0.330"
+        },
+        {
+          "priority": "batch",
+          "price": "0.270"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "8065b30b-4a27-434c-8610-222e8df8fad7",
+      "name": " RTX 5080 (16 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.420"
+        },
+        {
+          "priority": "medium",
+          "price": "0.345"
+        },
+        {
+          "priority": "low",
+          "price": "0.270"
+        },
+        {
+          "priority": "batch",
+          "price": "0.195"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "61e8ceee-4479-40c5-9a05-1711f45f931c",
+      "name": "RTX 5070 (12 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.24"
+        },
+        {
+          "priority": "medium",
+          "price": "0.193"
+        },
+        {
+          "priority": "low",
+          "price": "0.147"
+        },
+        {
+          "priority": "batch",
+          "price": "0.1"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "1b8747be-e789-475b-a339-3c1028010d84",
+      "name": "RTX 5070 Ti (16 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.28"
+        },
+        {
+          "priority": "medium",
+          "price": "0.23"
+        },
+        {
+          "priority": "low",
+          "price": "0.18"
+        },
+        {
+          "priority": "batch",
+          "price": "0.13"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "dec851b7-eba7-4457-a319-a01b611a810e",
+      "name": "Stable Diffusion Compatible",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.08"
+        },
+        {
+          "priority": "medium",
+          "price": "0.067"
+        },
+        {
+          "priority": "low",
+          "price": "0.053"
+        },
+        {
+          "priority": "batch",
+          "price": "0.04"
+        }
+      ],
+      "is_high_demand": false
+    }
+  ]
+}

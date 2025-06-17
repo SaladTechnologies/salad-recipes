@@ -9,4 +9,4 @@ if [ -z "$SALAD_API_KEY" ]; then
   exit 1
 fi
 
-getAllPrices $org | jq . > benchmark/prices.json
+getAllPrices $org | jq . > scripts/prices.json

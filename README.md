@@ -4,7 +4,8 @@ Recipes are pre-configured container group templates that can be used to quickly
 
 ## Repository Structure
 
-> The `src/` directory should be considered deprecated. The contents of `recipes/` are now the primary source of truth for recipes.
+> The `src/` directory should be considered deprecated. The contents of `recipes/` are now the primary source of truth for recipes, but the `src/` directory remains for backwards compatibility with existing scripts and workflows.
+> The `benchmark/` directory should be considered deprecated. The important bits of it have been moved to `scripts/`, but the directory remains for backwards compatibility with existing scripts and workflows.
 
 ### Recipes
 
