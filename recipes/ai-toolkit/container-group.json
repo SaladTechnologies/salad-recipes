@@ -1,0 +1,21 @@
+{
+  "autostartPolicy": true,
+  "container": {
+    "environmentVariables": {},
+    "image": "saladtechnologies/ai-toolkit:cuda12.8-flux1-dev-kelpie",
+    "imageCaching": true,
+    "priority": "high",
+    "resources": {
+      "cpu": 4,
+      "gpuClasses": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "memory": 30720,
+      "storageAmount": 53687091200
+    }
+  },
+  "name": "",
+  "replicas": 3,
+  "restartPolicy": "always",
+  "readme": "$replace"
+}

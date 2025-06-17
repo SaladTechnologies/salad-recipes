@@ -622,29 +622,6 @@
       "is_high_demand": false
     },
     {
-      "id": "dec851b7-eba7-4457-a319-a01b611a810e",
-      "name": "Stable Diffusion Compatible",
-      "prices": [
-        {
-          "priority": "high",
-          "price": "0.08"
-        },
-        {
-          "priority": "medium",
-          "price": "0.067"
-        },
-        {
-          "priority": "low",
-          "price": "0.053"
-        },
-        {
-          "priority": "batch",
-          "price": "0.04"
-        }
-      ],
-      "is_high_demand": false
-    },
-    {
       "id": "851399fb-7329-4195-a042-d6514b28cf33",
       "name": "RTX 5090 (32 GB)",
       "prices": [
@@ -686,6 +663,75 @@
         {
           "priority": "batch",
           "price": "0.195"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "61e8ceee-4479-40c5-9a05-1711f45f931c",
+      "name": "RTX 5070 (12 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.24"
+        },
+        {
+          "priority": "medium",
+          "price": "0.193"
+        },
+        {
+          "priority": "low",
+          "price": "0.147"
+        },
+        {
+          "priority": "batch",
+          "price": "0.1"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "1b8747be-e789-475b-a339-3c1028010d84",
+      "name": "RTX 5070 Ti (16 GB)",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.28"
+        },
+        {
+          "priority": "medium",
+          "price": "0.23"
+        },
+        {
+          "priority": "low",
+          "price": "0.18"
+        },
+        {
+          "priority": "batch",
+          "price": "0.13"
+        }
+      ],
+      "is_high_demand": false
+    },
+    {
+      "id": "dec851b7-eba7-4457-a319-a01b611a810e",
+      "name": "Stable Diffusion Compatible",
+      "prices": [
+        {
+          "priority": "high",
+          "price": "0.08"
+        },
+        {
+          "priority": "medium",
+          "price": "0.067"
+        },
+        {
+          "priority": "low",
+          "price": "0.053"
+        },
+        {
+          "priority": "batch",
+          "price": "0.04"
         }
       ],
       "is_high_demand": false
