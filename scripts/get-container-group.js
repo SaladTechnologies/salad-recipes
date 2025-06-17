@@ -24,6 +24,24 @@ function normalizeRecipeName(name) {
   return name.replace(/[^a-z0-9]/ig, '-').toLowerCase()
 }
 
+function snakeToCamel(str) {
+  return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+}
+
+function convertAllKeysToCamelCase(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(convertAllKeysToCamelCase);
+  } else if (obj !== null && typeof obj === 'object') {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => [
+        snakeToCamel(key),
+        convertAllKeysToCamelCase(value)
+      ])
+    );
+  }
+  return obj;
+}
+
 async function main() {
   const cgAddress = process.argv[2];
   const output = process.argv[3];
@@ -55,7 +73,7 @@ async function main() {
   container.priority = "high";
 
   
-  const newDef = {
+  let newDef = {
     name: recipeName,
     display_name: recipeName,
     container,
@@ -70,6 +88,7 @@ async function main() {
     delete networking.dns;
     newDef.networking = networking;
   }
+  newDef = convertAllKeysToCamelCase(newDef);
 
   fs.writeFileSync(output, JSON.stringify(newDef, null, 2));
 }

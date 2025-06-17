@@ -12,3 +12,4 @@ comfyui-api
 **/flux1*/data/**/
 nohup.out
 venv
+node_modules

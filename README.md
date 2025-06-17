@@ -1,109 +1,79 @@
 # Salad Recipes
 
-- [Salad Recipes](#salad-recipes)
-  - [Introduction](#introduction)
-  - [Looking for Help with a Recipe?](#looking-for-help-with-a-recipe)
-  - [Repository Structure](#repository-structure)
-    - [Recipes](#recipes)
-    - [Benchmark](#benchmark)
-      - [`run`](#run)
-      - [`process-results.js`](#process-resultsjs)
-      - [`embed-result.js`](#embed-resultjs)
-    - [Scripts](#scripts)
-      - [`get-container-group.js`](#get-container-groupjs)
-      - [`start-container-group-and-wait-for-replicas`](#start-container-group-and-wait-for-replicas)
-      - [`salad-api`](#salad-api)
-
-
-## Introduction
-
-Recipes are the easiest way to start running an application on SaladCloud. By using recipes, you can run the most popular applications with pre-validated configurations. Simply head over to the [portal](https://portal.salad.com/) to create an account, which takes just a few minutes. Once the account is created, set up a payment method to pay for the resource usage. Once the payment method is set up, you can deploy recipes to any of the thousands of GPU powered nodes available on SaladCloud. With access to such a large number of nodes, you can be confident that there will always be the resources that you need to run your applications.
-
-## Looking for Help with a Recipe?
-
-Check [the docs](https://docs.salad.com/products/recipes/overview) and see if your question has already been answered.
-
-If you don't find a solution, don't worry! Simply create a new issue and our team will be happy to help you out. We value your input and strive to provide the best possible support to all our users, so don't hesitate to reach out to us with any questions or concerns you may have.
+Recipes are pre-configured container group templates that can be used to quickly deploy popular AI models and applications. Many of them are available directly from the [SaladCloud Portal](https://portal.salad.com/), and those that aren't can be deployed using the [SaladCloud API.](https://docs.salad.com/reference/api-usage)
 
 ## Repository Structure
 
+> The `src/` directory should be considered deprecated. The contents of `recipes/` are now the primary source of truth for recipes.
+
 ### Recipes
 
-This repository contains a collection of recipes for running popular applications on SaladCloud. Each recipe is stored in a separate directory within `src/`, with the name of the directory corresponding to the name of the application. In each recipe directory, you will see the following files:
+The `recipes/` directory contains a directory for each recipe. Within each recipe directory, there are several files:
 
-- `readme.md`: A file containing information about the application and how to run it on SaladCloud. This may just link to a documentation page.
-- `Dockerfile`: The Dockerfile used to build the image for the application.
-- `build`: A script that builds the docker image for the application.
-- `run`: A script that runs the application locally from the image you built in the previous step.
-- `openapi.json` | `openapi.yaml`: An OpenAPI specification file for the application's API, if available.
-- `container-group.json`: A file containing the configuration for the container group that will run the application on SaladCloud.
-- `get-openapi-spec`: A script that fetches the OpenAPI specification for the application's API, if available.
-
-Additionally, you may see a `benchmark` directory. This directory contains scripts for running benchmarks on the application to test its performance on SaladCloud, as well as the results of those benchmarks. Other contents may vary, but all `benchmark` directories will container at least one file:
-
-- `benchmark.js`: A [K6](https://k6.io/) script that defines the benchmark to be run.
-
-### Benchmark
-
-The `benchmark` directory contains scripts for running and processing benchmarks on applications running on SaladCloud, as well as an embeddable [plotly graph](https://plotly.com/graphing-libraries/) that displays the results of the benchmarks. The `benchmark` directory contains multiple scripts.
-
-#### `run`
-
-```text
-Usage: ./benchmark/run --org <org> --project <project> --container-group <container-group> --replicas <replicas> --recipe <recipe> [--output <output>]
-```
-
-This script does the following:
-
-1. Starts the container group and waits for it to be ready.
-2. Runs the benchmark script.
-3. Stops the container group.
-4. Processes the benchmark results.
-
-#### `process-results.js`
-
-```text
-Usage: node benchmark/process-results.js <raw-results-file> [output-results-file]
-
-  raw-results-file: The file containing the raw results from the k6 run, in JSON Lines format
-  [output-results-file]: The file to write the processed results to. Defaults to results.json in the same directory as the raw-results-file
-```
-
-This script processes the raw results from a k6 run and outputs a JSON file containing the processed results ready to be rendered in the plotly graph.
-
-#### `embed-result.js`
-
-This is the script that can be embedded on an external website by linking to the raw content of the script. The script will fetch the configured results and render them in a plotly graph. You can see this demonstrated in `benchmark/result.html`.
+- Often 1 or more `Dockerfile` files, but partner and community recipes may not include a Dockerfile.
+- `container-group.json` - The container group definition file.
+- `container_template.readme.mdx` - The readme file for the container group, which is displayed in the SaladCloud Portal, post-deployment.
+- `form.description.mdx` - The description file for the container group, which is displayed in the SaladCloud Portal, pre-deployment.
+- `form.json` - A JSON schema file that defines form fields for the recipe deployment page.
+- `patches.json` - A JSON file that contains patches to apply to the container group definition. This can include conditional patches based on form values.
+- `misc.json` - A JSON file that contains miscellaneous information about the recipe, such as miscellaneous UI info, docs links, and categories.
+- `patches.*.*.readme.mdx` - Sometimes you want a different readme depending on the recipes variant or configuration. These files allow you to provide a different readme for each variant or configuration of the recipe. The `*.*` value is the index in `patches.json`
+- `recipe.json` - The above `.mdx` and `.json` files are combined into a single `recipe.json` file, which is used by the SaladCloud Portal to display the recipe and its details.
+- Sometimes there are additional scripts and files that are used with the recipe.
 
 ### Scripts
 
-The `scripts` directory contains scripts that are used to automate various tasks related to the recipes and benchmarks. The scripts are written in bash and node.js.
+The `scripts/` directory contains a variety of utility scripts that can be used when developing or testing recipes.
 
-#### `get-container-group.js`
+#### `scripts/salad-api.sh`
 
-```text
+This script provides functions for interacting with the Salad API. It relies on `curl` and `jq` to make API requests and parse the responses.
+
+Use: `source scripts/salad-api.sh` to load the Salad API functions into your shell.
+
+Functions include:
+
+- `getCurrentStatus <org> <project> <container_group>`: Get the current status of a container group.
+- `startContainerGroup <org> <project> <container_group>`: Start a container group.
+- `stopContainerGroup <org> <project> <container_group>`: Stop a container group.
+- `getConfiguredReplicas <org> <project> <container_group>`: Get the number of replicas configured for a container group.
+- `setReplicas <org> <project> <container_group> <replicas>`: Set the number of replicas for a container group.
+- `getRunningReplicas <org> <project> <container_group>`: Get the number of running replicas for a container group.
+- `getAccessDomainName <org> <project> <container_group>`: Get the access domain name for a container group.
+- `getAllPrices <org>`: Get all gpu classes and their prices.
+- `getContainerGroup <org> <project> <container_group>`: Get the container group definition.
+- `createContainerGroup <org> <project> <request-body>`: Create a new container group.
+- `createQueue <org> <project> <request-body>`: Create a new queue for a project.
+- `getQueue <org> <project> <queue_name>`: Get the details of a queue.
+- `getJob <org> <project> <queue_name> <job_id>`: Get the details of a job in a queue.
+- `createJob <org> <project> <queue_name> <request-body>`: Create a new job in a queue.
+- `watchJob <org> <project> <queue_name> <job_id> [<interval>]`: Watch a job in a queue and print its status.
+
+#### `scripts/get-container-group.js`
+
+The script retrieves the container group definition, strips it down to what is needed to create a new container group, and camelCases all keys.
+
+Use:
+
+```bash
 Usage: node scripts/get-container-group.js <container-group-address> <output-file>
 
 Example:
-node scripts/get-container-group.js \
+./scripts/get-container-group.js \
 organizations/salad-benchmarking/projects/recipe-staging/containers/dreamshaper8-comfyui \
-src/dreamshaper8-comfyui/container-group.json
+recipes/comfyui/container-group.json
 ```
 
-This script fetches the container group configuration from SaladCloud and writes it to a file, making small modifications to the configuration to make it standardized for the recipe.
+#### recipe-tool.js
 
-#### `start-container-group-and-wait-for-replicas`
+A command line utility for exporting and importing recipes from their final single-file format to the multiple-file format used in the repository.
 
-```text
-Usage: ./scripts/start-container-group-and-wait-for-replicas --org <org> --project <project> --container-group <container-group> --replicas <replicas>
+Use:
+
+```bash
+Usage ./scripts/recipe-tool.js <command> [options]
+Commands:
+  export <recipe-dir> <recipe-file>  Export a recipe from its multiple-file format to the final single-file format.
+  import <recipe-file> <recipe-dir>   Import a recipe from the final single-file format to its multiple-file format.
+  new <recipe-dir> Populate a directory with a new recipe template.
 ```
-
-This script starts the container group and waits for the specified number of replicas to be ready before exiting.
-
-#### `salad-api`
-
-```shell
-source scripts/salad-api
-```
-
-This script adds some functions for interacting with the salad api. It is sourced in other scripts.

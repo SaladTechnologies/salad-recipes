@@ -108,7 +108,7 @@ async function exportRecipe(directory, recipeJson) {
       ...misc
     };
     await fs.writeFile(recipeJson, JSON.stringify(recipe, null, 2));
-    execSync(`yarn prettier --write ${recipeJson}`, { stdio: 'inherit' });
+    execSync(`npx prettier --write ${recipeJson}`, { stdio: 'inherit' });
   } catch (err) {
     console.error(`Error reading or writing recipe:`, err);
     process.exit(1);
