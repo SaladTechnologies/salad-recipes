@@ -23,7 +23,7 @@ The `recipes/` directory contains a directory for each recipe. Within each recip
 
 ### Scripts
 
-The `scripts/` directory contains a variety of utility scripts that can be used when developing or testing recipes.
+The `scripts/` directory contains a variety of utility scripts that can be used when developing or testing recipes. Most scripts require your Salad API key to be set in the `SALAD_API_KEY` environment variable.
 
 #### `scripts/salad-api.sh`
 
@@ -55,7 +55,7 @@ The script retrieves the container group definition, strips it down to what is n
 
 Use:
 
-```bash
+```text
 Usage: node scripts/get-container-group.js <container-group-address> <output-file>
 
 Example:
@@ -64,16 +64,42 @@ organizations/salad-benchmarking/projects/recipe-staging/containers/dreamshaper8
 recipes/comfyui/container-group.json
 ```
 
-#### recipe-tool.js
+#### `scripts/recipe-tool.js`
 
 A command line utility for exporting and importing recipes from their final single-file format to the multiple-file format used in the repository.
 
 Use:
 
-```bash
+```text
 Usage ./scripts/recipe-tool.js <command> [options]
+
 Commands:
   export <recipe-dir> <recipe-file>  Export a recipe from its multiple-file format to the final single-file format.
   import <recipe-file> <recipe-dir>   Import a recipe from the final single-file format to its multiple-file format.
   new <recipe-dir> Populate a directory with a new recipe template.
 ```
+
+#### `scripts/update-benchmark-pricing.sh`
+
+This script updates `benchmark/prices.json` with the latest prices from the Salad API. It uses the `getAllPrices` function from `scripts/salad-api.sh`.
+
+Use:
+
+```text
+Usage: ./scripts/update-benchmark-pricing.sh [<org>]
+```
+
+#### `scripts/start-container-group-and-wait-for-replicas.sh`
+
+This script starts a container group and waits for the specified number of replicas to be running. It will set the replica count to the specified value if the existing configured value is less than the desired value.
+
+Use:
+
+```text
+Usage: ./scripts/start-container-group-and-wait-for-replicas.sh \
+--org <org> \
+--project <project> \
+--container-group <container_group> \
+--replicas <replicas>
+```
+

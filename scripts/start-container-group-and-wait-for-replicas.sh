@@ -40,7 +40,7 @@ if [ -z "$SALAD_API_KEY" ]; then
   exit 1
 fi
 
-source scripts/salad-api
+source scripts/salad-api.sh
 
 currentState=$(getCurrentStatus $org $project $container_group)
 echo "Current state: $currentState"
