@@ -1,0 +1,58 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/sogni_api_key",
+      "path": "/output/container/environmentVariables/API_KEY"
+    },
+    {
+      "op": "copy",
+      "from": "/input/sogni_nft_token_id",
+      "path": "/output/container/environmentVariables/NFT_TOKEN_ID"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/sogni_worker_type",
+      "value": "flux"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "sogni/sogni-flux-worker:latest"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/sogni_worker_type",
+      "value": "stable_diffusion"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "sogni/sogni-stable-diffusion-worker:latest"
+    },
+    {
+      "op": "copy",
+      "from": "/input/download_model_count",
+      "path": "/output/container/environmentVariables/AUTO_DOWNLOAD_TO_MIN_MODEL_COUNT"
+    }
+  ]
+]
