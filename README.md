@@ -103,3 +103,17 @@ Usage: ./scripts/start-container-group-and-wait-for-replicas.sh \
 --replicas <replicas>
 ```
 
+#### `scripts/monitor-node-count.sh`
+
+This script monitors the number of running replicas for a container group and writes the current time and running replicas to a CSV file. It can be used to track the fill ratio of a container group over time.
+
+Use:
+
+```text
+Usage: ./scripts/monitor-node-count.sh \
+--org <org> \
+--project <project> \
+--container-group <container_group> \
+--output <output-file.csv>
+```
+
