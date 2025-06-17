@@ -1,0 +1,69 @@
+{
+  "autostartPolicy": true,
+  "container": {
+    "environmentVariables": {},
+    "image": "saladtechnologies/ollama:0.9.1",
+    "imageCaching": true,
+    "priority": "high",
+    "resources": {
+      "cpu": 4,
+      "gpuClasses": [
+        "a5db5c50-cbcb-4596-ae80-6a0c8090d80f"
+      ],
+      "memory": 30720,
+      "storageAmount": 53687091200
+    }
+  },
+  "name": "",
+  "networking": {
+    "auth": true,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 11434,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  },
+  "replicas": 3,
+  "restartPolicy": "always",
+  "readme": "$replace",
+  "startupProbe": {
+    "failureThreshold": 10,
+    "http": {
+      "headers": [],
+      "path": "/",
+      "port": 11434,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 1,
+    "periodSeconds": 1,
+    "successThreshold": 1,
+    "timeoutSeconds": 5
+  },
+  "livenessProbe": {
+    "failureThreshold": 2,
+    "http": {
+      "headers": [],
+      "path": "/",
+      "port": 11434,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 0,
+    "periodSeconds": 10,
+    "successThreshold": 1,
+    "timeoutSeconds": 30
+  },
+  "readinessProbe": {
+    "exec": {
+      "command": [
+        "cat",
+        "/tmp/ollama_model_ready"
+      ]
+    },
+    "failureThreshold": 1,
+    "initialDelaySeconds": 0,
+    "periodSeconds": 1,
+    "successThreshold": 1,
+    "timeoutSeconds": 1
+  }
+}
