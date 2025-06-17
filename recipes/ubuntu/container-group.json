@@ -1,0 +1,30 @@
+{
+  "autostartPolicy": true,
+  "container": {
+    "environmentVariables": {},
+    "image": "saladtechnologies/misc:ubuntu24-dev",
+    "imageCaching": true,
+    "priority": "high",
+    "resources": {
+      "cpu": 4,
+      "gpuClasses": [
+        "a5db5c50-cbcb-4596-ae80-6a0c8090d80f"
+      ],
+      "memory": 16384,
+      "storageAmount": 10737418240
+    }
+  },
+  "name": "",
+  "replicas": 1,
+  "restartPolicy": "always",
+  "readme": "$replace",
+  "networking": {
+    "auth": false,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 8888,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  }
+}
