@@ -12,20 +12,6 @@ const usage = `
 Usage: ./${process.argv[1]} <path-to-recipe-json>
 `
 
-const recipePath = process.argv[2]
-assert(recipePath, usage)
-assert(fs.existsSync(recipePath), `Recipe file does not exist: ${recipePath}`)
-const recipe = JSON.parse(fs.readFileSync(recipePath, 'utf8'))
-
-const { form, container_template: containerTemplate, patches, ui } = recipe
-assert(form, 'Recipe must contain a "form" property')
-assert(form.title, 'Recipe form must contain a "title" property')
-assert(form.description, 'Recipe form must contain a "description" property')
-assert(containerTemplate, 'Recipe must contain a "container_template" property')
-assert(patches, 'Recipe must contain a "patches" property')
-assert(recipe.documentation_url, 'Recipe must contain a "documentation_url" property')
-assert(recipe.short_description, 'Recipe must contain a "short_description" property')
-
 async function promptBoolean(defaultValue) {
   const prompt = `Enter "t" for true, "f" for false`
   if (defaultValue !== undefined) {
@@ -101,7 +87,20 @@ async function promptString(defaultValue) {
   return value
 }
 
-async function getInputs(form) {
+function snakeToCamel(str) {
+  return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase())
+}
+
+function camelAllKeys(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(camelAllKeys)
+  } else if (obj !== null && typeof obj === 'object') {
+    return Object.fromEntries(Object.entries(obj).map(([key, value]) => [snakeToCamel(key), camelAllKeys(value)]))
+  }
+  return obj
+}
+
+async function getInputs(form, ui) {
   const input = {}
   for (const field in form.properties) {
     const required = form?.required.includes(field) ? '(required) ' : ''
@@ -169,21 +168,21 @@ async function getInputs(form) {
 }
 
 function setNestedValue(obj, path, value) {
-  const lastKey = path[path.length - 1];
-  const parentPath = path.slice(0, -1);
-  
+  const lastKey = path[path.length - 1]
+  const parentPath = path.slice(0, -1)
+
   // Navigate to the parent object
-  let current = obj;
+  let current = obj
   for (const key of parentPath) {
     if (!(key in current) || typeof current[key] !== 'object') {
-      current[key] = {};
+      current[key] = {}
     }
-    current = current[key];
+    current = current[key]
   }
-  
+
   // Set the value
-  current[lastKey] = value;
-  return obj;
+  current[lastKey] = value
+  return obj
 }
 
 function applyPatches(containerTemplate, inputs, patches) {
@@ -202,11 +201,11 @@ function applyPatches(containerTemplate, inputs, patches) {
           continue
         }
         const targetField = patch.path.split('/').slice(2)
-        setNestedValue(output, targetField, sourceValue);
+        setNestedValue(output, targetField, sourceValue)
       } else if (patch.op === 'add') {
         const targetField = patch.path.split('/').slice(2)
         // Traverse output to find the target field, and add the value
-        setNestedValue(output, targetField, patch.value);
+        setNestedValue(output, targetField, patch.value)
       }
     }
   }
@@ -214,95 +213,141 @@ function applyPatches(containerTemplate, inputs, patches) {
 }
 
 async function createContainerGroup(org, project, containerGroupDefinition) {
-  const url = `https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers`;
+  const url = `https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers`
   const response = await fetch(url, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "Salad-Api-Key": SALAD_API_KEY,
+      'Content-Type': 'application/json',
+      'Salad-Api-Key': SALAD_API_KEY,
     },
     body: JSON.stringify(containerGroupDefinition),
-  });
+  })
   if (!response.ok) {
-    let body = await response.text();
+    let body = await response.text()
     try {
-      body = JSON.parse(body);
-      body = JSON.stringify(body, null, 2);
-    } catch (e) {
-    }
+      body = JSON.parse(body)
+      body = JSON.stringify(body, null, 2)
+    } catch (e) {}
     console.error(body)
-    throw new Error(
-      `Failed to create container group:${response.status} - ${response.statusText}`
-    );
+    throw new Error(`Failed to create container group:${response.status} - ${response.statusText}`)
   }
-  return response.json();
+  return response.json()
 }
 
 function camelToSnakeCase(str) {
-  return str.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+  return str.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase()
 }
 
 function snakeAllKeys(obj) {
   if (Array.isArray(obj)) {
-    return obj.map(snakeAllKeys);
+    return obj.map(snakeAllKeys)
   } else if (typeof obj === 'object' && obj !== null) {
-    return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => [camelToSnakeCase(key), snakeAllKeys(value)])
-    );
+    return Object.fromEntries(Object.entries(obj).map(([key, value]) => [camelToSnakeCase(key), snakeAllKeys(value)]))
   }
-  return obj;
+  return obj
 }
 
-async function main() {
+function renderReadme(readme, props) {
+  if (!readme) return ''
+  // Readme has js template literals that need to be evaluated
+  const literalRegex = /=?{(`[^`]+`)}/g
+  const allMatches = readme.matchAll(literalRegex)
+  if (!allMatches) {
+    console.warn('No template literals found in readme. Returning original readme.')
+    return readme
+  }
+  let renderedReadme = readme
+  for (const match of allMatches) {
+    const fullMatch = match[0]
+    const literal = match[1]
+    const renderedLiteral = eval(literal)
+    // if the literal is preceded by a =, wrap it in quotes
+    if (fullMatch.startsWith('=')) {
+      renderedReadme = renderedReadme.replace(fullMatch, `="${renderedLiteral}"`)
+    } else {
+      renderedReadme = renderedReadme.replace(fullMatch, renderedLiteral)
+    }
+  }
+  return renderedReadme
+}
+
+async function deployRecipe(recipePath) {
+  assert(fs.existsSync(recipePath), `Recipe file does not exist: ${recipePath}`)
+  const recipe = JSON.parse(fs.readFileSync(recipePath, 'utf8'))
+
+  const { form, container_template: containerTemplate, patches, ui } = recipe
+  assert(form, 'Recipe must contain a "form" property')
+  assert(form.title, 'Recipe form must contain a "title" property')
+  assert(form.description, 'Recipe form must contain a "description" property')
+  assert(containerTemplate, 'Recipe must contain a "container_template" property')
+  assert(patches, 'Recipe must contain a "patches" property')
+  assert(recipe.documentation_url, 'Recipe must contain a "documentation_url" property')
+  assert(recipe.short_description, 'Recipe must contain a "short_description" property')
   console.log(`===Recipe Deployment Wizard===`)
   console.log(`Deploying recipe: ${form.title}`)
   console.log(`\n${form.description}\n`)
 
-  const inputs = await getInputs(form)
-  let output = applyPatches(containerTemplate, inputs, patches)
-  const readme = output.readme;
-  delete output.readme; // Remove readme from the output to avoid sending it to the API
-  output = snakeAllKeys(output); // Convert all keys to snake_case
-  console.log("\nSalad Organization:")
+  const inputs = await getInputs(form, ui)
+  const output = applyPatches(containerTemplate, inputs, patches)
+  const readme = output.readme
+  delete output.readme // Remove readme from the output to avoid sending it to the API
+  const snakedOutput = snakeAllKeys(output) // Convert all keys to snake_case
+  console.log('\nSalad Organization:')
   const org = await promptString()
   if (!org) {
-    console.error("Organization is required.")
+    console.error('Organization is required.')
     return
   }
-  console.log("\nSalad Project:")
+  console.log('\nSalad Project:')
   const project = await promptString()
   if (!project) {
-    console.error("Project is required.")
+    console.error('Project is required.')
     return
   }
   console.log(`Creating container group with the following configuration, in org '${org}', project '${project}':`)
-  console.log(JSON.stringify(output, null, 2))
+  console.log(JSON.stringify(snakedOutput, null, 2))
   const confirmation = await promptBoolean(true)
-  process.stdin.destroy();
+  process.stdin.destroy()
   if (!confirmation) {
-    console.log("Deployment cancelled.")
+    console.log('Deployment cancelled.')
     return
   }
+  let containerGroup
   try {
-    const containerGroup = await createContainerGroup(org, project, output);
-    console.log(`Container group created successfully: ${containerGroup.id}`);
-    if (readme) {
-      console.log(`\n${readme}`);
-    }
-    const url = `https://portal.salad.com/organizations/${org}/projects/${project}/containers/${containerGroup.name}`;
-    console.log(`\nYou can view the container group at: ${url}`);
-
-    try {
-      // open the URL in the default browser
-      execSync(`xdg-open "${url}"`, { stdio: 'ignore' });
-    }
-    catch (error) {
-      console.error(`Failed to open URL in browser: ${error.message}`);
-    }
-
+    containerGroup = await createContainerGroup(org, project, snakedOutput)
+    console.log(`Container group created successfully: ${containerGroup.id}`)
   } catch (error) {
-    console.error(`Error creating container group: ${error.message}`);
+    console.error(`Error creating container group: ${error.message}`)
+    process.exit(1)
+  }
+
+  const readmePath = path.resolve(`./${containerGroup.name}.readme.mdx`)
+  containerGroup.apiKey = SALAD_API_KEY // Include API key in output for readme rendering
+  try {
+    fs.writeFileSync(readmePath, renderReadme(readme, camelAllKeys(containerGroup)))
+    console.log(`Readme written to: ${readmePath}`)
+  } catch (error) {
+    console.error(`Error writing readme: ${error.message}`)
+  }
+
+  const url = `https://portal.salad.com/organizations/${org}/projects/${project}/containers/${containerGroup.name}`
+  console.log(`\nYou can view the container group at: ${url}`)
+
+  try {
+    // open the URL in the default browser
+    execSync(`xdg-open "${url}"`, { stdio: 'ignore' })
+  } catch (error) {
+    console.error(`Failed to open URL in browser: ${error.message}`)
   }
 }
 
-main()
+if (require.main === module) {
+  const recipePath = process.argv[2]
+  assert(recipePath, usage)
+  deployRecipe(recipePath).catch((error) => {
+    console.error(`Error: ${error.message}`)
+    process.exit(1)
+  })
+}
+
+exports.deployRecipe = deployRecipe
