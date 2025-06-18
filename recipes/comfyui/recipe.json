@@ -14,7 +14,7 @@
       }
     },
     "livenessProbe": {
-      "failureThreshold": 50,
+      "failureThreshold": 20,
       "http": {
         "headers": [],
         "path": "/health",
