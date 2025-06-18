@@ -4,6 +4,7 @@
   - [Repository Structure](#repository-structure)
     - [Recipes](#recipes)
     - [Scripts](#scripts)
+      - [`scripts/deploy-recipe.js`](#scriptsdeploy-recipejs)
       - [`scripts/salad-api.sh`](#scriptssalad-apish)
       - [`scripts/get-container-group.js`](#scriptsget-container-groupjs)
       - [`scripts/recipe-tool.js`](#scriptsrecipe-tooljs)
@@ -42,6 +43,15 @@ The `recipes/` directory contains a directory for each recipe. Within each recip
 ### Scripts
 
 The `scripts/` directory contains a variety of utility scripts that can be used when developing or testing recipes. Most scripts require your Salad API key to be set in the `SALAD_API_KEY` environment variable.
+
+#### `scripts/deploy-recipe.js`
+
+This script deploys a recipe to Salad by creating a container group based on the recipe's definition. It will interactively prompt for any required configuration values, and output the readme for the recipe after deployment.
+Use:
+
+```text
+Usage: ./scripts/deploy-recipe.js <path-to-recipe-json>
+```
 
 #### `scripts/salad-api.sh`
 
