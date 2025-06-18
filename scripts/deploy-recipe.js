@@ -104,7 +104,7 @@ async function promptString(defaultValue) {
 async function getInputs(form) {
   const input = {}
   for (const field in form.properties) {
-    const required = form.required.includes(field) ? '(required) ' : ''
+    const required = form?.required.includes(field) ? '(required) ' : ''
     console.log(`${required}${form.properties[field].title}:\n${form.properties[field].description || ''}`)
     let value
     if (form.properties[field].type === 'boolean') {
@@ -145,6 +145,25 @@ async function getInputs(form) {
       throw new Error(`Field "${field}" is required but no value was provided.`)
     }
     input[field] = value
+  }
+
+  if (form.dependencies) {
+    for (const depField in form.dependencies) {
+      if (!form.dependencies[depField].oneOf) {
+        console.error(`Invalid dependency format for field "${depField}". Expected "oneOf" property.`)
+        continue
+      }
+      for (const dep of form.dependencies[depField].oneOf) {
+        const matches = dep.properties[depField].enum.includes(input[depField])
+        if (matches) {
+          const subForm = JSON.parse(JSON.stringify(dep))
+          delete subForm.properties[depField] // Remove the dependency field from the sub-input
+          const subInputs = await getInputs(subForm)
+          Object.assign(input, subInputs)
+          break // Only apply the first matching dependency
+        }
+      }
+    }
   }
   return input
 }
