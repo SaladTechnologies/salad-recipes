@@ -1,6 +1,9 @@
 # Salad Recipes
 
 - [Salad Recipes](#salad-recipes)
+  - [Submitting Recipes](#submitting-recipes)
+    - [Developing Recipes](#developing-recipes)
+    - [Using Variables in Recipe Readmes](#using-variables-in-recipe-readmes)
   - [Repository Structure](#repository-structure)
     - [Recipes](#recipes)
     - [Scripts](#scripts)
@@ -13,12 +16,58 @@
       - [`scripts/monitor-node-count.sh`](#scriptsmonitor-node-countsh)
       - [`scripts/run-container-gateway-benchmark.sh`](#scriptsrun-container-gateway-benchmarksh)
       - [`scripts/run-benchmark-matrix.js`](#scriptsrun-benchmark-matrixjs)
-  - [Submitting Recipes](#submitting-recipes)
-    - [Developing Recipes](#developing-recipes)
-    - [Using Variables in Recipe Readmes](#using-variables-in-recipe-readmes)
 
 
 Recipes are pre-configured container group templates that can be used to quickly deploy popular AI models and applications. Those in the `recipes/` directory can be deployed directly from the [SaladCloud Portal](https://portal.salad.com/), and any others can be deployed using the [SaladCloud API.](https://docs.salad.com/reference/api-usage)
+
+## Submitting Recipes
+
+If you want to make your application available to Salad users as a recipe, please first reach out to [support](mailto:support@salad.com). Partner and community recipes are a new addition to the Salad platform, and we want to ensure that your recipe is a good fit for our users.
+
+Once approved by the salad team, submit a pull request with your recipe files in the `recipes/` directory. Before submitting, please ensure that your recipe meets the following criteria:
+
+- The recipe should be well-documented, with a clear description of what it does and how to use it.
+- The recipe should be tested and working correctly on the Salad platform.
+- The recipe should not include any proprietary or sensitive information. (this is a public repository)
+- The recipe should not include any illegal or harmful content.
+- The recipe should use a public docker image.
+
+### Developing Recipes
+
+The recommended flow for developing recipes is:
+
+1. Get your application running reliably and as intended in a Salad Container Group.
+2. Create a fork or branch of this repository.
+3. Create a new directory in the `recipes/` directory for your recipe.
+4. Populate the directory with boilerplate files using the `./scripts/recipe-tool.js new recipes/<your-recipe>` command.
+5. Use your working container group to get the container group definition using the `./scripts/get-container-group.js <container-group-address> recipes/<your-recipe>/container-group.json` command. Ensure that your Salad API key is set in the `SALAD_API_KEY` environment variable. This tool will set the replica count to 3, so override this if your recipe has a better default value.
+6. If there are environment variables that need to be set by the user, make sure to remove them from `container-group.json` and add them to `form.json` instead, to include them in the recipe form.
+7. Fill out the readme files in the recipe directory, including `container_template.readme.mdx` and `form.description.mdx`.
+8. If your recipe has multiple variants, or configuration options, extend `patches.json` to include the necessary patches, and create additional readme files as needed.
+9. Use the `./scripts/recipe-tool.js export recipes/<your-recipe> recipes/<your-recipe>/recipe.json` command to export your recipe to a single file format, which is what we ultimately publish to the SaladCloud Portal.
+10. Use the `./scripts/deploy-recipe.js recipes/<your-recipe>/recipe.json` command to test deploying your recipe to Salad. This will prompt you for any required configuration values and deploy the recipe to Salad. After deployment, it will output the readme for the recipe, which you can use to verify that everything is working as expected.
+11. Finally, create a pull request with your changes, and ensure that the Salad team reviews and approves your recipe.
+
+Explore the other recipes in the `recipes/` directory to see how they are structured and [what files they include](#recipes).
+
+### Using Variables in Recipe Readmes
+
+You can access a variety of information about the deployed container group to dynamically populate your readme files. This is accomplished using JSX syntax in the `.mdx` files. Here are some examples of what you can access:
+
+```jsx
+<Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link>
+```
+
+```jsx
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/api/chat \\
+    -X POST \\
+    -H 'Content-Type: application/json' \\
+    -H 'Salad-Api-Key: ${props.apiKey}' \\
+    -d '{"model": "${props.container.environmentVariables.OLLAMA_MODEL_NAME}","messages": [{"role": "system","content": "You are a helpful assistant."},{"role": "user","content": "What is deep learning?"}],"stream": true,"max_tokens": 128}'
+`}</CodeBlock>
+```
+
+The `props` object has the camelCase schema of the container group, and a special value `props.apiKey` that contains the logged-in users Salad API key, which is used to authenticate API requests.
 
 ## Repository Structure
 
@@ -191,52 +240,3 @@ Options:
   [--show-options]           Show options.
   [--dry-run]                Do not create container groups or run benchmarks.
 ```
-
-## Submitting Recipes
-
-If you want to make your application available to Salad users as a recipe, please first reach out to [support](mailto:support@salad.com). Partner and community recipes are a new addition to the Salad platform, and we want to ensure that your recipe is a good fit for our users.
-
-Once approved by the salad team, submit a pull request with your recipe files in the `recipes/` directory. Before submitting, please ensure that your recipe meets the following criteria:
-
-- The recipe should be well-documented, with a clear description of what it does and how to use it.
-- The recipe should be tested and working correctly on the Salad platform.
-- The recipe should not include any proprietary or sensitive information. (this is a public repository)
-- The recipe should not include any illegal or harmful content.
-- The recipe should use a public docker image.
-
-### Developing Recipes
-
-The recommended flow for developing recipes is:
-
-1. Get your application running reliably and as intended in a Salad Container Group.
-2. Create a fork or branch of this repository.
-3. Create a new directory in the `recipes/` directory for your recipe.
-4. Populate the directory with boilerplate files using the `./scripts/recipe-tool.js new recipes/<your-recipe>` command.
-5. Use your working container group to get the container group definition using the `./scripts/get-container-group.js <container-group-address> recipes/<your-recipe>/container-group.json` command. Ensure that your Salad API key is set in the `SALAD_API_KEY` environment variable. This tool will set the replica count to 3, so override this if your recipe has a better default value.
-6. If there are environment variables that need to be set by the user, make sure to remove them from `container-group.json` and add them to `form.json` instead, to include them in the recipe form.
-7. Fill out the readme files in the recipe directory, including `container_template.readme.mdx` and `form.description.mdx`.
-8. If your recipe has multiple variants, or configuration options, extend `patches.json` to include the necessary patches, and create additional readme files as needed.
-9. Use the `./scripts/recipe-tool.js export recipes/<your-recipe> recipes/<your-recipe>/recipe.json` command to export your recipe to a single file format, which is what we ultimately publish to the SaladCloud Portal.
-10. Use the `./scripts/deploy-recipe.js recipes/<your-recipe>/recipe.json` command to test deploying your recipe to Salad. This will prompt you for any required configuration values and deploy the recipe to Salad. After deployment, it will output the readme for the recipe, which you can use to verify that everything is working as expected.
-11. Finally, create a pull request with your changes, and ensure that the Salad team reviews and approves your recipe.
-
-Explore the other recipes in the `recipes/` directory to see how they are structured and what files they include.
-
-### Using Variables in Recipe Readmes
-
-You can access a variety of information about the deployed container group to dynamically populate your readme files. This is accomplished using JSX syntax in the `.mdx` files. Here are some examples of what you can access:
-
-```jsx
-<Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link>
-```
-
-```jsx
-<CodeBlock language="bash">{`curl https://${props.networking.dns}/api/chat \\
-    -X POST \\
-    -H 'Content-Type: application/json' \\
-    -H 'Salad-Api-Key: ${props.apiKey}' \\
-    -d '{"model": "${props.container.environmentVariables.OLLAMA_MODEL_NAME}","messages": [{"role": "system","content": "You are a helpful assistant."},{"role": "user","content": "What is deep learning?"}],"stream": true,"max_tokens": 128}'
-`}</CodeBlock>
-```
-
-The `props` object has the camelCase schema of the container group, and a special value `props.apiKey` that contains the logged-in users Salad API key, which is used to authenticate API requests.
