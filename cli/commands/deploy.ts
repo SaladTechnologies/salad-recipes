@@ -1,0 +1,364 @@
+import { Args, Command } from '@oclif/core'
+import fs from 'fs'
+import path from 'path'
+import assert from 'assert'
+import { execSync } from 'child_process'
+import inquirer from 'inquirer'
+import { marked } from 'marked'
+import cliHtml from 'cli-html'
+import ora from 'ora'
+
+export default class Deploy extends Command {
+  static override args = {
+    'recipe-file': Args.file({
+      description: 'JSON file containing the recipe to deploy',
+      required: true,
+      exists: true,
+    }),
+  }
+  static override description = 'Deploy a recipe to Salad Cloud'
+  static override examples = ['<%= config.bin %> <%= command.id %>']
+  private saladApiKey: string | undefined
+
+  public async run(): Promise<void> {
+    const { args } = await this.parse(Deploy)
+    this.saladApiKey = process.env.SALAD_API_KEY
+    if (!this.saladApiKey) {
+      this.error('SALAD_API_KEY environment variable is not set.')
+    }
+
+    const recipeFile = args['recipe-file']
+    await this.deployRecipe(recipeFile)
+  }
+
+  async deployRecipe(recipePath: string): Promise<void> {
+    assert(fs.existsSync(recipePath), `Recipe file does not exist: ${recipePath}`)
+    const recipe = JSON.parse(fs.readFileSync(recipePath, 'utf8'))
+
+    const { form, container_template: containerTemplate, patches, ui } = recipe
+    assert(form, 'Recipe must contain a "form" property')
+    assert(form.title, 'Recipe form must contain a "title" property')
+    assert(form.description, 'Recipe form must contain a "description" property')
+    assert(containerTemplate, 'Recipe must contain a "container_template" property')
+    assert(patches, 'Recipe must contain a "patches" property')
+    assert(recipe.documentation_url, 'Recipe must contain a "documentation_url" property')
+    assert(recipe.short_description, 'Recipe must contain a "short_description" property')
+    this.log(`===Recipe Deployment Wizard===`)
+    this.log(`Deploying recipe: ${form.title}\n\n`)
+    this.log(cliHtml(await marked(form.description)))
+
+    const inputs = await this.getInputs(form, ui)
+    const output = this.applyPatches(containerTemplate, inputs, patches)
+    const readme = output.readme
+    delete output.readme // Remove readme from the output to avoid sending it to the API
+    const snakedOutput = this.snakeAllKeys(output) // Convert all keys to snake_case
+    this.log('\nSalad Organization:')
+    const org = (
+      await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'org',
+          message: 'Enter your Salad organization Name:',
+          required: true,
+        },
+      ])
+    ).org
+    if (!org) {
+      this.error('Organization is required.')
+      return
+    }
+    this.log('\nSalad Project:')
+    const project = (
+      await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'project',
+          message: 'Enter your Salad project Name:',
+          required: true,
+        },
+      ])
+    ).project
+    if (!project) {
+      this.error('Project is required.')
+      return
+    }
+    this.log(`Creating container group with the following configuration, in org '${org}', project '${project}':`)
+    this.log(JSON.stringify(snakedOutput, null, 2))
+    const confirmation = (
+      await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'confirm',
+          message: 'Do you want to proceed with the deployment?',
+          default: true,
+        },
+      ])
+    ).confirm
+    process.stdin.destroy()
+    if (!confirmation) {
+      this.log('Deployment cancelled.')
+      return
+    }
+    let containerGroup: any
+    try {
+      containerGroup = await this.createContainerGroup(org, project, snakedOutput)
+      this.log(`Container group created successfully: ${containerGroup.id}`)
+    } catch (error) {
+      console.error(`Error creating container group: ${error.message}`)
+      process.exit(1)
+    }
+
+    const readmePath = path.resolve(`./${containerGroup.name}.readme.mdx`)
+    containerGroup.apiKey = this.saladApiKey // Include API key in output for readme rendering
+    try {
+      fs.writeFileSync(readmePath, this.renderReadme(readme, this.camelAllKeys(containerGroup)))
+      this.log(`Readme written to: ${readmePath}`)
+    } catch (error) {
+      console.error(`Error writing readme: ${error.message}`)
+    }
+
+    const url = `https://portal.salad.com/organizations/${org}/projects/${project}/containers/${containerGroup.name}`
+    this.log(`\nYou can view the container group at: ${url}`)
+
+    try {
+      // open the URL in the default browser
+      execSync(`xdg-open "${url}"`, { stdio: 'ignore' })
+    } catch (error) {
+      console.error(`Failed to open URL in browser: ${error.message}`)
+    }
+  }
+
+  snakeToCamel(str: string): string {
+    return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase())
+  }
+
+  camelAllKeys(obj: any): any {
+    if (Array.isArray(obj)) {
+      return obj.map(this.camelAllKeys)
+    } else if (obj !== null && typeof obj === 'object') {
+      return Object.fromEntries(
+        Object.entries(obj).map(([key, value]) => [this.snakeToCamel(key), this.camelAllKeys(value)]),
+      )
+    }
+    return obj
+  }
+
+  async getInputs(form: any, ui: any): Promise<Record<string, any>> {
+    const input = {}
+    for (const field in form.properties) {
+      const required = form?.required.includes(field) ? '(required) ' : ''
+      this.log(`${required}${form.properties[field].title}:\n${form.properties[field].description || ''}`)
+      let value: any
+      if (form.properties[field].type === 'boolean') {
+        value = (
+          await inquirer.prompt([
+            {
+              type: 'confirm',
+              name: field,
+              message: form.properties[field].title,
+              default: form.properties[field].default || false,
+            },
+          ])
+        )[field]
+      } else if (form.properties[field].type === 'number') {
+        value = (
+          await inquirer.prompt([
+            {
+              type: 'number',
+              name: field,
+              message: form.properties[field].title,
+              default: form.properties[field].default,
+            },
+          ])
+        )[field]
+      } else if (form.properties[field].type === 'string' && form.properties[field].enum) {
+        let enumOptions = form.properties[field].enum
+        let usedLabels = false
+        let defaultValue = form.properties[field].default
+        if (ui && ui[field] && ui[field]['ui:enumNames']) {
+          assert(Array.isArray(ui[field]['ui:enumNames']), `ui:enumNames for field "${field}" must be an array`)
+          assert(
+            ui[field]['ui:enumNames'].length === enumOptions.length,
+            `ui:enumNames for field "${field}" must have the same length as enum options`,
+          )
+          enumOptions = ui[field]['ui:enumNames']
+          defaultValue = ui[field]['ui:enumNames'][form.properties[field].enum.indexOf(defaultValue)]
+          usedLabels = true
+        }
+        value = (
+          await inquirer.prompt([
+            {
+              type: 'list',
+              name: field,
+              message: form.properties[field].title,
+              choices: enumOptions,
+              default: defaultValue,
+            },
+          ])
+        )[field]
+        if (usedLabels) {
+          // If using labels, map back to original enum values
+          const index = enumOptions.indexOf(value)
+          if (index !== -1) {
+            value = form.properties[field].enum[index]
+          } else {
+            throw new Error(`Selected option "${value}" is not valid.`)
+          }
+        }
+      } else if (form.properties[field].type === 'string') {
+        value = (
+          await inquirer.prompt([
+            {
+              type: 'input',
+              name: field,
+              message: form.properties[field].title,
+              default: form.properties[field].default || '',
+            },
+          ])
+        )[field]
+      } else {
+        throw new Error(`Unsupported field type "${form.properties[field].type}" for field "${field}".`)
+      }
+
+      if (form.required.includes(field) && (value === undefined || value === null || value === '')) {
+        throw new Error(`Field "${field}" is required but no value was provided.`)
+      }
+      input[field] = value
+    }
+
+    if (form.dependencies) {
+      for (const depField in form.dependencies) {
+        if (!form.dependencies[depField].oneOf) {
+          console.error(`Invalid dependency format for field "${depField}". Expected "oneOf" property.`)
+          continue
+        }
+        for (const dep of form.dependencies[depField].oneOf) {
+          const matches = dep.properties[depField].enum.includes(input[depField])
+          if (matches) {
+            const subForm = JSON.parse(JSON.stringify(dep))
+            delete subForm.properties[depField] // Remove the dependency field from the sub-input
+            const subInputs = await this.getInputs(subForm, ui)
+            Object.assign(input, subInputs)
+            break // Only apply the first matching dependency
+          }
+        }
+      }
+    }
+    return input
+  }
+
+  setNestedValue(obj: any, path: string[], value: any): any {
+    const lastKey = path[path.length - 1]
+    const parentPath = path.slice(0, -1)
+
+    // Navigate to the parent object
+    let current = obj
+    for (const key of parentPath) {
+      if (!(key in current) || typeof current[key] !== 'object') {
+        current[key] = {}
+      }
+      current = current[key]
+    }
+
+    // Set the value
+    current[lastKey] = value
+    return obj
+  }
+
+  applyPatches(containerTemplate: any, inputs: Record<string, any>, patches: any[][]): any {
+    const output = JSON.parse(JSON.stringify(containerTemplate)) // Deep copy to avoid mutating the original
+    for (const patchBlock of patches) {
+      for (const patch of patchBlock) {
+        if (patch.op === 'test') {
+          const fieldToTest = patch.path.split('/').pop()
+          if (inputs[fieldToTest] !== patch.value) {
+            break // Skip this block if the test fails
+          }
+        } else if (patch.op === 'copy') {
+          const sourceField = patch.from.split('/').pop()
+          const sourceValue = inputs[sourceField]
+          if (sourceValue === undefined) {
+            continue
+          }
+          const targetField = patch.path.split('/').slice(2)
+          this.setNestedValue(output, targetField, sourceValue)
+        } else if (patch.op === 'add') {
+          const targetField = patch.path.split('/').slice(2)
+          // Traverse output to find the target field, and add the value
+          this.setNestedValue(output, targetField, patch.value)
+        }
+      }
+    }
+    return output
+  }
+
+  async createContainerGroup(org, project, containerGroupDefinition) {
+    const url = `https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers`
+    const spinner = ora(
+      `Creating container group ${containerGroupDefinition.name} in org '${org}', project '${project}'...`,
+    ).start()
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Salad-Api-Key': this.saladApiKey!,
+      },
+      body: JSON.stringify(containerGroupDefinition),
+    })
+    spinner.stop()
+    if (!response.ok) {
+      let body = await response.text()
+      try {
+        body = JSON.parse(body)
+        body = JSON.stringify(body, null, 2)
+      } catch (e) {}
+      console.error(body)
+      throw new Error(`Failed to create container group:${response.status} - ${response.statusText}`)
+    }
+    return response.json()
+  }
+
+  camelToSnakeCase(str: string): string {
+    return str.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase()
+  }
+
+  snakeAllKeys(obj: any): any {
+    if (Array.isArray(obj)) {
+      return obj.map(this.snakeAllKeys)
+    } else if (typeof obj === 'object' && obj !== null) {
+      return Object.fromEntries(
+        Object.entries(obj).map(([key, value]) => {
+          if (key === 'environmentVariables') {
+            return [this.camelToSnakeCase(key), value] // Keep environmentVariables as is
+          }
+          return [this.camelToSnakeCase(key), this.snakeAllKeys(value)]
+        }),
+      )
+    }
+    return obj
+  }
+
+  renderReadme(readme: string, props: Record<string, any>): string {
+    if (!readme) return ''
+    // Readme has js template literals that need to be evaluated
+    const literalRegex = /=?{(`[^`]+`)}/g
+    const allMatches = readme.matchAll(literalRegex)
+    if (!allMatches) {
+      console.warn('No template literals found in readme. Returning original readme.')
+      return readme
+    }
+    let renderedReadme = readme
+    for (const match of allMatches) {
+      const fullMatch = match[0]
+      const literal = match[1]
+      const renderedLiteral = eval(literal)
+      // if the literal is preceded by a =, wrap it in quotes
+      if (fullMatch.startsWith('=')) {
+        renderedReadme = renderedReadme.replace(fullMatch, `="${renderedLiteral}"`)
+      } else {
+        renderedReadme = renderedReadme.replace(fullMatch, renderedLiteral)
+      }
+    }
+    return renderedReadme
+  }
+}
