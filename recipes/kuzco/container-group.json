@@ -1,0 +1,22 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {},
+    "image": "saladtechnologies/salad-kuzco:1.0.0",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 8,
+      "memory": 16384,
+      "gpuClasses": [
+        "a5db5c50-cbcb-4596-ae80-6a0c8090d80f"
+      ],
+      "storageAmount": 53687091200
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3
+}

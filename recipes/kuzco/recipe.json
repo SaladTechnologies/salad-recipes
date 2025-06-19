@@ -1,0 +1,73 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "SaladCloud will find a qualified node, and begin the process of downloading the container image to the host machine. It may take up to tens of minutes to download to some machines, depending on the network conditions of that particular node. Remember, these are privately owned PCs with gaming GPUs in a variety of networking conditions, and performance will vary across different nodes.\n\nEventually, you will see your instance enter the running state, and show a green checkmark in the \"Ready\" column. \n\nAt this time the container group will be considered running and you will see new instances under Worker Details in the Kuzco Inference dashboard.",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "saladtechnologies/salad-kuzco:1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 16384,
+        "gpuClasses": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"],
+        "storageAmount": 53687091200
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3
+  },
+  "form": {
+    "title": "Kuzco (Inference.net)",
+    "description": "Run a [Kuzco](https://devnet.inference.net/) worker node on Salad using this recipe.\n\nKuzco is a distributed GPU cluster built on the Solana blockchain, designed to facilitate inference of large language models (LLMs) such as LLaMA 3, Mistral, and Phi-3. By running a Kuzco worker, you earn $INT points for compute time.\n\n<Callout variation=\"warning\">\nYou must register a Kuzco worker and provide a valid worker_code to use this recipe. Without it, the worker will fail to register with the Kuzco controller.\n</Callout>\n\nThis container launches instances under a single Kuzco **worker**, which connect to the Kuzco controller, pull model, and serve inference traffic.\n\n## Getting Started\n\n1. Register an account at [devnet.inference.net/register](https://devnet.inference.net/register)\n2. Verify your email address\n3. Go to the **Workers** tab in your dashboard\n4. Click **Create Worker** (top-right)\n5. Choose a name, select **Docker**, and click **Create Worker**\n6. On the Worker Details page, click **Launch Worker**\n7. Copy the generated **Worker Code** and paste it into the <code>worker_code</code> field in this recipe\n\nFor full setup instructions, see the [Kuzco Guide](https://docs.devnet.inference.net/advanced/docker)\n",
+    "type": "object",
+    "required": ["container_group_name", "worker_code"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "worker_code": {
+        "title": "Kuzco Worker Code",
+        "description": "Code for Kuzco worker node. You can find or generate this code in the Kuzco Inference Portal.",
+        "type": "string",
+        "default": ""
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/worker_code",
+        "path": "/output/container/environmentVariables/CODE"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.devnet.inference.net/advanced/docker",
+  "short_description": "Run Kuzco worker for distributed LLM workloads and earn $INT points.",
+  "workload_types": ["blockchain", "LLM"]
+}

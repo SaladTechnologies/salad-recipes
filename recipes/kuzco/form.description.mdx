@@ -1,0 +1,21 @@
+Run a [Kuzco](https://devnet.inference.net/) worker node on Salad using this recipe.
+
+Kuzco is a distributed GPU cluster built on the Solana blockchain, designed to facilitate inference of large language models (LLMs) such as LLaMA 3, Mistral, and Phi-3. By running a Kuzco worker, you earn $INT points for compute time.
+
+<Callout variation="warning">
+You must register a Kuzco worker and provide a valid worker_code to use this recipe. Without it, the worker will fail to register with the Kuzco controller.
+</Callout>
+
+This container launches instances under a single Kuzco **worker**, which connect to the Kuzco controller, pull model, and serve inference traffic.
+
+## Getting Started
+
+1. Register an account at [devnet.inference.net/register](https://devnet.inference.net/register)
+2. Verify your email address
+3. Go to the **Workers** tab in your dashboard
+4. Click **Create Worker** (top-right)
+5. Choose a name, select **Docker**, and click **Create Worker**
+6. On the Worker Details page, click **Launch Worker**
+7. Copy the generated **Worker Code** and paste it into the <code>worker_code</code> field in this recipe
+
+For full setup instructions, see the [Kuzco Guide](https://docs.devnet.inference.net/advanced/docker)

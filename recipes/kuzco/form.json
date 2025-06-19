@@ -1,0 +1,26 @@
+{
+  "title": "Kuzco (Inference.net)",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "worker_code"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+      "default": ""
+    },
+    "worker_code": {
+      "title": "Kuzco Worker Code",
+      "description": "Code for Kuzco worker node. You can find or generate this code in the Kuzco Inference Portal.",
+      "type": "string",
+      "default": ""
+    }
+  }
+}
