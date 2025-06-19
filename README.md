@@ -99,7 +99,7 @@ This script deploys a recipe to Salad by creating a container group based on the
 Use:
 
 ```text
-Usage: ./scripts/deploy-recipe.js <path-to-recipe-json>
+Usage: npx recipe deploy <path-to-recipe-json>
 ```
 
 #### `scripts/salad-api.sh`

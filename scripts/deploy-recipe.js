@@ -242,7 +242,12 @@ function snakeAllKeys(obj) {
   if (Array.isArray(obj)) {
     return obj.map(snakeAllKeys)
   } else if (typeof obj === 'object' && obj !== null) {
-    return Object.fromEntries(Object.entries(obj).map(([key, value]) => [camelToSnakeCase(key), snakeAllKeys(value)]))
+    return Object.fromEntries(Object.entries(obj).map(([key, value]) => {
+      if (key === 'environmentVariables') {
+        return [camelToSnakeCase(key), value] // Keep environmentVariables as is
+      }
+      return [camelToSnakeCase(key), snakeAllKeys(value)]
+    }))
   }
   return obj
 }
