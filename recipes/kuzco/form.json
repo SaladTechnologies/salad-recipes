@@ -4,7 +4,7 @@
   "type": "object",
   "required": [
     "container_group_name",
-    "code"
+    "worker_code"
   ],
   "properties": {
     "container_group_name": {
@@ -16,9 +16,9 @@
       "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
       "default": ""
     },
-    "code": {
-      "title": "Kuzco Code",
-      "description": "Code for Kuzco worker node. You can find or generate this code in the Kuzco portal.",
+    "worker_code": {
+      "title": "Kuzco Worker Code",
+      "description": "Code for Kuzco worker node. You can find or generate this code in the Kuzco Inference Portal.",
       "type": "string",
       "default": ""
     }

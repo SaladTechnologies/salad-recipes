@@ -17,7 +17,7 @@
     },
     {
       "op": "copy",
-      "from": "/input/code",
+      "from": "/input/worker_code",
       "path": "/output/container/environmentVariables/CODE"
     }
   ]

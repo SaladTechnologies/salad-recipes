@@ -1,0 +1,8 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.devnet.inference.net/advanced/docker",
+  "short_description": "Run Kuzco worker for distributed LLM workloads and earn $INT points.",
+  "workload_types": [
+    "blockchain", "llm"
+  ]
+}
