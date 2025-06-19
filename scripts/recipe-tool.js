@@ -2,13 +2,13 @@
 const fs = require('fs/promises');
 const { execSync } = require('child_process');
 
-
 const usage = `usage: ${process.argv[1]} <command> [options]
 
 Commands:
   import <recipe-json> <directory>  Import a recipe from a JSON file
   export <directory> <recipe-json>  Export a recipe to a JSON file
   new <directory>                   Create a new recipe directory with template files
+  deploy <path-to-recipe-json>      Deploy a recipe to Salad Cloud
 
 `;
 
@@ -233,7 +233,7 @@ This is a placeholder for the recipe description, visible from the recipe form. 
   await fs.writeFile(`${directory}/container_template.readme.mdx`, readmeContent);
   await fs.writeFile(`${directory}/form.json`, JSON.stringify(formContent, null, 2));
   await fs.writeFile(`${directory}/container-group.json`, JSON.stringify(containerGroupContent, null, 2));
-  await fs.writeFile(`${directory}/form.description.mdx`, "This is a placeholder for the form description. Replace this with your actual content.");
+  await fs.writeFile(`${directory}/form.description.mdx`, descriptionContent);
   await fs.writeFile(`${directory}/misc.json`, JSON.stringify(miscContent, null, 2));
   await fs.writeFile(`${directory}/patches.json`, JSON.stringify(patches, null, 2));
 
@@ -269,6 +269,18 @@ async function main() {
     const directory = process.argv[3];
     await newRecipe(directory);
 
+  } else if ( command === "deploy") {
+    if (process.argv.length !== 4) {
+      console.error(`Usage: ${process.argv[1]} deploy <recipe-json>`);
+      process.exit(1);
+    }
+    const { deployRecipe } = require('./deploy-recipe');
+    const recipeJson = process.argv[3];
+    console.log(`Deploying recipe from ${recipeJson}`);
+    await deployRecipe(recipeJson);
+  } else if (process.argv.length < 4 || command === 'help' || command === '--help' || command === '-h') {
+    console.log(usage);
+    process.exit(1);
   } else {
     console.error(`Unknown command: ${command}`);
     console.error(usage);
