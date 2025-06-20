@@ -4,13 +4,12 @@
   - [Submitting Recipes](#submitting-recipes)
     - [Developing Recipes](#developing-recipes)
     - [Using Variables in Recipe Readmes](#using-variables-in-recipe-readmes)
+    - [Recipe CLI Tool](#recipe-cli-tool)
   - [Repository Structure](#repository-structure)
     - [Recipes](#recipes)
     - [Scripts](#scripts)
-      - [`scripts/deploy-recipe.js`](#scriptsdeploy-recipejs)
       - [`scripts/salad-api.sh`](#scriptssalad-apish)
       - [`scripts/get-container-group.js`](#scriptsget-container-groupjs)
-      - [`scripts/recipe-tool.js`](#scriptsrecipe-tooljs)
       - [`scripts/update-benchmark-pricing.sh`](#scriptsupdate-benchmark-pricingsh)
       - [`scripts/start-container-group-and-wait-for-replicas.sh`](#scriptsstart-container-group-and-wait-for-replicassh)
       - [`scripts/monitor-node-count.sh`](#scriptsmonitor-node-countsh)
@@ -34,18 +33,20 @@ Once approved by the salad team, submit a pull request with your recipe files in
 
 ### Developing Recipes
 
+This repo includes a CLI tool to help you develop recipes. It can be used to create new recipes, move recipes in an out of their single-file format, and deploy recipes to Salad. The tool can be run using [`npx recipe`](#recipe-cli-tool).
+
 The recommended flow for developing recipes is:
 
 1. Get your application running reliably and as intended in a Salad Container Group.
 2. Create a fork or branch of this repository.
 3. Create a new directory in the `recipes/` directory for your recipe.
-4. Populate the directory with boilerplate files using the [`npx recipe`](#scriptsrecipe-tooljs) `new recipes/<recipe-name>` command.
+4. Populate the directory with boilerplate files using the [`npx recipe`](#recipe-cli-tool) `new recipes/<recipe-name>` command.
 5. Use your working container group to get the container group definition using the `./scripts/get-container-group.js <container-group-address> recipes/<your-recipe>/container-group.json` command. Ensure that your Salad API key is set in the `SALAD_API_KEY` environment variable. This tool will set the replica count to 3, so override this if your recipe has a better default value.
 6. If there are environment variables that need to be set by the user, make sure to remove them from `container-group.json` and add them to `form.json` instead, to include them in the recipe form.
 7. Fill out the readme files in the recipe directory, including `container_template.readme.mdx` and `form.description.mdx`.
 8. If your recipe has multiple variants, or configuration options, extend `patches.json` to include the necessary patches, and create additional readme files as needed.
-9. Use the [`npx recipe`](#scriptsrecipe-tooljs) `export recipes/<your-recipe> recipes/<your-recipe>/recipe.json` command to export your recipe to a single file format, which is what we ultimately publish to the SaladCloud Portal.
-10. Use the [`npx recipe`](#scriptsrecipe-tooljs) `deploy recipes/<your-recipe>/recipe.json` command to test deploying your recipe to Salad. This will prompt you for any required configuration values and deploy the recipe to Salad. After deployment, it will output the readme for the recipe, which you can use to verify that everything is working as expected.
+9. Use the [`npx recipe`](#recipe-cli-tool) `export recipes/<your-recipe> recipes/<your-recipe>/recipe.json` command to export your recipe to a single file format, which is what we ultimately publish to the SaladCloud Portal.
+10. Use the [`npx recipe`](#recipe-cli-tool) `deploy recipes/<your-recipe>/recipe.json` command to test deploying your recipe to Salad. This will prompt you for any required configuration values and deploy the recipe to Salad. After deployment, it will output the readme for the recipe, which you can use to verify that everything is working as expected.
 11. Finally, create a pull request with your changes, and ensure that the Salad team reviews and approves your recipe.
 
 Explore the other recipes in the `recipes/` directory to see how they are structured and [what files they include](#recipes).
@@ -68,6 +69,31 @@ You can access a variety of information about the deployed container group to dy
 ```
 
 The `props` object has the camelCase schema of the container group, and a special value `props.apiKey` that contains the logged-in users Salad API key, which is used to authenticate API requests.
+
+### Recipe CLI Tool
+
+This repo includes a CLI tool to help you develop recipes. It can be used to create new recipes, move recipes in an out of their single-file format, and deploy recipes to Salad. The tool can be run using `npx recipe`.
+
+Notes:
+
+- You must have Node.js 24 installed to use the CLI tool. You can use `nvm use` to switch to the correct version.
+- Run `npm install` to install the necessary dependencies before using the CLI tool.
+
+```text
+Explore and Manage Recipes for SaladCloud
+
+VERSION
+  salad-recipes/1.0.0 wsl-x64 node-v24.2.0
+
+USAGE
+  $ recipe [COMMAND]
+
+COMMANDS
+  deploy  Deploy a recipe to Salad Cloud
+  export  Export a recipe to a JSON file
+  import  Import a recipe from a JSON file
+  new     create a new boilerplate recipe
+```
 
 ## Repository Structure
 
@@ -92,15 +118,6 @@ The `recipes/` directory contains a directory for each recipe. Within each recip
 ### Scripts
 
 The `scripts/` directory contains a variety of utility scripts that can be used when developing or testing recipes. Most scripts require your Salad API key to be set in the `SALAD_API_KEY` environment variable.
-
-#### `scripts/deploy-recipe.js`
-
-This script deploys a recipe to Salad by creating a container group based on the recipe's definition. It will interactively prompt for any required configuration values, and output the readme for the recipe after deployment.
-Use:
-
-```text
-Usage: npx recipe deploy <path-to-recipe-json>
-```
 
 #### `scripts/salad-api.sh`
 
@@ -139,22 +156,6 @@ Example:
 ./scripts/get-container-group.js \
 organizations/salad-benchmarking/projects/recipe-staging/containers/dreamshaper8-comfyui \
 recipes/comfyui/container-group.json
-```
-
-#### `scripts/recipe-tool.js`
-
-A command line utility for exporting and importing recipes from their final single-file format to the multiple-file format used in the repository.
-
-Use:
-
-```text
-Usage npx recipe <command> [options]
-
-Commands:
-  export <recipe-dir> <recipe-file>   Export a recipe from its multiple-file format to the final single-file format.
-  import <recipe-file> <recipe-dir>   Import a recipe from the final single-file format to its multiple-file format.
-  new <recipe-dir>                    Populate a directory with a new recipe template.
-  deploy <recipe-file>                Deploy a recipe to Salad, prompting for any required configuration values.
 ```
 
 #### `scripts/update-benchmark-pricing.sh`

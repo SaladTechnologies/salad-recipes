@@ -5,6 +5,8 @@ const fs = require('fs')
 const path = require('path')
 const { execSync } = require('child_process')
 
+console.warn(`This tool is deprecated and will be removed in the future. Please use npx recipe instead.`);
+
 const { SALAD_API_KEY } = process.env
 assert(SALAD_API_KEY, 'SALAD_API_KEY is required')
 
