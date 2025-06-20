@@ -1,4 +1,4 @@
-import { Args, Command, Flags } from '@oclif/core'
+import { Args, Command } from '@oclif/core'
 import fs from 'fs/promises'
 import path from 'path'
 
@@ -77,9 +77,8 @@ export default class Import extends Command {
       }
       const patchesPath = `${directory}/patches.json`
       await this.writeFile(patchesPath, JSON.stringify(recipe.patches, null, 2))
-    } catch (err) {
-      this.error(`Error reading or writing recipe:`, err)
-      process.exit(1)
+    } catch (err: any) {
+      this.error(err)
     }
   }
 

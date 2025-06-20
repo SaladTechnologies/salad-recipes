@@ -9,7 +9,6 @@
     - [Recipes](#recipes)
     - [Scripts](#scripts)
       - [`scripts/salad-api.sh`](#scriptssalad-apish)
-      - [`scripts/get-container-group.js`](#scriptsget-container-groupjs)
       - [`scripts/update-benchmark-pricing.sh`](#scriptsupdate-benchmark-pricingsh)
       - [`scripts/start-container-group-and-wait-for-replicas.sh`](#scriptsstart-container-group-and-wait-for-replicassh)
       - [`scripts/monitor-node-count.sh`](#scriptsmonitor-node-countsh)
@@ -40,14 +39,13 @@ The recommended flow for developing recipes is:
 1. Get your application running reliably and as intended in a Salad Container Group.
 2. Create a fork or branch of this repository.
 3. Create a new directory in the `recipes/` directory for your recipe.
-4. Populate the directory with boilerplate files using the [`npx recipe`](#recipe-cli-tool) `new recipes/<recipe-name>` command.
-5. Use your working container group to get the container group definition using the `./scripts/get-container-group.js <container-group-address> recipes/<your-recipe>/container-group.json` command. Ensure that your Salad API key is set in the `SALAD_API_KEY` environment variable. This tool will set the replica count to 3, so override this if your recipe has a better default value.
-6. If there are environment variables that need to be set by the user, make sure to remove them from `container-group.json` and add them to `form.json` instead, to include them in the recipe form.
-7. Fill out the readme files in the recipe directory, including `container_template.readme.mdx` and `form.description.mdx`.
-8. If your recipe has multiple variants, or configuration options, extend `patches.json` to include the necessary patches, and create additional readme files as needed.
-9. Use the [`npx recipe`](#recipe-cli-tool) `export recipes/<your-recipe> recipes/<your-recipe>/recipe.json` command to export your recipe to a single file format, which is what we ultimately publish to the SaladCloud Portal.
-10. Use the [`npx recipe`](#recipe-cli-tool) `deploy recipes/<your-recipe>/recipe.json` command to test deploying your recipe to Salad. This will prompt you for any required configuration values and deploy the recipe to Salad. After deployment, it will output the readme for the recipe, which you can use to verify that everything is working as expected.
-11. Finally, create a pull request with your changes, and ensure that the Salad team reviews and approves your recipe.
+4. Populate the directory with boilerplate files using the [`npx recipe`](#recipe-cli-tool) `new recipes/<recipe-name>` command. You can use the `--from-container-group <container-group-name>` option to create the recipe from an existing container group. Ensure that your Salad API key is set in the `SALAD_API_KEY` environment variable. This tool will set the replica count to 3, so override this if your recipe has a better default value.
+5. If there are environment variables that need to be set by the user, make sure to remove them from `container-group.json` and add them to `form.json` instead, to include them in the recipe form.
+6. Fill out the readme files in the recipe directory, including `container_template.readme.mdx` and `form.description.mdx`.
+7. If your recipe has multiple variants, or configuration options, extend `patches.json` to include the necessary patches, and create additional readme files as needed.
+8. Use the [`npx recipe`](#recipe-cli-tool) `export recipes/<your-recipe> recipes/<your-recipe>/recipe.json` command to export your recipe to a single file format, which is what we ultimately publish to the SaladCloud Portal.
+9. Use the [`npx recipe`](#recipe-cli-tool) `deploy recipes/<your-recipe>/recipe.json` command to test deploying your recipe to Salad. This will prompt you for any required configuration values and deploy the recipe to Salad. After deployment, it will output the readme for the recipe, which you can use to verify that everything is working as expected.
+10. Finally, create a pull request with your changes, and ensure that the Salad team reviews and approves your recipe.
 
 Explore the other recipes in the `recipes/` directory to see how they are structured and [what files they include](#recipes).
 
@@ -98,6 +96,7 @@ COMMANDS
 ## Repository Structure
 
 > The `src/` directory should be considered deprecated. The contents of `recipes/` are now the primary source of truth for recipes, but the `src/` directory remains for backwards compatibility with existing scripts and workflows.
+
 > The `benchmark/` directory should be considered deprecated. The important bits of it have been moved to `scripts/`, but the directory remains for backwards compatibility with existing scripts and workflows.
 
 ### Recipes
@@ -142,21 +141,6 @@ Functions include:
 - `getJob <org> <project> <queue_name> <job_id>`: Get the details of a job in a queue.
 - `createJob <org> <project> <queue_name> <request-body>`: Create a new job in a queue.
 - `watchJob <org> <project> <queue_name> <job_id> [<interval>]`: Watch a job in a queue and print its status.
-
-#### `scripts/get-container-group.js`
-
-The script retrieves the container group definition, strips it down to what is needed to create a new container group, and camelCases all keys.
-
-Use:
-
-```text
-Usage: node scripts/get-container-group.js <container-group-address> <output-file>
-
-Example:
-./scripts/get-container-group.js \
-organizations/salad-benchmarking/projects/recipe-staging/containers/dreamshaper8-comfyui \
-recipes/comfyui/container-group.json
-```
 
 #### `scripts/update-benchmark-pricing.sh`
 

@@ -4,6 +4,8 @@ const assert = require('assert')
 const fs = require('fs')
 const path = require('path')
 
+console.warn('This script is no longer maintained, in favor of the `recipe new --from-container-group` command. It will be removed in the future.')
+
 const { SALAD_API_KEY } = process.env
 assert(SALAD_API_KEY, 'SALAD_API_KEY is required')
 

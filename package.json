@@ -1,11 +1,11 @@
 {
   "name": "salad-recipes",
-  "type": "module",
   "version": "1.0.0",
   "description": "Explore and Manage Recipes for SaladCloud",
   "main": "echo \"No start script\" && exit 1",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
   },
   "author": "",
   "license": "MIT",
@@ -20,7 +20,7 @@
   },
   "oclif": {
     "bin": "recipe",
-    "commands": "./cli/commands",
+    "commands": "./cli/dist/commands",
     "dirname": "cli",
     "topicSeparator": " "
   },

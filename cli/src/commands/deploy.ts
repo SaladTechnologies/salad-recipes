@@ -7,6 +7,7 @@ import inquirer from 'inquirer'
 import { marked } from 'marked'
 import cliHtml from 'cli-html'
 import ora from 'ora'
+import { snakeAllKeys, camelAllKeys } from '../text-utils'
 
 export default class Deploy extends Command {
   static override args = {
@@ -51,7 +52,7 @@ export default class Deploy extends Command {
     const output = this.applyPatches(containerTemplate, inputs, patches)
     const readme = output.readme
     delete output.readme // Remove readme from the output to avoid sending it to the API
-    const snakedOutput = this.snakeAllKeys(output) // Convert all keys to snake_case
+    const snakedOutput = snakeAllKeys(output) // Convert all keys to snake_case
     this.log('\nSalad Organization:')
     const org = (
       await inquirer.prompt([
@@ -103,18 +104,17 @@ export default class Deploy extends Command {
     try {
       containerGroup = await this.createContainerGroup(org, project, snakedOutput)
       this.log(`Container group created successfully: ${containerGroup.id}`)
-    } catch (error) {
-      console.error(`Error creating container group: ${error.message}`)
-      process.exit(1)
+    } catch (error: any) {
+      this.error(`Error creating container group: ${error.message}`)
     }
 
     const readmePath = path.resolve(`./${containerGroup.name}.readme.mdx`)
     containerGroup.apiKey = this.saladApiKey // Include API key in output for readme rendering
     try {
-      fs.writeFileSync(readmePath, this.renderReadme(readme, this.camelAllKeys(containerGroup)))
+      fs.writeFileSync(readmePath, this.renderReadme(readme, camelAllKeys(containerGroup)))
       this.log(`Readme written to: ${readmePath}`)
-    } catch (error) {
-      console.error(`Error writing readme: ${error.message}`)
+    } catch (error: any) {
+      this.error(`Error writing readme: ${error.message}`)
     }
 
     const url = `https://portal.salad.com/organizations/${org}/projects/${project}/containers/${containerGroup.name}`
@@ -123,28 +123,13 @@ export default class Deploy extends Command {
     try {
       // open the URL in the default browser
       execSync(`xdg-open "${url}"`, { stdio: 'ignore' })
-    } catch (error) {
-      console.error(`Failed to open URL in browser: ${error.message}`)
+    } catch (error: any) {
+      this.error(`Failed to open URL in browser: ${error.message}`)
     }
-  }
-
-  snakeToCamel(str: string): string {
-    return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase())
-  }
-
-  camelAllKeys(obj: any): any {
-    if (Array.isArray(obj)) {
-      return obj.map(this.camelAllKeys)
-    } else if (obj !== null && typeof obj === 'object') {
-      return Object.fromEntries(
-        Object.entries(obj).map(([key, value]) => [this.snakeToCamel(key), this.camelAllKeys(value)]),
-      )
-    }
-    return obj
   }
 
   async getInputs(form: any, ui: any): Promise<Record<string, any>> {
-    const input = {}
+    const input: Record<string, any> = {}
     for (const field in form.properties) {
       const required = form?.required.includes(field) ? '(required) ' : ''
       this.log(`${required}${form.properties[field].title}:\n${form.properties[field].description || ''}`)
@@ -202,7 +187,7 @@ export default class Deploy extends Command {
           if (index !== -1) {
             value = form.properties[field].enum[index]
           } else {
-            throw new Error(`Selected option "${value}" is not valid.`)
+            this.error(`Selected option "${value}" is not valid.`)
           }
         }
       } else if (form.properties[field].type === 'string') {
@@ -292,7 +277,7 @@ export default class Deploy extends Command {
     return output
   }
 
-  async createContainerGroup(org, project, containerGroupDefinition) {
+  async createContainerGroup(org: string, project: string, containerGroupDefinition: any): Promise<any> {
     const url = `https://api.salad.com/api/public/organizations/${org}/projects/${project}/containers`
     const spinner = ora(
       `Creating container group ${containerGroupDefinition.name} in org '${org}', project '${project}'...`,
@@ -305,37 +290,18 @@ export default class Deploy extends Command {
       },
       body: JSON.stringify(containerGroupDefinition),
     })
-    spinner.stop()
+
     if (!response.ok) {
       let body = await response.text()
       try {
         body = JSON.parse(body)
         body = JSON.stringify(body, null, 2)
-      } catch (e) {}
-      console.error(body)
-      throw new Error(`Failed to create container group:${response.status} - ${response.statusText}`)
+      } catch (e: any) {}
+      spinner.fail(`Failed to create container group: ${response.status} - ${response.statusText}\n${body}`)
+      this.error(`Failed to create container group: ${response.status} - ${response.statusText}\n${body}`)
     }
+    spinner.succeed(`Container group ${containerGroupDefinition.name} created successfully.`)
     return response.json()
-  }
-
-  camelToSnakeCase(str: string): string {
-    return str.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase()
-  }
-
-  snakeAllKeys(obj: any): any {
-    if (Array.isArray(obj)) {
-      return obj.map(this.snakeAllKeys)
-    } else if (typeof obj === 'object' && obj !== null) {
-      return Object.fromEntries(
-        Object.entries(obj).map(([key, value]) => {
-          if (key === 'environmentVariables') {
-            return [this.camelToSnakeCase(key), value] // Keep environmentVariables as is
-          }
-          return [this.camelToSnakeCase(key), this.snakeAllKeys(value)]
-        }),
-      )
-    }
-    return obj
   }
 
   renderReadme(readme: string, props: Record<string, any>): string {
