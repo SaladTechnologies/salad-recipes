@@ -12,6 +12,8 @@ Commands:
 
 `;
 
+console.warn(`This tool is deprecated and will be removed in the future. Please use npx recipe instead.`);
+
 if (process.argv[2] === '--help' || process.argv[2] === '-h') {
   console.log(process.argv)
   console.error(usage);

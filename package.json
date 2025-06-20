@@ -1,7 +1,8 @@
 {
   "name": "salad-recipes",
+  "type": "module",
   "version": "1.0.0",
-  "description": "Recipes for SaladCloud",
+  "description": "Explore and Manage Recipes for SaladCloud",
   "main": "echo \"No start script\" && exit 1",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,9 +10,25 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "prettier": "^3.5.3"
+    "@types/node": "^24.0.3",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "bin": {
-    "recipe": "./scripts/recipe-tool.js"
+    "recipe": "./bin/run.js"
+  },
+  "oclif": {
+    "bin": "recipe",
+    "commands": "./cli/commands",
+    "dirname": "cli",
+    "topicSeparator": " "
+  },
+  "dependencies": {
+    "@oclif/core": "^4.4.0",
+    "cli-html": "^4.4.0",
+    "inquirer": "^12.6.3",
+    "marked": "^15.0.12",
+    "ora": "^8.2.0"
   }
 }
