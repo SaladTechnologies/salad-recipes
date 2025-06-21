@@ -1,43 +1,78 @@
 {
-  "autostartPolicy": true,
-  "container": {
-    "environmentVariables": {},
-    "image": "",
-    "imageCaching": true,
-    "priority": "high",
-    "resources": {
-      "cpu": 1,
-      "memory": 1024,
-      "gpuClasses": [
-        "a5db5c50-cbcb-4596-ae80-6a0c8090d80f"
-      ],
-      "storageAmount": 1073741824
-    }
-  },
-  "name": "",
-  "networking": {
-    "auth": true,
-    "clientRequestTimeout": 100000,
-    "loadBalancer": "least_number_of_connections",
-    "port": 3000,
-    "protocol": "http",
-    "serverResponseTimeout": 100000,
-    "singleConnectionLimit": false
-  },
-  "replicas": 3,
-  "restartPolicy": "always",
+  "name": "thestage",
+  "displayName": "thestage",
   "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {
+      "HUGGINGFACE_ACCESS_TOKEN": "",
+      "THESTAGE_AUTH_TOKEN": "",
+      "MODEL_REPO": "black-forest-labs/FLUX.1-schnell",
+      "MODEL_SIZE": "S",
+      "MODEL_BATCH_SIZE": "1",
+      "AUTH_TOKEN": ""
+    },
+    "image": "public.ecr.aws/i3f7g5s7/thestage/elastic-models:0.0.11.blackwell",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 4,
+      "memory": 8192,
+      "gpuClasses": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "storageAmount": 107374182400
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3,
   "readinessProbe": {
-    "failureThreshold": 1,
+    "failureThreshold": 20,
     "http": {
       "headers": [],
       "path": "/ready",
-      "port": 3000,
+      "port": 80,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 100,
+    "periodSeconds": 5,
+    "successThreshold": 1,
+    "timeoutSeconds": 1
+  },
+  "startupProbe": {
+    "failureThreshold": 50,
+    "http": {
+      "headers": [],
+      "path": "/startup",
+      "port": 80,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 100,
+    "periodSeconds": 5,
+    "successThreshold": 1,
+    "timeoutSeconds": 10
+  },
+  "livenessProbe": {
+    "failureThreshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/live",
+      "port": 80,
       "scheme": "http"
     },
     "initialDelaySeconds": 0,
-    "periodSeconds": 3,
+    "periodSeconds": 10,
     "successThreshold": 1,
-    "timeoutSeconds": 10
+    "timeoutSeconds": 30
+  },
+  "networking": {
+    "auth": false,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 80,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
   }
 }
