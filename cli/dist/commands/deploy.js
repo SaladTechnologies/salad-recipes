@@ -25,12 +25,22 @@ const text_utils_1 = require("../text-utils");
 class Deploy extends core_1.Command {
     run() {
         return __awaiter(this, void 0, void 0, function* () {
-            const { args } = yield this.parse(Deploy);
+            const { args, flags } = yield this.parse(Deploy);
             this.saladApiKey = process.env.SALAD_API_KEY;
             if (!this.saladApiKey) {
                 this.error('SALAD_API_KEY environment variable is not set.');
             }
-            const recipeFile = args['recipe-file'];
+            let recipeFile = args['recipe-file'];
+            if (!recipeFile && !flags.list) {
+                this.error('You must provide a recipe file or use the --list flag to choose a recipe interactively.');
+            }
+            else if (flags.list) {
+                const recipeRootDir = flags['recipe-dir'];
+                recipeFile = yield this.promptRecipes(recipeRootDir);
+            }
+            else {
+                this.error('Recipe file is required when not using the --list flag.');
+            }
             yield this.deployRecipe(recipeFile);
         });
     }
@@ -314,14 +324,63 @@ class Deploy extends core_1.Command {
         }
         return renderedReadme;
     }
+    promptRecipes(recipeRootDir) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const recipeDirs = fs_1.default.readdirSync(recipeRootDir, {
+                withFileTypes: true,
+            });
+            const recipePaths = recipeDirs
+                .filter((dir) => dir.isDirectory())
+                .map((dir) => path_1.default.join(recipeRootDir, dir.name, 'recipe.json'));
+            const recipes = recipePaths.map((recipePath) => {
+                try {
+                    const content = fs_1.default.readFileSync(recipePath, 'utf-8');
+                    return { content: JSON.parse(content), path: recipePath };
+                }
+                catch (error) {
+                    this.error(`Error reading recipe at ${recipePath}: ${error.message}`);
+                }
+            });
+            const recipeFile = (yield inquirer_1.default.prompt([
+                {
+                    type: 'list',
+                    name: 'recipe',
+                    message: 'Choose a recipe to deploy:',
+                    choices: recipes.map((recipe) => {
+                        return {
+                            name: recipe.content.form.title,
+                            value: recipe.path,
+                        };
+                    }),
+                    default: recipes[0].path,
+                },
+            ])).recipe;
+            return recipeFile;
+        });
+    }
 }
 Deploy.args = {
     'recipe-file': core_1.Args.file({
         description: 'JSON file containing the recipe to deploy',
-        required: true,
+        required: false,
         exists: true,
     }),
 };
 Deploy.description = 'Deploy a recipe to Salad Cloud';
 Deploy.examples = ['<%= config.bin %> <%= command.id %>'];
+Deploy.flags = {
+    list: core_1.Flags.boolean({
+        description: 'interactively choose a recipe to deploy from a list',
+        required: false,
+        default: false,
+        char: 'l',
+    }),
+    'recipe-dir': core_1.Flags.directory({
+        description: 'directory containing recipes to list',
+        required: false,
+        exists: true,
+        default: './recipes',
+        char: 'd',
+    }),
+};
 exports.default = Deploy;

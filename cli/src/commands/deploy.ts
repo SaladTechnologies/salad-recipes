@@ -1,4 +1,4 @@
-import { Args, Command } from '@oclif/core'
+import { Args, Command, Flags } from '@oclif/core'
 import fs from 'fs'
 import path from 'path'
 import assert from 'assert'
@@ -13,22 +13,47 @@ export default class Deploy extends Command {
   static override args = {
     'recipe-file': Args.file({
       description: 'JSON file containing the recipe to deploy',
-      required: true,
+      required: false,
       exists: true,
     }),
   }
   static override description = 'Deploy a recipe to Salad Cloud'
   static override examples = ['<%= config.bin %> <%= command.id %>']
+  static override flags = {
+    list: Flags.boolean({
+      description: 'interactively choose a recipe to deploy from a list',
+      required: false,
+      default: false,
+      char: 'l',
+    }),
+    'recipe-dir': Flags.directory({
+      description: 'directory containing recipes to list',
+      required: false,
+      exists: true,
+      default: './recipes',
+      char: 'd',
+    }),
+  }
+
   private saladApiKey: string | undefined
 
   public async run(): Promise<void> {
-    const { args } = await this.parse(Deploy)
+    const { args, flags } = await this.parse(Deploy)
     this.saladApiKey = process.env.SALAD_API_KEY
     if (!this.saladApiKey) {
       this.error('SALAD_API_KEY environment variable is not set.')
     }
 
-    const recipeFile = args['recipe-file']
+    let recipeFile = args['recipe-file']
+    if (!recipeFile && !flags.list) {
+      this.error('You must provide a recipe file or use the --list flag to choose a recipe interactively.')
+    } else if (flags.list) {
+      const recipeRootDir = flags['recipe-dir'] as string
+      recipeFile = await this.promptRecipes(recipeRootDir)
+    } else {
+      this.error('Recipe file is required when not using the --list flag.')
+    }
+
     await this.deployRecipe(recipeFile)
   }
 
@@ -326,5 +351,39 @@ export default class Deploy extends Command {
       }
     }
     return renderedReadme
+  }
+
+  async promptRecipes(recipeRootDir: string): Promise<string> {
+    const recipeDirs = fs.readdirSync(recipeRootDir, {
+      withFileTypes: true,
+    })
+    const recipePaths = recipeDirs
+      .filter((dir) => dir.isDirectory())
+      .map((dir) => path.join(recipeRootDir, dir.name, 'recipe.json'))
+    const recipes = recipePaths.map((recipePath) => {
+      try {
+        const content = fs.readFileSync(recipePath, 'utf-8')
+        return { content: JSON.parse(content), path: recipePath }
+      } catch (error: any) {
+        this.error(`Error reading recipe at ${recipePath}: ${error.message}`)
+      }
+    })
+    const recipeFile = (
+      await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'recipe',
+          message: 'Choose a recipe to deploy:',
+          choices: recipes.map((recipe) => {
+            return {
+              name: recipe.content.form.title,
+              value: recipe.path,
+            }
+          }),
+          default: recipes[0].path,
+        },
+      ])
+    ).recipe
+    return recipeFile
   }
 }
