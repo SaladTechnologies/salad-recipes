@@ -74,7 +74,7 @@ This repo includes a CLI tool to help you develop recipes. It can be used to cre
 
 Notes:
 
-- You must have Node.js 24 installed to use the CLI tool. You can use `nvm use` to switch to the correct version.
+- You must have Node.js 20+ installed to use the CLI tool. You can use `nvm use` to switch to the correct version.
 - Run `npm install` to install the necessary dependencies before using the CLI tool.
 
 ```text
