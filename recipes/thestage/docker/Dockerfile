@@ -18,4 +18,6 @@ WORKDIR /opt/project
 ADD default.conf /usr/local/openresty/nginx/conf/nginx.conf
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 
+ENV MODEL_TYPE=diffusion MODEL_REPO=black-forest-labs/FLUX.1-schnell MODEL_SIZE=S MODEL_BATCH_SIZE=1
+
 ENTRYPOINT ["supervisord"]
