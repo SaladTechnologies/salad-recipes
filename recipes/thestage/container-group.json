@@ -4,14 +4,7 @@
   "readme": "$replace",
   "container": {
     "command": [],
-    "environmentVariables": {
-      "HUGGINGFACE_ACCESS_TOKEN": "",
-      "THESTAGE_AUTH_TOKEN": "",
-      "MODEL_REPO": "black-forest-labs/FLUX.1-schnell",
-      "MODEL_SIZE": "S",
-      "MODEL_BATCH_SIZE": "1",
-      "AUTH_TOKEN": ""
-    },
+    "environmentVariables": {},
     "image": "public.ecr.aws/i3f7g5s7/thestage/elastic-models:0.0.11.blackwell",
     "imageCaching": true,
     "resources": {
