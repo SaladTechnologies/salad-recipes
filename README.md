@@ -15,14 +15,13 @@
       - [`scripts/run-container-gateway-benchmark.sh`](#scriptsrun-container-gateway-benchmarksh)
       - [`scripts/run-benchmark-matrix.js`](#scriptsrun-benchmark-matrixjs)
 
-
-Recipes are pre-configured container group templates that can be used to quickly deploy popular AI models and applications. Those in the `recipes/` directory can be deployed directly from the [SaladCloud Portal](https://portal.salad.com/), and any others can be deployed using the [SaladCloud API.](https://docs.salad.com/reference/api-usage)
+Recipes are pre-configured container group templates that can be used to quickly deploy popular AI models and applications. Those in the `recipes/` directory can be deployed directly from the [SaladCloud Portal](https://portal.salad.com/) or with the [Recipe CLI](#recipe-cli-tool) included in this repo, and any others can be deployed using the [SaladCloud API.](https://docs.salad.com/reference/api-usage)
 
 ## Submitting Recipes
 
 If you want to make your application available to Salad users as a recipe, please first reach out to [support](mailto:support@salad.com). Partner and community recipes are a new addition to the Salad platform, and we want to ensure that your recipe is a good fit for our users.
 
-Once approved by the salad team, submit a pull request with your recipe files in the `recipes/` directory. Before submitting, please ensure that your recipe meets the following criteria:
+Once approved by the Salad team, submit a pull request with your recipe files in the `recipes/` directory. Before submitting, please ensure that your recipe meets the following criteria:
 
 - The recipe should be well-documented, with a clear description of what it does and how to use it.
 - The recipe should be tested and working correctly on the Salad platform.
