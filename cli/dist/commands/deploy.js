@@ -47,8 +47,8 @@ class Deploy extends core_1.Command {
             (0, assert_1.default)(recipe.documentation_url, 'Recipe must contain a "documentation_url" property');
             (0, assert_1.default)(recipe.short_description, 'Recipe must contain a "short_description" property');
             this.log(`===Recipe Deployment Wizard===`);
-            this.log(`Deploying recipe: ${form.title}\n\n`);
-            this.log((0, cli_html_1.default)(yield (0, marked_1.marked)(form.description)));
+            this.log(`Deploying recipe: ${recipePath}\n\n`);
+            this.log((0, cli_html_1.default)(yield (0, marked_1.marked)(`# ${form.title}\n${form.description}`)));
             const inputs = yield this.getInputs(form, ui);
             const output = this.applyPatches(containerTemplate, inputs, patches);
             const readme = output.readme;

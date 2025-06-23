@@ -45,8 +45,8 @@ export default class Deploy extends Command {
     assert(recipe.documentation_url, 'Recipe must contain a "documentation_url" property')
     assert(recipe.short_description, 'Recipe must contain a "short_description" property')
     this.log(`===Recipe Deployment Wizard===`)
-    this.log(`Deploying recipe: ${form.title}\n\n`)
-    this.log(cliHtml(await marked(form.description)))
+    this.log(`Deploying recipe: ${recipePath}\n\n`)
+    this.log(cliHtml(await marked(`# ${form.title}\n${form.description}`)))
 
     const inputs = await this.getInputs(form, ui)
     const output = this.applyPatches(containerTemplate, inputs, patches)
