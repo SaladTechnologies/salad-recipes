@@ -17,8 +17,18 @@
     },
     {
       "op": "copy",
-      "from": "/input/networking_auth",
-      "path": "/output/networking/auth"
+      "from": "/input/huggingface_access_token",
+      "path": "/output/container/environmentVariables/HUGGINGFACE_ACCESS_TOKEN"
+    },
+    {
+      "op": "copy",
+      "from": "/input/thestage_auth_token",
+      "path": "/output/container/environmentVariables/THESTAGE_AUTH_TOKEN"
+    },
+    {
+      "op": "copy",
+      "from": "/input/auth_token",
+      "path": "/output/container/environmentVariables/AUTH_TOKEN"
     }
   ]
 ]

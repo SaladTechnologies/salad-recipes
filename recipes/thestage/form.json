@@ -1,9 +1,12 @@
 {
-  "title": "My Recipe",
+  "title": "TheStage AI Elastic Models: Flux 1 Schnell",
   "description": "$replace",
   "type": "object",
   "required": [
-    "container_group_name"
+    "container_group_name",
+    "huggingface_access_token",
+    "thestage_auth_token",
+    "auth_token"
   ],
   "properties": {
     "container_group_name": {
@@ -15,11 +18,29 @@
       "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
       "default": ""
     },
-    "networking_auth": {
-      "title": "Require Container Gateway Authentication",
-      "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
-      "type": "boolean",
-      "default": true
+    "huggingface_access_token": {
+      "title": "HuggingFace access token",
+      "description": "Your HuggingFace access token for weight access. Make sure you have requested access to black-forest-labs/FLUX.1-schnell weights.",
+      "type": "string",
+      "maxLength": 128,
+      "minLength": 1,
+      "default": ""
+    },
+    "thestage_auth_token": {
+      "title": "The Stage auth token",
+      "description": "Your TheStage auth token for optimised model access.",
+      "type": "string",
+      "maxLength": 300,
+      "minLength": 1,
+      "default": ""
+    },
+    "auth_token": {
+      "title": "Authorization token",
+      "description": "Authorization token with will be used to protect inference endpoint from public access.",
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1,
+      "default": ""
     }
   }
 }

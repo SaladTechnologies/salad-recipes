@@ -1,3 +1,31 @@
-# Recipe Description
-This is a placeholder for the recipe description, visible from the recipe form. Replace this with your actual content.
-  
+# TheStage AI Elastic Models: Flux 1 Schnell
+
+Deploy optimised by TheStage AI [Flux1-Scnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell) on GeForce-RTX-5090.
+Explore TheStage AI [model library](https://app.thestage.ai/models) to find more models.
+
+## Prerequisites
+
+- HuggingFace API token with access to weights of [FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell)
+- TheStage API token can be generated on app.thestage.ai. Go to `Profile->API tokens` and click on `Generate API token`.
+
+## Generating images
+To generate image you'll need Linux machine with docker installed. Here is an example of command to generate an image.
+
+
+```bash
+docker run -e THESTAGE_AUTH_TOKEN= \\
+    -v $(pwd)/output:/output \\
+    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.11 \\
+    bash -c 'elastic-models client diffusion \\
+        --pos-prompt "photo of a cat" \\
+        --host gojiberry-chickpea-rh01fxqzbh69hm0t.salad.cloud \\
+        --protocol https \\
+        --port 443 \\
+        --metadata-host  gojiberry-chickpea-rh01fxqzbh69hm0t.salad.cloud \\
+        --metadata-port 443 \\
+```
+
+## Authorization
+There is no support of `--header 'Salad-Api-Key: <salad-api-key>'` in the `elastic-models client` yet.
+If you don't want your endpoint be public please set `AUTH_TOKEN` environment variable on deploying container group.
+If `AUTH_TOKEN` environment variable is set than to generate image command you have to add option `--authorization "Bearer /*AUTH_TOKEN*/"'`

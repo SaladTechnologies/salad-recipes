@@ -1,3 +1,28 @@
-# Recipe Readme
-This is a placeholder for the recipe readme, visible from the deployed container group page. Replace this with your actual content.
-  
+# # TheStage AI Elastic Models: Flux 1 Schnell
+
+This recipe provides an example how to deploy optimised by TheStage AI [Flux1-Scnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell) on GeForce-RTX-5090.
+
+## Resources
+
+- [Flux1-Scnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell)
+- [TheStage AI platform](https://app.thestage.ai/)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/thestage/)
+
+## How to generate image
+
+- Command below can only be run on linux machine with docker installed.
+- Omit --authorization option if you have not set `AUTH_TOKEN` environment variable on deployment.
+- Image will be stored in `.output/flux-1-schnell-s-bs1-paged` directory.
+
+<CodeBlock language="bash">{`docker run -e THESTAGE_AUTH_TOKEN=/*paste your thestage ai token here*/ \\
+    -v $(pwd)/output:/output \\
+    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.11 \\
+    bash -c 'elastic-models client diffusion \\
+        --pos-prompt "photo of a cat" \\
+        --host ${props.networking.dns} \\
+        --protocol https \\
+        --port 443 \\
+        --metadata-host ${props.networking.dns} \\
+        --metadata-port 443 \\
+        --authorization "Bearer /*AUTH_TOKEN*/"'
+`}</CodeBlock>
