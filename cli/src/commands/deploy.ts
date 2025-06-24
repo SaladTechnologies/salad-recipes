@@ -50,11 +50,9 @@ export default class Deploy extends Command {
     } else if (flags.list) {
       const recipeRootDir = flags['recipe-dir'] as string
       recipeFile = await this.promptRecipes(recipeRootDir)
-    } else {
-      this.error('Recipe file is required when not using the --list flag.')
     }
 
-    await this.deployRecipe(recipeFile)
+    await this.deployRecipe(recipeFile!)
   }
 
   async deployRecipe(recipePath: string): Promise<void> {

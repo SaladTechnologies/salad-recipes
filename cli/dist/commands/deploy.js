@@ -38,9 +38,6 @@ class Deploy extends core_1.Command {
                 const recipeRootDir = flags['recipe-dir'];
                 recipeFile = yield this.promptRecipes(recipeRootDir);
             }
-            else {
-                this.error('Recipe file is required when not using the --list flag.');
-            }
             yield this.deployRecipe(recipeFile);
         });
     }
