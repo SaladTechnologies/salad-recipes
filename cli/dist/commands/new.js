@@ -31,8 +31,7 @@ class New extends core_1.Command {
             const readmeContent = `# Recipe Readme
 This is a placeholder for the recipe readme, visible from the deployed container group page. Replace this with your actual content.
   `;
-            const descriptionContent = `# Recipe Description
-This is a placeholder for the recipe description, visible from the recipe form. Replace this with your actual content.
+            const descriptionContent = `This is a placeholder for the recipe description, visible from the recipe form. Replace this with your actual content.
   `;
             const formContent = {
                 title: 'My Recipe',
@@ -190,6 +189,7 @@ This is a placeholder for the recipe description, visible from the recipe form. 
             newDef.networking = networking;
         }
         newDef = (0, text_utils_1.camelAllKeys)(newDef);
+        return newDef;
     }
     getContainerGroup(org, project, containerGroupName) {
         return __awaiter(this, void 0, void 0, function* () {
