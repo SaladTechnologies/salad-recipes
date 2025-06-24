@@ -31,16 +31,15 @@
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
-        "description": "(Required) Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
         "type": "string",
         "maxLength": 63,
         "minLength": 2,
-        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
-        "default": ""
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
       },
       "wallet": {
         "title": "Wallet Address",
-        "description": "(Required) The wallet address to receive rewards. Starts with '0x' followed by 40 hexadecimal characters.",
+        "description": "Required* The wallet address to receive rewards. Starts with '0x' followed by 40 hexadecimal characters.",
         "type": "string",
         "minLength": 42,
         "maxLength": 42,
@@ -48,13 +47,13 @@
       },
       "stratum_ip": {
         "title": "Stratum IP",
-        "description": "(Required) The IP address of the Stratum server to connect to.",
+        "description": "Required* The IP address of the Stratum server to connect to.",
         "type": "string",
         "minLength": 1
       },
       "stratum_port": {
         "title": "Stratum Port",
-        "description": "(Required) The port of the Stratum server to connect to.",
+        "description": "Required* The port of the Stratum server to connect to.",
         "type": "number",
         "minimum": 1,
         "maximum": 65535,

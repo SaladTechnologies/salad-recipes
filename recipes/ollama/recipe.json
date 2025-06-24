@@ -8,8 +8,8 @@
       "priority": "high",
       "resources": {
         "cpu": 4,
-        "gpuClasses": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"],
         "memory": 30720,
+        "gpuClasses": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"],
         "storageAmount": 53687091200
       }
     },
@@ -71,12 +71,11 @@
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
-        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
         "type": "string",
         "maxLength": 63,
         "minLength": 2,
-        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
-        "default": ""
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
       },
       "networking_auth": {
         "title": "Require Container Gateway Authentication",
@@ -86,7 +85,7 @@
       },
       "model_name": {
         "title": "Model Name",
-        "description": "The name of the model to use, from the ollama library.",
+        "description": "Required* The name of the model to use, from the ollama library.",
         "type": "string",
         "default": "llama3.2"
       }
@@ -124,5 +123,5 @@
   "ui": {},
   "documentation_url": "https://github.com/ollama/ollama/blob/main/docs/api.md",
   "short_description": "Run popular LLMs with Ollama.",
-  "workload_types": ["llm"]
+  "workload_types": ["LLM"]
 }

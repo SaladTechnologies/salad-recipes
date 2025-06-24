@@ -52,12 +52,11 @@
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
-        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
         "type": "string",
         "maxLength": 63,
         "minLength": 2,
-        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
-        "default": ""
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
       },
       "sogni_worker_type": {
         "title": "Sogni Worker Type",
@@ -67,19 +66,17 @@
       },
       "sogni_api_key": {
         "title": "Sogni API Key",
-        "description": "Your Sogni account API key.",
+        "description": "Required* Your Sogni account API key.",
         "type": "string",
         "maxLength": 1000,
-        "minLength": 1,
-        "default": ""
+        "minLength": 1
       },
       "sogni_nft_token_id": {
         "title": "Sogni NFT Token ID",
-        "description": "The NFT Token ID for your Sogni worker.",
+        "description": "Required* The NFT Token ID for your Sogni worker.",
         "type": "string",
         "maxLength": 1000,
-        "minLength": 1,
-        "default": ""
+        "minLength": 1
       }
     },
     "dependencies": {
@@ -170,5 +167,5 @@
   },
   "documentation_url": "https://docs.salad.com/products/recipes/sogni-flux-worker",
   "short_description": "Deploy Sogni Flux and Stable Diffusion fast workers for high-quality image generation.",
-  "workload_types": ["imageGen"]
+  "workload_types": ["imageGeneration"]
 }

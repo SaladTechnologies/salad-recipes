@@ -11,11 +11,10 @@
     "container_group_name": {
       "type": "string",
       "title": "Container Group Name",
-      "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
       "maxLength": 63,
       "minLength": 2,
-      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
-      "default": ""
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
     },
     "container_image_model": {
       "title": "Model",

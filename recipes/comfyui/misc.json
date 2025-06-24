@@ -16,6 +16,6 @@
   "documentation_url": "https://docs.salad.com/products/recipes/overview",
   "short_description": "Run popular image generation models with ComfyUI and ComfyUI API.",
   "workload_types": [
-    "imageGen"
+    "imageGeneration"
   ]
 }

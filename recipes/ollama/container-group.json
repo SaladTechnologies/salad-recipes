@@ -7,10 +7,10 @@
     "priority": "high",
     "resources": {
       "cpu": 4,
+      "memory": 30720,
       "gpuClasses": [
         "a5db5c50-cbcb-4596-ae80-6a0c8090d80f"
       ],
-      "memory": 30720,
       "storageAmount": 53687091200
     }
   },

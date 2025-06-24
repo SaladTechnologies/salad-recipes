@@ -51,12 +51,11 @@
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
-        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
         "type": "string",
         "maxLength": 63,
         "minLength": 2,
-        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
-        "default": ""
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
       },
       "container_image_model": {
         "title": "Model",
@@ -90,12 +89,11 @@
               },
               "container_environment_hf_token": {
                 "title": "HuggingFace Token",
-                "description": "Must begin with \"hf_\" or \"api_org_\".",
+                "description": "Required* Must begin with \"hf_\" or \"api_org_\".",
                 "type": "string",
                 "maxLength": 42,
                 "minLength": 37,
-                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
-                "default": ""
+                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$"
               }
             }
           },
@@ -107,12 +105,11 @@
               },
               "container_environment_hf_token": {
                 "title": "HuggingFace Token",
-                "description": "Must begin with \"hf_\" or \"api_org_\".",
+                "description": "Required* Must begin with \"hf_\" or \"api_org_\".",
                 "type": "string",
                 "maxLength": 42,
                 "minLength": 37,
-                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
-                "default": ""
+                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$"
               }
             }
           },
@@ -124,12 +121,11 @@
               },
               "container_environment_hf_token": {
                 "title": "HuggingFace Token",
-                "description": "Must begin with \"hf_\" or \"api_org_\".",
+                "description": "Required* Must begin with \"hf_\" or \"api_org_\".",
                 "type": "string",
                 "maxLength": 42,
                 "minLength": 37,
-                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
-                "default": ""
+                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$"
               }
             }
           },
@@ -141,10 +137,10 @@
               },
               "container_environment_model_id": {
                 "title": "HuggingFace Model ID",
+                "description": "Required*",
                 "type": "string",
                 "maxLength": 1000,
-                "minLength": 1,
-                "default": ""
+                "minLength": 1
               },
               "container_environment_hf_token": {
                 "title": "HuggingFace Token",
@@ -152,8 +148,7 @@
                 "type": "string",
                 "maxLength": 42,
                 "minLength": 37,
-                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$",
-                "default": ""
+                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$"
               },
               "container_environment_quantize": {
                 "title": "Quantization",
@@ -332,5 +327,5 @@
   },
   "documentation_url": "https://docs.salad.com/products/recipes/overview",
   "short_description": "Run popular LLMs and VLMs with 🤗 Text Generation Inference.",
-  "workload_types": ["llm"]
+  "workload_types": ["LLM"]
 }
