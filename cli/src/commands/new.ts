@@ -35,8 +35,7 @@ export default class New extends Command {
 This is a placeholder for the recipe readme, visible from the deployed container group page. Replace this with your actual content.
   `
 
-    const descriptionContent = `# Recipe Description
-This is a placeholder for the recipe description, visible from the recipe form. Replace this with your actual content.
+    const descriptionContent = `This is a placeholder for the recipe description, visible from the recipe form. Replace this with your actual content.
   `
 
     const formContent = {
@@ -209,6 +208,7 @@ This is a placeholder for the recipe description, visible from the recipe form. 
       newDef.networking = networking
     }
     newDef = camelAllKeys(newDef)
+    return newDef
   }
 
   async getContainerGroup(org: string, project: string, containerGroupName: string): Promise<any> {

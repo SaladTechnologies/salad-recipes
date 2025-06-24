@@ -345,7 +345,7 @@ class Deploy extends core_1.Command {
                 {
                     type: 'list',
                     name: 'recipe',
-                    message: 'Choose a recipe to deploy:',
+                    message: `Choose a recipe to deploy (${recipes.length} available):`,
                     choices: recipes.map((recipe) => {
                         return {
                             name: recipe.content.form.title,
@@ -353,6 +353,7 @@ class Deploy extends core_1.Command {
                         };
                     }),
                     default: recipes[0].path,
+                    pageSize: 10, // Show 10 recipes at a time
                 },
             ])).recipe;
             return recipeFile;

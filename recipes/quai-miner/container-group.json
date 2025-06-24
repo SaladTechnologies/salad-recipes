@@ -1,0 +1,26 @@
+{
+  "name": "quai-miner",
+  "readme": "$replace",
+  "container": {
+    "command": [
+      "sh",
+      "-c",
+      "./quai-gpu-miner/quai-gpu-miner-nvidia/quai-gpu-miner-nvidia -U -P stratum://${WALLET}.${SALAD_MACHINE_ID}@${STRATUM_IP}:${STRATUM_PORT}"
+    ],
+    "environmentVariables": {},
+    "image": "quainetwork/quai-gpu-miner-run:latest",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 8,
+      "memory": 16384,
+      "gpuClasses": [
+        "a5db5c50-cbcb-4596-ae80-6a0c8090d80f"
+      ],
+      "shmSize": 64
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3
+}

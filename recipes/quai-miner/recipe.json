@@ -1,0 +1,106 @@
+{
+  "container_template": {
+    "name": "quai-miner",
+    "readme": "# Quai Miner\n\nSaladCloud will find qualified nodes, and begin the process of downloading the container image to the host machine. It may take up to tens of minutes to download to some machines, depending on the network conditions of that particular node. Remember, these are privately owned PCs with gaming GPUs in a variety of networking conditions, and performance will vary across different nodes.\n\nEventually, you will see your instances enter the running state, and show a green checkmark in the \"Ready\" column. You are only charged for instances that are in the running state.\n\nEach container instance will have the machine ID as the worker tag.",
+    "container": {
+      "command": [
+        "sh",
+        "-c",
+        "./quai-gpu-miner/quai-gpu-miner-nvidia/quai-gpu-miner-nvidia -U -P stratum://${WALLET}.${SALAD_MACHINE_ID}@${STRATUM_IP}:${STRATUM_PORT}"
+      ],
+      "environmentVariables": {},
+      "image": "quainetwork/quai-gpu-miner-run:latest",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 16384,
+        "gpuClasses": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"],
+        "shmSize": 64
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3
+  },
+  "form": {
+    "title": "Quai Miner",
+    "description": "Mine [Quai](https://docs.qu.ai/learn/introduction) using the official [Quai GPU Miner](https://github.com/dominant-strategies/quai-gpu-miner).\n\n1. Create a [Quai wallet](https://docs.qu.ai/learn/use-quai#get-a-quai-wallet) if you do not already have one, and get your wallet address.\n2. Find a [Quai pool](https://docs.qu.ai/guides/miner/pools-software), and note the pool's IP and port.\n\n## Available Wallets\n\n| Wallet                                      | Type              | Features                             | Status      |\n| ------------------------------------------- | ----------------- | ------------------------------------ | ----------- |\n| [Pelagus Wallet](https://pelaguswallet.io/) | Browser Extension | Official Quai wallet                 | Available   |\n| [Koala Wallet](https://koalawallet.io/)     | Browser Extension | Multi-chain support                  | Available   |\n| [Blip Mobile](https://blippay.me/)          | Mobile App        | Mobile-first experience, $QI support | Beta Access |\n\n## Available Mining Pools\n\n| Pool Name  | Website                       |\n| ---------- | ----------------------------- |\n| AlphaPool  | https://alphapool.tech        |\n| HeroMiners | https://quai.herominers.com   |\n| K1Pool     | https://k1pool.com/pool/quai  |\n| Kryptex    | https://pool.kryptex.com/quai |\n| LuckyPool  | https://quai.luckypool.io     |\n| Oula       | https://oula.network/en/pool  |",
+    "type": "object",
+    "required": ["container_group_name", "wallet", "stratum_ip", "stratum_port"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "(Required) Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "wallet": {
+        "title": "Wallet Address",
+        "description": "(Required) The wallet address to receive rewards.",
+        "type": "string",
+        "minLength": 1
+      },
+      "stratum_ip": {
+        "title": "Stratum IP",
+        "description": "(Required) The IP address of the Stratum server to connect to.",
+        "type": "string",
+        "minLength": 1
+      },
+      "stratum_port": {
+        "title": "Stratum Port",
+        "description": "(Required) The port of the Stratum server to connect to.",
+        "type": "number",
+        "minimum": 1,
+        "maximum": 65535,
+        "default": 3333
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/wallet",
+        "path": "/output/container/environmentVariables/WALLET"
+      },
+      {
+        "op": "copy",
+        "from": "/input/stratum_ip",
+        "path": "/output/container/environmentVariables/STRATUM_IP"
+      },
+      {
+        "op": "copy",
+        "from": "/input/stratum_port",
+        "path": "/output/container/environmentVariables/STRATUM_PORT"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.qu.ai/learn/introduction",
+  "short_description": "Mine Quai using the official Quai GPU Miner.",
+  "workload_types": ["blockchain"]
+}
