@@ -1,12 +1,14 @@
 # Ubuntu 24.04
 
-[Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/src/ubuntu-dev)
-
 ## Access
 
-- <Link url={`https://${props.networking.dns}/lab`}>JupyterLab</Link>
+- <Link url={`https://${props.networking.dns}/lab`}>JupyterLab</Link> (once running)
 - <Link url={`https://vscode.dev/tunnel/${props.id}/workspace`}>VS Code</Link>, if configured.
 - Click on a running instance to access a browser-based terminal.
 
 Keep in mind that SaladCloud instances are ephemeral and can be reallocated at any time, resetting to a fresh Ubuntu image. Make sure to persist any important data to a remote location, such as S3 or a database, to avoid losing it when the instance is reset.
 
+## Resources
+
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/src/ubuntu-dev)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Ubuntu%2024.04&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>
