@@ -3,6 +3,7 @@
 - [Salad Recipes](#salad-recipes)
   - [Submitting Recipes](#submitting-recipes)
     - [Developing Recipes](#developing-recipes)
+      - [Troubleshooting Common Issues](#troubleshooting-common-issues)
     - [Using Variables in Recipe Readmes](#using-variables-in-recipe-readmes)
     - [Recipe CLI Tool](#recipe-cli-tool)
   - [Repository Structure](#repository-structure)
@@ -47,6 +48,12 @@ The recommended flow for developing recipes is:
 10. Finally, create a pull request with your changes, and ensure that the Salad team reviews and approves your recipe.
 
 Explore the other recipes in the `recipes/` directory to see how they are structured and [what files they include](#recipes).
+
+#### Troubleshooting Common Issues
+
+- If you encounter issues with the recipe CLI tool, ensure that you have Node.js 20+ installed and that you have run `npm install` to install the necessary dependencies.
+- If your recipe uses the container gateway, ensure that your application is configured to listen on ipv6, which typically means the hostname should be set to `::` or `*` depending on your server.
+- If your recipe uses the container gateway, make sure to use a readiness probe to ensure that traffic is not sent to the container until it is ready to handle requests. This can be done by adding a `readinessProbe` to your `container-group.json` file.
 
 ### Using Variables in Recipe Readmes
 
