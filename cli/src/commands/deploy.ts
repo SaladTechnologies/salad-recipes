@@ -33,6 +33,12 @@ export default class Deploy extends Command {
       default: './recipes',
       char: 'd',
     }),
+    export: Flags.boolean({
+      description: 'Rebuild the recipe.json before deploying',
+      required: false,
+      default: false,
+      char: 'e',
+    }),
   }
 
   private saladApiKey: string | undefined
@@ -50,6 +56,11 @@ export default class Deploy extends Command {
     } else if (flags.list) {
       const recipeRootDir = flags['recipe-dir'] as string
       recipeFile = await this.promptRecipes(recipeRootDir)
+    }
+
+    if (flags.export) {
+      const recipeDir = path.dirname(recipeFile!)
+      execSync(`npx recipe export ${recipeDir}`)
     }
 
     await this.deployRecipe(recipeFile!)

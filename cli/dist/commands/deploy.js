@@ -38,6 +38,10 @@ class Deploy extends core_1.Command {
                 const recipeRootDir = flags['recipe-dir'];
                 recipeFile = yield this.promptRecipes(recipeRootDir);
             }
+            if (flags.export) {
+                const recipeDir = path_1.default.dirname(recipeFile);
+                (0, child_process_1.execSync)(`npx recipe export ${recipeDir}`);
+            }
             yield this.deployRecipe(recipeFile);
         });
     }
@@ -379,6 +383,12 @@ Deploy.flags = {
         exists: true,
         default: './recipes',
         char: 'd',
+    }),
+    export: core_1.Flags.boolean({
+        description: 'Rebuild the recipe.json before deploying',
+        required: false,
+        default: false,
+        char: 'e',
     }),
 };
 exports.default = Deploy;
