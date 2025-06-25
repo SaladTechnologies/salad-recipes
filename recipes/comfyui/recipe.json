@@ -22,7 +22,7 @@
         "scheme": "http"
       },
       "initialDelaySeconds": 5,
-      "periodSeconds": 5,
+      "periodSeconds": 6,
       "successThreshold": 1,
       "timeoutSeconds": 2
     },
