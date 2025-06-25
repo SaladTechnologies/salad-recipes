@@ -4,6 +4,8 @@ import ora from 'ora'
 import inquirer from 'inquirer'
 import { camelAllKeys } from '../text-utils'
 
+const treeIndent = '└─'
+
 export default class New extends Command {
   static override args = {
     'recipe-dir': Args.directory({
@@ -38,7 +40,7 @@ This is a placeholder for the recipe readme, visible from the deployed container
     const descriptionContent = `This is a placeholder for the recipe description, visible from the recipe form. Replace this with your actual content.
   `
 
-    const formContent = {
+    const formContent: any = {
       title: 'My Recipe',
       description: '$replace',
       type: 'object',
@@ -86,11 +88,22 @@ This is a placeholder for the recipe readme, visible from the deployed container
       containerGroupContent = await this.getContainerGroup(org, project, fromContainerGroup)
       if (containerGroupContent) {
         containerGroupContent = this.normalizeContainerGroup(containerGroupContent)
+        if (!containerGroupContent.networking) {
+          delete formContent.properties.networking_auth
+        }
       }
     }
 
     if (!containerGroupContent) {
       this.log('Creating new container group content from template')
+      const usesContainerGateway = (
+        await inquirer.prompt({
+          name: 'usesContainerGateway',
+          type: 'confirm',
+          message: 'Does this recipe use the Container Gateway?',
+          default: true,
+        })
+      ).usesContainerGateway
       containerGroupContent = {
         autostartPolicy: true,
         container: {
@@ -134,6 +147,12 @@ This is a placeholder for the recipe readme, visible from the deployed container
           timeoutSeconds: 10,
         },
       }
+
+      if (!usesContainerGateway) {
+        delete containerGroupContent.networking
+        delete containerGroupContent.readinessProbe
+        delete formContent.properties.networking_auth
+      }
     }
 
     const patches = [
@@ -153,13 +172,15 @@ This is a placeholder for the recipe readme, visible from the deployed container
           from: '/input/container_group_name',
           path: '/output/name',
         },
-        {
-          op: 'copy',
-          from: '/input/networking_auth',
-          path: '/output/networking/auth',
-        },
       ],
     ]
+    if (containerGroupContent.networking) {
+      patches[0].push({
+        op: 'copy',
+        from: '/input/networking_auth',
+        path: '/output/networking/auth',
+      })
+    }
 
     const miscContent = {
       ui: {},
@@ -169,11 +190,32 @@ This is a placeholder for the recipe readme, visible from the deployed container
     }
 
     await this.writeFile(`${directory}/container_template.readme.mdx`, readmeContent)
+    this.log(
+      `${treeIndent} This file is used as the readme for the container group, visible from the deployed container group page. It should include information about how to use the recipe, and how to find help for it.\n`,
+    )
+
     await this.writeFile(`${directory}/form.json`, JSON.stringify(formContent, null, 2))
+    this.log(
+      `${treeIndent} This file is used to generate the input form for the recipe, visible from the recipe deployment page.\n`,
+    )
+
     await this.writeFile(`${directory}/container-group.json`, JSON.stringify(containerGroupContent, null, 2))
+    this.log(`${treeIndent} This file is used to define the base container group for the recipe.\n`)
+
     await this.writeFile(`${directory}/form.description.mdx`, descriptionContent)
+    this.log(
+      `${treeIndent} This file is used to provide the pre-deployment description for the recipe, and should include information about what the recipe does and how to configure it.\n`,
+    )
+
     await this.writeFile(`${directory}/misc.json`, JSON.stringify(miscContent, null, 2))
+    this.log(
+      `${treeIndent} This file is used to provide additional metadata for the recipe, including UI settings, documentation URL, and workload types.\n`,
+    )
+
     await this.writeFile(`${directory}/patches.json`, JSON.stringify(patches, null, 2))
+    this.log(
+      `${treeIndent} This file is used to define the patches that will be applied to the container group when the recipe is deployed. It allows you to customize the container group based on user input from the form.\n`,
+    )
 
     this.log(`New recipe created in ${directory}`)
   }

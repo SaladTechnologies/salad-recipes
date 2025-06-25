@@ -17,6 +17,7 @@ const promises_1 = __importDefault(require("fs/promises"));
 const ora_1 = __importDefault(require("ora"));
 const inquirer_1 = __importDefault(require("inquirer"));
 const text_utils_1 = require("../text-utils");
+const treeIndent = '└─';
 class New extends core_1.Command {
     run() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -74,10 +75,19 @@ This is a placeholder for the recipe readme, visible from the deployed container
                 containerGroupContent = yield this.getContainerGroup(org, project, fromContainerGroup);
                 if (containerGroupContent) {
                     containerGroupContent = this.normalizeContainerGroup(containerGroupContent);
+                    if (!containerGroupContent.networking) {
+                        delete formContent.properties.networking_auth;
+                    }
                 }
             }
             if (!containerGroupContent) {
                 this.log('Creating new container group content from template');
+                const usesContainerGateway = (yield inquirer_1.default.prompt({
+                    name: 'usesContainerGateway',
+                    type: 'confirm',
+                    message: 'Does this recipe use the Container Gateway?',
+                    default: true,
+                })).usesContainerGateway;
                 containerGroupContent = {
                     autostartPolicy: true,
                     container: {
@@ -121,6 +131,11 @@ This is a placeholder for the recipe readme, visible from the deployed container
                         timeoutSeconds: 10,
                     },
                 };
+                if (!usesContainerGateway) {
+                    delete containerGroupContent.networking;
+                    delete containerGroupContent.readinessProbe;
+                    delete formContent.properties.networking_auth;
+                }
             }
             const patches = [
                 [
@@ -139,13 +154,15 @@ This is a placeholder for the recipe readme, visible from the deployed container
                         from: '/input/container_group_name',
                         path: '/output/name',
                     },
-                    {
-                        op: 'copy',
-                        from: '/input/networking_auth',
-                        path: '/output/networking/auth',
-                    },
                 ],
             ];
+            if (containerGroupContent.networking) {
+                patches[0].push({
+                    op: 'copy',
+                    from: '/input/networking_auth',
+                    path: '/output/networking/auth',
+                });
+            }
             const miscContent = {
                 ui: {},
                 documentation_url: '',
@@ -153,11 +170,17 @@ This is a placeholder for the recipe readme, visible from the deployed container
                 workload_types: [],
             };
             yield this.writeFile(`${directory}/container_template.readme.mdx`, readmeContent);
+            this.log(`${treeIndent} This file is used as the readme for the container group, visible from the deployed container group page. It should include information about how to use the recipe, and how to find help for it.\n`);
             yield this.writeFile(`${directory}/form.json`, JSON.stringify(formContent, null, 2));
+            this.log(`${treeIndent} This file is used to generate the input form for the recipe, visible from the recipe deployment page.\n`);
             yield this.writeFile(`${directory}/container-group.json`, JSON.stringify(containerGroupContent, null, 2));
+            this.log(`${treeIndent} This file is used to define the base container group for the recipe.\n`);
             yield this.writeFile(`${directory}/form.description.mdx`, descriptionContent);
+            this.log(`${treeIndent} This file is used to provide the pre-deployment description for the recipe, and should include information about what the recipe does and how to configure it.\n`);
             yield this.writeFile(`${directory}/misc.json`, JSON.stringify(miscContent, null, 2));
+            this.log(`${treeIndent} This file is used to provide additional metadata for the recipe, including UI settings, documentation URL, and workload types.\n`);
             yield this.writeFile(`${directory}/patches.json`, JSON.stringify(patches, null, 2));
+            this.log(`${treeIndent} This file is used to define the patches that will be applied to the container group when the recipe is deployed. It allows you to customize the container group based on user input from the form.\n`);
             this.log(`New recipe created in ${directory}`);
         });
     }
