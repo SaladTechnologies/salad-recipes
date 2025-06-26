@@ -16,6 +16,26 @@
       "path": "/output/name"
     },
     {
+      "op": "add",
+      "path": "/output/container/environmentVariables/MODEL_REPO",
+      "value": "black-forest-labs/FLUX.1-schnell"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/MODEL_SIZE",
+      "value": "S"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/MODEL_BATCH_SIZE",
+      "value": 1
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/MODEL_TYPE",
+      "value": "diffusion"
+    },
+    {
       "op": "copy",
       "from": "/input/huggingface_access_token",
       "path": "/output/container/environmentVariables/HUGGINGFACE_ACCESS_TOKEN"

@@ -1,11 +1,10 @@
 {
-  "name": "thestage",
-  "displayName": "thestage",
+  "name": "",
   "readme": "$replace",
   "container": {
     "command": [],
     "environmentVariables": {},
-    "image": "public.ecr.aws/i3f7g5s7/thestage/elastic-models:0.0.11.blackwell",
+    "image": "public.ecr.aws/i3f7g5s7/thestage/elastic-models:0.0.14.blackwell",
     "imageCaching": true,
     "resources": {
       "cpu": 4,
@@ -19,53 +18,53 @@
   },
   "autostartPolicy": true,
   "restartPolicy": "always",
-  "replicas": 3,
-  "readinessProbe": {
-    "failureThreshold": 20,
-    "http": {
-      "headers": [],
-      "path": "/ready",
-      "port": 80,
-      "scheme": "http"
-    },
-    "initialDelaySeconds": 100,
-    "periodSeconds": 5,
-    "successThreshold": 1,
-    "timeoutSeconds": 1
-  },
+  "replicas": 1,
   "startupProbe": {
-    "failureThreshold": 50,
     "http": {
       "headers": [],
       "path": "/startup",
       "port": 80,
       "scheme": "http"
     },
-    "initialDelaySeconds": 100,
-    "periodSeconds": 5,
+    "initialDelaySeconds": 60,
+    "periodSeconds": 90,
+    "timeoutSeconds": 10,
     "successThreshold": 1,
-    "timeoutSeconds": 10
+    "failureThreshold": 20
   },
-  "livenessProbe": {
-    "failureThreshold": 3,
+  "readinessProbe": {
     "http": {
-      "headers": [],
-      "path": "/live",
+      "path": "/ready",
       "port": 80,
-      "scheme": "http"
+      "scheme": "http",
+      "headers": []
     },
     "initialDelaySeconds": 0,
-    "periodSeconds": 10,
+    "periodSeconds": 5,
+    "timeoutSeconds": 5,
     "successThreshold": 1,
-    "timeoutSeconds": 30
+    "failureThreshold": 3
+  },
+  "livenessProbe": {
+    "http": {
+      "path": "/live",
+      "port": 80,
+      "scheme": "http",
+      "headers": []
+    },
+    "initialDelaySeconds": 60,
+    "periodSeconds": 30,
+    "timeoutSeconds": 10,
+    "successThreshold": 1,
+    "failureThreshold": 3
   },
   "networking": {
     "auth": false,
     "clientRequestTimeout": 100000,
-    "loadBalancer": "least_number_of_connections",
+    "serverResponseTimeout": 100000,
+    "loadBalancer": "round_robin",
     "port": 80,
     "protocol": "http",
-    "serverResponseTimeout": 100000,
     "singleConnectionLimit": false
   }
 }

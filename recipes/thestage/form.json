@@ -18,26 +18,43 @@
       "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
       "default": ""
     },
+    "autostart_policy": {
+      "title": "Autostart Policy",
+      "description": "Whether to automatically start the container group on deployment.",
+      "type": "boolean",
+      "default": true
+    },
+    "replicas": {
+      "title": "Replicas",
+      "description": "Number of container replicas to run.",
+      "type": "number",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 1
+    },
     "huggingface_access_token": {
-      "title": "HuggingFace access token",
+      "title": "HuggingFace Access Token",
       "description": "Your HuggingFace access token for weight access. Make sure you have requested access to black-forest-labs/FLUX.1-schnell weights.",
       "type": "string",
+      "format": "password",
       "maxLength": 128,
       "minLength": 1,
       "default": ""
     },
     "thestage_auth_token": {
-      "title": "The Stage auth token",
-      "description": "Your TheStage auth token for optimised model access.",
+      "title": "TheStage Auth Token",
+      "description": "Your TheStage auth token for optimized model access. Generate this token at app.thestage.ai under Profile -> API tokens.",
       "type": "string",
+      "format": "password",
       "maxLength": 300,
       "minLength": 1,
       "default": ""
     },
     "auth_token": {
-      "title": "Authorization token",
-      "description": "Authorization token with will be used to protect inference endpoint from public access.",
+      "title": "Authorization Token",
+      "description": "Authorization token that will be used to protect the inference endpoint from public access.",
       "type": "string",
+      "format": "password",
       "maxLength": 100,
       "minLength": 1,
       "default": ""

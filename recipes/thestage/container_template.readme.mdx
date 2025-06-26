@@ -1,28 +1,37 @@
-# TheStage AI Elastic Models: Flux 1 Schnell
+# TheStage AI Elastic Models: FLUX.1-schnell
 
-This recipe provides an example how to deploy optimised by TheStage AI [Flux1-Scnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell) on GeForce-RTX-5090.
+This recipe provides optimized [TheStage AI FLUX.1-schnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell) deployment on GeForce RTX 5090.
 
 ## Resources
 
-- [Flux1-Scnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell)
-- [TheStage AI platform](https://app.thestage.ai/)
+- [TheStage AI FLUX.1-schnell Model](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell)
+- [TheStage AI Platform](https://app.thestage.ai/)
 - [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/thestage/)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=TheStage%20Recipe%20Issue&body=Issue%20with%20TheStage%20FLUX.1-schnell%20recipe%0A%0AImage:%20${props.container.image}%0A%0APlease%20describe%20the%20issue:`}>Report an Issue on GitHub</Link>
 
-## How to generate image
+## How to Generate Images
 
-- Command below can only be run on linux machine with docker installed.
-- Omit --authorization option if you have not set `AUTH_TOKEN` environment variable on deployment.
-- Image will be stored in `.output/flux-1-schnell-s-bs1-paged` directory.
+<Callout variation="note">The command below can only be run on machine with Docker installed. Omit the `--authorization` option if you have not set an `AUTH_TOKEN` environment variable during deployment.</Callout>
 
-<CodeBlock language="bash">{`docker run -e THESTAGE_AUTH_TOKEN=/*paste your thestage ai token here*/ \\
+Generated images will be stored in the `./output/flux-1-schnell-s-bs1-paged` directory.
+
+<CodeBlock language="bash">{`docker run \\
+    -e THESTAGE_AUTH_TOKEN=${props.container.environmentVariables.THESTAGE_AUTH_TOKEN} \\
     -v $(pwd)/output:/output \\
-    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.11 \\
+    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \\
     bash -c 'elastic-models client diffusion \\
         --pos-prompt "photo of a cat" \\
-        --host ${props.networking.dns} \\
-        --protocol https \\
-        --port 443 \\
-        --metadata-host ${props.networking.dns} \\
-        --metadata-port 443 \\
-        --authorization "Bearer /*AUTH_TOKEN*/"'
+        --inference-url https://${props.networking.dns} \\
+        --metadata-url https://${props.networking.dns}/api/metadata \\
+        --authorization "${props.container.environmentVariables.AUTH_TOKEN}"'
 `}</CodeBlock>
+
+## API Endpoints
+
+Your deployed container provides the following endpoints:
+- **Inference**: `{`https://${props.networking.dns}`}`
+- **Metadata**: `{`https://${props.networking.dns}/api/metadata`}`
+- **Health Checks**:
+    - `{`https://${props.networking.dns}/startup`}`
+    - `{`https://${props.networking.dns}/live`}`
+    - `{`https://${props.networking.dns}/ready`}`
