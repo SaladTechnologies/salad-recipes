@@ -1,0 +1,183 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {},
+      "image": "docker.io/saladtechnologies/mds:recipe-gromacs-srcg",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 16,
+        "memory": 24576,
+        "gpuClasses": [
+          "ed563892-aacd-40f5-80b7-90c9be6c759b",
+          "0d062939-7c01-4aae-a2b1-30e315124e51",
+          "f1380143-51cd-4bad-80cb-1f86ee6b49fe",
+          "de00c90b-904b-4d9e-8fc9-1d9a08eb0932",
+          "2b73eef8-be49-4667-8fc0-5c0cb127cfe0"
+        ],
+        "storageAmount": 53687091200
+      }
+    },
+    "name": "",
+    "replicas": 1,
+    "restartPolicy": "always",
+    "readme": "# GROMACS-SRCG\n\n## Access\n- <Link url={`https://${props.networking.dns}/lab`}>JupyterLab</Link> (once running)\n- Click on a running instance to access a browser-based terminal.\n\nKeep in mind that SaladCloud instances are ephemeral and can be reallocated at any time, resetting to a fresh image. Make sure to persist any important data to a remote location, such as S3 or a database, to avoid losing it when the instance is reset.\n\n## Resources\n\n- [The GROMACS-SRCG solution](https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg)\n- [The GitHub repository](https://github.com/SaladTechnologies/mds/tree/main/gromacs-srcg)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/gromacs-srcg)",
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8888,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "GROMACS-SRCG",
+    "description": "[A basic GROMACS image](https://github.com/SaladTechnologies/mds/blob/main/gromacs-srcg/Dockerfile.recipe) running on RTX 4000 series GPUs to help you get started with molecular dynamics simulations on SaladCloud.\n\nPlease familiarize yourself with [the GROMACS-SRCG solution](https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg) before running the recipe.\n\nIncludes JupyterLab for easy terminal access. The VS Code Server CLI is also pre-installed, allowing you to connect to the instance with VS Code for debugging. \nFor more details, please check [the link](https://docs.salad.com/tutorials/vscode-remote-development#interactive-mode) for more information.\n\nYou only need to provide the Container Group Name and select 1 replica to run the recipe. This will create a GROMACS playground environment with example .tpr files available in the /app/systems folder. \n\nIf you specify [addtional environment variables](https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg#environment-variables), the instance will automatically run the simulation using your input and sleep infinity upon completion.",
+    "type": "object",
+    "required": ["container_group_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "CLOUDFLARE_ENDPOINT_URL": {
+        "title": "CLOUDFLARE_ENDPOINT_URL",
+        "description": "The URL of the Cloudflare endpoint.",
+        "type": "string"
+      },
+      "CLOUDFLARE_ID": {
+        "title": "CLOUDFLARE_ID",
+        "description": "The ID of the Cloudflare endpoint.",
+        "type": "string"
+      },
+      "CLOUDFLARE_KEY": {
+        "title": "CLOUDFLARE_KEY",
+        "description": "The key for the Cloudflare endpoint.",
+        "type": "string"
+      },
+      "BUCKET": {
+        "title": "BUCKET",
+        "description": "The name of the R2 bucket.",
+        "type": "string"
+      },
+      "PREFIX": {
+        "title": "PREFIX",
+        "description": "The prefix of folder.",
+        "type": "string"
+      },
+      "FOLDER": {
+        "title": "FOLDER",
+        "description": "The name of the folder.",
+        "type": "string"
+      },
+      "TPR_FILE": {
+        "title": "TPR_FILE",
+        "description": "The name of the TPR file.",
+        "type": "string"
+      },
+      "MAX_STEPS": {
+        "title": "MAX_STEPS",
+        "description": "The number of simulation steps.",
+        "type": "string"
+      },
+      "SAVING_INTERVAL_HOURS": {
+        "title": "SAVING_INTERVAL_HOURS",
+        "description": "The chunk interval (in hours).",
+        "type": "string",
+        "default": "0.5"
+      },
+      "MAX_NO_RESPONSE_TIME": {
+        "title": "MAX_NO_RESPONSE_TIME",
+        "description": "The maximum time (in seconds) to wait for a chunk is completed.",
+        "type": "string",
+        "default": "3600"
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/CLOUDFLARE_ENDPOINT_URL",
+        "path": "/output/container/environmentVariables/CLOUDFLARE_ENDPOINT_URL"
+      },
+      {
+        "op": "copy",
+        "from": "/input/CLOUDFLARE_ID",
+        "path": "/output/container/environmentVariables/CLOUDFLARE_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/CLOUDFLARE_KEY",
+        "path": "/output/container/environmentVariables/CLOUDFLARE_KEY"
+      },
+      {
+        "op": "copy",
+        "from": "/input/BUCKET",
+        "path": "/output/container/environmentVariables/BUCKET"
+      },
+      {
+        "op": "copy",
+        "from": "/input/PREFIX",
+        "path": "/output/container/environmentVariables/PREFIX"
+      },
+      {
+        "op": "copy",
+        "from": "/input/FOLDER",
+        "path": "/output/container/environmentVariables/FOLDER"
+      },
+      {
+        "op": "copy",
+        "from": "/input/TPR_FILE",
+        "path": "/output/container/environmentVariables/TPR_FILE"
+      },
+      {
+        "op": "copy",
+        "from": "/input/MAX_STEPS",
+        "path": "/output/container/environmentVariables/MAX_STEPS"
+      },
+      {
+        "op": "copy",
+        "from": "/input/SAVING_INTERVAL_HOURS",
+        "path": "/output/container/environmentVariables/SAVING_INTERVAL_HOURS"
+      },
+      {
+        "op": "copy",
+        "from": "/input/MAX_NO_RESPONSE_TIME",
+        "path": "/output/container/environmentVariables/MAX_NO_RESPONSE_TIME"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg",
+  "short_description": "Deploy a GROMACS playground for hands-on experimentation",
+  "workload_types": []
+}
