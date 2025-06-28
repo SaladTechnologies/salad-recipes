@@ -1,0 +1,8 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.ultralytics.com",
+  "short_description": "Run YOLO Object Detection Models.",
+  "workload_types": [
+    "objectDetection"
+  ]
+}

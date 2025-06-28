@@ -1,16 +1,14 @@
 from ultralytics import YOLO
 import cv2
-import datetime
 import json
 import numpy as np
 import tempfile
-from fastapi import FastAPI, File, UploadFile, Body, Query
+from fastapi import FastAPI, File, UploadFile, Query, Request
 from fastapi.responses import StreamingResponse
 import io
 from pydantic import BaseModel
-from pytube import YouTube
 import torch
-from typing import List, Optional
+from typing import Optional
 from starlette.responses import JSONResponse
 from cap_from_youtube import cap_from_youtube
 import requests
@@ -34,12 +32,11 @@ if torch.cuda.is_available():
         
         if best_gpu is not None:
             torch.cuda.set_device(best_gpu)
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Load the YOLOv8 model
 model = YOLO(model)
 
-async def process_video_annotated(cap, conf, iou, imgsz, track, tracker, device=device):
+async def process_video_annotated(cap, track, tracker, **kwargs):
     width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS) or 30
@@ -55,9 +52,9 @@ async def process_video_annotated(cap, conf, iou, imgsz, track, tracker, device=
         if not success:
             break
         if track:
-            results = model.track(frame, conf=conf, iou=iou, imgsz=imgsz, tracker=tracker, device=device)
+            results = model.track(frame, tracker=tracker, **kwargs)
         else:
-            results = model.predict(frame, conf=conf, iou=iou, imgsz=imgsz, device=device)
+            results = model.predict(frame, **kwargs)
         annotated = results[0].plot()
         out.write(annotated)
 
@@ -65,7 +62,7 @@ async def process_video_annotated(cap, conf, iou, imgsz, track, tracker, device=
     return out_path
 
 
-async def process_video(cap, conf, iou, imgsz, track, tracker, device=device):
+async def process_video(cap, track, tracker, **kwargs):
     all_detections = []
     frame_count = 0
     fps = cap.get(cv2.CAP_PROP_FPS)
@@ -77,9 +74,9 @@ async def process_video(cap, conf, iou, imgsz, track, tracker, device=device):
             break
         timestamp = frame_count / fps
         if track:
-            results = model.track(frame, conf=conf, iou=iou, imgsz=imgsz, tracker=tracker, device=device)
+            results = model.track(frame,  tracker=tracker, **kwargs)
         else:
-            results = model.predict(frame, conf=conf, iou=iou, imgsz=imgsz, device=device)
+            results = model.predict(frame,  **kwargs)
         detections = json.loads(results[0].tojson())
         for detection in detections:
             detection['timestamp'] = timestamp
@@ -89,25 +86,34 @@ async def process_video(cap, conf, iou, imgsz, track, tracker, device=device):
     return all_detections
 
 
-
-
 @app.post("/process_file")
 async def process_file(
+    request: Request,
     file: UploadFile = File(...),
     annotated: bool = Query(False),
-    conf: float = Query(0.25),
-    iou: float = Query(0.7),
-    imgsz: int = Query(640),
     track: bool = Query(False),
-    tracker: Optional[str] = Query("bytetrack.yaml")
+    tracker: Optional[str] = Query("bytetrack.yaml"),
+
 ):
     contents = await file.read()
+    # Remove the known parameters so only YOLO ones remain
+    # Get all query params, strip the known ones
+    params = dict(request.query_params)
+    for key in ["annotated", "track", "tracker"]:
+        params.pop(key, None)
+
+    # Convert to float if possible
+    extra_params = {
+        k: float(v) if v.replace('.', '', 1).isdigit() else v
+        for k, v in params.items()
+    }
+
     # Try to read as an image
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     if img is not None:
         # Process as image
-        results = model.predict(img, conf=conf, iou=iou, imgsz=imgsz, device=device)
+        results = model.predict(img, **extra_params)
         if annotated:
             annotated_img = results[0].plot()
             _, buffer = cv2.imencode('.jpg', annotated_img)
@@ -123,7 +129,7 @@ async def process_file(
         temp_filename = temp.name
         cap = cv2.VideoCapture(temp_filename)
         if annotated:
-            output_path = await process_video_annotated(cap, conf, iou, imgsz, track, tracker, device=device)
+            output_path = await process_video_annotated(cap, track, tracker, **extra_params)
             cap.release()
             os.remove(temp_filename)
 
@@ -134,7 +140,7 @@ async def process_file(
 
             return StreamingResponse(iterfile(), media_type="video/mp4")
         else:
-            detections = await process_video(cap, conf, iou, imgsz, track, tracker, device=device)
+            detections = await process_video(cap, track, tracker, **extra_params)
             cap.release()
             os.remove(temp_filename)
             return detections
@@ -146,20 +152,30 @@ class URLRequest(BaseModel):
 
 @app.post("/process_url")
 async def process_url(
+    request: Request,
     url_request: URLRequest,
     annotated: bool = Query(False),
-    conf: float = Query(0.25),
-    iou: float = Query(0.7),
-    imgsz: int = Query(640),
     track: bool = Query(False),
-    tracker: Optional[str] = Query("bytetrack.yaml")
+    tracker: Optional[str] = Query("bytetrack.yaml"),
 ):
     url = url_request.url
     try:
+        # Remove the known parameters so only YOLO ones remain
+        # Get all query params, strip the known ones
+        params = dict(request.query_params)
+        for key in ["annotated", "track", "tracker"]:
+            params.pop(key, None)
+
+        # Convert to float if possible
+        extra_params = {
+            k: float(v) if v.replace('.', '', 1).isdigit() else v
+            for k, v in params.items()
+        }
+
         if "youtube.com" in url or "youtu.be" in url:
             cap = cap_from_youtube(url, "720p")
             if annotated:
-                output_path = await process_video_annotated(cap, conf, iou, imgsz, track, tracker, device=device)
+                output_path = await process_video_annotated(cap, track, tracker, **extra_params)
                 cap.release()
                 def iterfile():
                     with open(output_path, "rb") as f:
@@ -168,34 +184,55 @@ async def process_url(
 
                 return StreamingResponse(iterfile(), media_type="video/mp4")
             else:
-                detections = await process_video(cap, conf, iou, imgsz, track, tracker, device=device)
+                detections = await process_video(cap, track, tracker, **extra_params)
                 cap.release()
                 return detections
         else:
-            # Check if the URL is an image
             response = requests.get(url, stream=True)
             content_type = response.headers.get('Content-Type', '')
+
             if 'image' in content_type:
-                # Download the image
+                # Handle image
                 img_array = np.asarray(bytearray(response.content), dtype=np.uint8)
                 img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
                 if img is not None:
-                    # Process as image
-                    results = model.predict(img, conf=conf, iou=iou, imgsz=imgsz, device=device)
+                    results = model.predict(img, **extra_params)
                     if annotated:
                         annotated_img = results[0].plot()
                         _, buffer = cv2.imencode('.jpg', annotated_img)
                         return StreamingResponse(io.BytesIO(buffer), media_type="image/jpeg")
                     else:
-                        # Collect labels and detections
                         detections = json.loads(results[0].tojson())
-                        # Return JSON with labels and detections
                         return detections
+                else:
+                    return JSONResponse(content={"error": "Could not decode the image"}, status_code=400)
+
+            elif 'video' in content_type or url.endswith(('.mp4', '.webm', '.mov', '.mkv')):
+                # Handle direct video URL
+                tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+                with open(tmp.name, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                cap = cv2.VideoCapture(tmp.name)
+
+                if annotated:
+                    output_path = await process_video_annotated(cap, track, tracker, **extra_params)
+                    cap.release()
+                    def iterfile():
+                        with open(output_path, "rb") as f:
+                            yield from f
+                        os.remove(output_path)
+                        os.remove(tmp.name)
+                    return StreamingResponse(iterfile(), media_type="video/mp4")
+                else:
+                    detections = await process_video(cap, track, tracker, **extra_params)
+                    cap.release()
+                    os.remove(tmp.name)
+                    return detections
 
             else:
-                return JSONResponse(content={"error": "Could not decode the image"}, status_code=400)
-            # else:
-            #     return JSONResponse(content={"error": "Invalid URL: Not an image or YouTube video"}, status_code=400)
+                return JSONResponse(content={"error": "Invalid URL: Not an image or video format we support"}, status_code=400)
+
     except Exception as e:
         return JSONResponse(content={"error": f"An error occurred: {str(e)}"}, status_code=500)
 

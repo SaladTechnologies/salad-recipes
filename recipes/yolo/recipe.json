@@ -1,0 +1,134 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# YOLO Inference API\n\nRun Ultralytics YOLO models on images, video files, or YouTube links. Supports both visual output and structured detection results.\n\n- <Link href={`https://${props.networking.dns}/docs`}>Swagger API Docs</Link>\n- [Ultralytics Docs](https://docs.ultralytics.com)\n\n\n<Callout variation=\"info\">\nThis API accepts any model configuration supported by the Ultralytics YOLO library as query parameters — such as <code>conf</code>, <code>iou</code>, <code>imgsz</code>, and others. For annotated videos makes sure they can be processed in less than 90 seconds, otherwise the request will timeout. For more details on parameters, refer to the <Link href=\"https://docs.ultralytics.com/modes/inference/\">Ultralytics Inference Docs</Link>.\n</Callout>\n\n## Output Types\n\n- <code>annotated=true</code>: Returns an image or video file with bounding boxes and confidence scores rendered on top.\n- <code>annotated=false</code> (default): Returns structured JSON output with detection results.\n\n<Callout variation=\"note\">Omit the <code>Salad-Api-Key</code> header if you do not have auth enabled.</Callout>\n\n---\n\n## Curl Examples\n\n### Image URL, JSON output\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/process_url \\\\\n  -H 'Content-Type: application/json' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -d '{\"url\": \"https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg\"}'`}</CodeBlock>\n\n### Image Upload with Confidence Threshold, Annotated output\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/process_file?annotated=true&conf=0.5 \\\\\n  -H 'Content-Type: multipart/form-data' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -F \"file=@test_pic.jpg\" \\\\\n  --output result.jpg`}</CodeBlock>\n\n### Process Local Video with object tracking, Annotated output\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/process_file?annotated=true&track=true \\\\\n  -H 'Content-Type: multipart/form-data' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -F \"file=@new_york.mp4\" \\\\\n  --output result.mp4`}</CodeBlock>\n\n### Process YouTube Video Link, JSON output\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/process_url \\\\\n  -H 'Content-Type: application/json' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -d '{\"url\": \"https://www.youtube.com/watch?v=qCId-swJ19w\"}'`}</CodeBlock>\n\n### Add Custom Parameters (e.g. `imgsz`, `classes`, `max_det`)\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/process_url?conf=0.4&imgsz=512&max_det=5 \\\\\n  -H 'Content-Type: application/json' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -d '{\"url\": \"https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg\"}'`}</CodeBlock>\n\n\n---\n\n## Additional Parameters\n\nThe API supports all YOLOv8-compatible parameters as query params — including but not limited to:\n\n- `conf` — confidence threshold (e.g., `conf=0.4`)\n- `iou` — intersection-over-union threshold\n- `imgsz` — image size\n- `classes` — filter by class IDs\n- `max_det` — maximum number of detections\n\nThese can be appended to any request URL.\n\n[See the full list of YOLOv8 parameters →](https://docs.ultralytics.com/modes/predict/#optional-args)\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "saladtechnologies/yolov8-recipe:1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 16384,
+        "gpuClasses": ["2b73eef8-be49-4667-8fc0-5c0cb127cfe0"],
+        "storageAmount": 53687091200,
+        "shmSize": 64
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "readinessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 80,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 1,
+      "successThreshold": 1,
+      "timeoutSeconds": 1
+    },
+    "startupProbe": {
+      "failureThreshold": 15,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 80,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 15,
+      "periodSeconds": 3,
+      "successThreshold": 2,
+      "timeoutSeconds": 10
+    },
+    "livenessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 80,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 30,
+      "periodSeconds": 10,
+      "successThreshold": 1,
+      "timeoutSeconds": 30
+    },
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 80,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "Yolo",
+    "description": "Run fast and accurate object detection with YOLO, a computer vision model for detecting objects in images and video.\n\nThis Salad recipe provides a REST API interface for inference via FastAPI. It includes support for:\n\n- Image files\n- Video files\n- Remote URLs (images, videos, YouTube)\n- Annotated (visual) or raw JSON detection results\n- Object Tracking\n- YOLO parameter customization\n- Swagger API Docs. Available after deployment\n\n## 📤 Request Format\n\nThe app exposes two endpoints:\n\n- `POST /process_file`: Accepts file uploads via `multipart/form-data`\n- `POST /process_url`: Accepts paths to remote images, videos or YouTube URL\n\nBoth support:\n\n- `annotated`: `true` to return annotated visuals with boxes and confidence scores\n- `track`: Enables object tracking (video only)\n- Any additional YOLO inference settings (e.g., `conf`, `iou`, `imgsz` etc.)\n\n## 🧠 Supported Models\n\nYou can use any YOLO base model or your own fine-tuned model by setting the `Model Name` environment variable:\n\n- Any base detection models: `yolov11n.pt`, `yolov8s.pt`...\n- Custom `.pt` models\n\n[See all official YOLO models →](https://docs.ultralytics.com/models/)\n",
+    "type": "object",
+    "required": ["container_group_name", "model_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
+        "type": "boolean",
+        "default": true
+      },
+      "model_name": {
+        "title": "Model Name",
+        "description": "The name of the model to use from the YOLO family. Example: 'yolov8m.pt'.",
+        "type": "string",
+        "default": "yolov8m.pt",
+        "minLength": 1
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_name",
+        "path": "/output/container/environmentVariables/MODEL"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.ultralytics.com",
+  "short_description": "Run YOLO Object Detection Models.",
+  "workload_types": ["objectDetection"]
+}
