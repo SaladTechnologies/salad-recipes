@@ -1,0 +1,17 @@
+black
+flake8
+hurry.filesize==0.9
+ultralytics
+yt-dlp
+opencv-python
+pafy
+cap_from_youtube
+fastapi
+azure-storage-blob
+azure-identity
+python-multipart
+pydantic
+uvicorn
+pytube
+torch
+starlette
