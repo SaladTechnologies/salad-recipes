@@ -1,0 +1,76 @@
+# YOLO Inference API
+
+Run Ultralytics YOLO models on images, video files, or YouTube links. Supports both visual output and structured detection results.
+
+- <Link href={`https://${props.networking.dns}/docs`}>Swagger API Docs</Link>
+- [Ultralytics Docs](https://docs.ultralytics.com)
+
+
+<Callout variation="info">
+This API accepts any model configuration supported by the Ultralytics YOLO library as query parameters — such as <code>conf</code>, <code>iou</code>, <code>imgsz</code>, and others. For annotated videos makes sure they can be processed in less than 90 seconds, otherwise the request will timeout. For more details on parameters, refer to the <Link href="https://docs.ultralytics.com/modes/inference/">Ultralytics Inference Docs</Link>.
+</Callout>
+
+## Output Types
+
+- <code>annotated=true</code>: Returns an image or video file with bounding boxes and confidence scores rendered on top.
+- <code>annotated=false</code> (default): Returns structured JSON output with detection results.
+
+<Callout variation="note">Omit the <code>Salad-Api-Key</code> header if you do not have auth enabled.</Callout>
+
+---
+
+## Curl Examples
+
+### Image URL, JSON output
+
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/process_url \\
+  -H 'Content-Type: application/json' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -d '{"url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg"}'`}</CodeBlock>
+
+### Image Upload with Confidence Threshold, Annotated output
+
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/process_file?annotated=true&conf=0.5 \\
+  -H 'Content-Type: multipart/form-data' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -F "file=@test_pic.jpg" \\
+  --output result.jpg`}</CodeBlock>
+
+### Process Local Video with object tracking, Annotated output
+
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/process_file?annotated=true&track=true \\
+  -H 'Content-Type: multipart/form-data' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -F "file=@new_york.mp4" \\
+  --output result.mp4`}</CodeBlock>
+
+### Process YouTube Video Link, JSON output
+
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/process_url \\
+  -H 'Content-Type: application/json' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -d '{"url": "https://www.youtube.com/watch?v=qCId-swJ19w"}'`}</CodeBlock>
+
+### Add Custom Parameters (e.g. `imgsz`, `classes`, `max_det`)
+
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/process_url?conf=0.4&imgsz=512&max_det=5 \\
+  -H 'Content-Type: application/json' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -d '{"url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg"}'`}</CodeBlock>
+
+
+---
+
+## Additional Parameters
+
+The API supports all YOLOv8-compatible parameters as query params — including but not limited to:
+
+- `conf` — confidence threshold (e.g., `conf=0.4`)
+- `iou` — intersection-over-union threshold
+- `imgsz` — image size
+- `classes` — filter by class IDs
+- `max_det` — maximum number of detections
+
+These can be appended to any request URL.
+
+[See the full list of YOLOv8 parameters →](https://docs.ultralytics.com/modes/predict/#optional-args)

@@ -1,0 +1,33 @@
+Run fast and accurate object detection with YOLO, a computer vision model for detecting objects in images and video.
+
+This Salad recipe provides a REST API interface for inference via FastAPI. It includes support for:
+
+- Image files
+- Video files
+- Remote URLs (images, videos, YouTube)
+- Annotated (visual) or raw JSON detection results
+- Object Tracking
+- YOLO parameter customization
+- Swagger API Docs. Available after deployment
+
+## 📤 Request Format
+
+The app exposes two endpoints:
+
+- `POST /process_file`: Accepts file uploads via `multipart/form-data`
+- `POST /process_url`: Accepts paths to remote images, videos or YouTube URL
+
+Both support:
+
+- `annotated`: `true` to return annotated visuals with boxes and confidence scores
+- `track`: Enables object tracking (video only)
+- Any additional YOLO inference settings (e.g., `conf`, `iou`, `imgsz` etc.)
+
+## 🧠 Supported Models
+
+You can use any YOLO base model or your own fine-tuned model by setting the `Model Name` environment variable:
+
+- Any base detection models: `yolov11n.pt`, `yolov8s.pt`...
+- Custom `.pt` models
+
+[See all official YOLO models →](https://docs.ultralytics.com/models/)
