@@ -17,7 +17,7 @@ import os
 # Initialize FastAPI app
 app = FastAPI()
 
-model = os.getenv("MODEL", "yolov8m.pt")
+model = os.getenv("MODEL", "yolo11l.pt")
 
 if torch.cuda.is_available():
         # Find which gpu is the best 

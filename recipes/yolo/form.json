@@ -24,9 +24,9 @@
     },
     "model_name": {
       "title": "Model Name",
-      "description": "The name of the model to use from the YOLO family. Example: 'yolov8m.pt'.",
+      "description": "The name of the model to use from the YOLO family. Example: 'yolo11l.pt'.",
       "type": "string",
-      "default": "yolov8m.pt",
+      "default": "yolo11l.pt",
       "minLength": 1
     }
   }
