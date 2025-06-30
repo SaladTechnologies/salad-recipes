@@ -14,7 +14,6 @@ from cap_from_youtube import cap_from_youtube
 import requests
 import os
 
-
 # Initialize FastAPI app
 app = FastAPI()
 
