@@ -36,6 +36,54 @@ if torch.cuda.is_available():
 # Load the YOLOv8 model
 model = YOLO(model)
 
+
+# Define valid types for parameters
+TRACK_KWARGS = {
+    "tracker_type": str,
+    "track_high_thresh": float,
+    "track_low_thresh": float,
+    "new_track_thresh": float,
+    "track_buffer": int,
+    "match_thresh": float,
+    "fuse_score": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v),
+    "gmc_method": str,
+    "proximity_thresh": float,
+    "appearance_thresh": float,
+    "with_reid": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v)
+    }
+
+PREDICT_KWARGS = {
+    "conf": float,
+    "iou": float,
+    "imgsz": int,
+    "rect": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v),
+    "half": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v),
+    "batch": int,
+    "max_det": int,
+    "vid_stride": int,
+    "stream_buffer": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v),
+    "visualize": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v),
+    "augment": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v),
+    "agnostic_nms": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v),
+    "retina_masks": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v),
+    "project": str,
+    "name": str,
+    "stream": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v),
+    "verbose": lambda v: v.lower() == "true" if isinstance(v, str) else bool(v)
+}
+
+ALL_KWARGS = {**TRACK_KWARGS, **PREDICT_KWARGS}
+
+def parse_kwargs(params):
+    valid = {}
+    for k, v in params.items():
+        if k in ALL_KWARGS:
+            try:
+                valid[k] = ALL_KWARGS[k](v)
+            except Exception:
+                continue
+    return valid
+
 async def process_video_annotated(cap, track, tracker, **kwargs):
     width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -103,10 +151,7 @@ async def process_file(
         params.pop(key, None)
 
     # Convert to float if possible
-    extra_params = {
-        k: float(v) if v.replace('.', '', 1).isdigit() else v
-        for k, v in params.items()
-    }
+    extra_params = parse_kwargs(params)
 
     # Try to read as an image
     nparr = np.frombuffer(contents, np.uint8)
@@ -167,10 +212,7 @@ async def process_url(
             params.pop(key, None)
 
         # Convert to float if possible
-        extra_params = {
-            k: float(v) if v.replace('.', '', 1).isdigit() else v
-            for k, v in params.items()
-        }
+        extra_params = parse_kwargs(params)
 
         if "youtube.com" in url or "youtu.be" in url:
             cap = cap_from_youtube(url, "720p")
