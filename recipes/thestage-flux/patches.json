@@ -1,0 +1,54 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/MODEL_REPO",
+      "value": "black-forest-labs/FLUX.1-schnell"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/MODEL_SIZE",
+      "value": "S"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/MODEL_BATCH_SIZE",
+      "value": 1
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/MODEL_TYPE",
+      "value": "diffusion"
+    },
+    {
+      "op": "copy",
+      "from": "/input/huggingface_access_token",
+      "path": "/output/container/environmentVariables/HUGGINGFACE_ACCESS_TOKEN"
+    },
+    {
+      "op": "copy",
+      "from": "/input/thestage_auth_token",
+      "path": "/output/container/environmentVariables/THESTAGE_AUTH_TOKEN"
+    },
+    {
+      "op": "copy",
+      "from": "/input/auth_token",
+      "path": "/output/container/environmentVariables/AUTH_TOKEN"
+    }
+  ]
+]
