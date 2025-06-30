@@ -4,7 +4,7 @@
   "container": {
     "command": [],
     "environmentVariables": {},
-    "image": "saladtechnologies/yolov8-recipe:1.0.0",
+    "image": "saladtechnologies/yolo-recipe:v11-large-1.0.0",
     "imageCaching": true,
     "resources": {
       "cpu": 8,
@@ -21,7 +21,7 @@
   "restartPolicy": "always",
   "replicas": 3,
   "readinessProbe": {
-    "failureThreshold": 3,
+    "failureThreshold": 1,
     "http": {
       "headers": [],
       "path": "/health",
