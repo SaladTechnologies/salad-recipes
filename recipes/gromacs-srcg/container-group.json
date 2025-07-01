@@ -9,11 +9,8 @@
       "cpu": 16,
       "memory": 24576,
       "gpuClasses": [
-       "ed563892-aacd-40f5-80b7-90c9be6c759b",
-       "0d062939-7c01-4aae-a2b1-30e315124e51",
-       "f1380143-51cd-4bad-80cb-1f86ee6b49fe",
-       "de00c90b-904b-4d9e-8fc9-1d9a08eb0932",
-       "2b73eef8-be49-4667-8fc0-5c0cb127cfe0"
+       "ed563892-aacd-40f5-80b7-90c9be6c759b"
+
       ],
       "storageAmount": 53687091200
     }

@@ -19,56 +19,6 @@
       "op": "copy",
       "from": "/input/networking_auth",
       "path": "/output/networking/auth"
-    },
-    {
-      "op": "copy",
-      "from": "/input/CLOUDFLARE_ENDPOINT_URL",
-      "path": "/output/container/environmentVariables/CLOUDFLARE_ENDPOINT_URL"
-    },
-    {
-      "op": "copy",
-      "from": "/input/CLOUDFLARE_ID",
-      "path": "/output/container/environmentVariables/CLOUDFLARE_ID"
-    },
-    {
-      "op": "copy",
-      "from": "/input/CLOUDFLARE_KEY",
-      "path": "/output/container/environmentVariables/CLOUDFLARE_KEY"
-    },
-    {
-      "op": "copy",
-      "from": "/input/BUCKET",
-      "path": "/output/container/environmentVariables/BUCKET"
-    },
-    {
-      "op": "copy",
-      "from": "/input/PREFIX",
-      "path": "/output/container/environmentVariables/PREFIX"
-    },
-    {
-      "op": "copy",
-      "from": "/input/FOLDER",
-      "path": "/output/container/environmentVariables/FOLDER"
-    },
-    {
-      "op": "copy",
-      "from": "/input/TPR_FILE",
-      "path": "/output/container/environmentVariables/TPR_FILE"
-    },
-    {
-      "op": "copy",
-      "from": "/input/MAX_STEPS",
-      "path": "/output/container/environmentVariables/MAX_STEPS"
-    },
-    {
-      "op": "copy",
-      "from": "/input/SAVING_INTERVAL_HOURS",
-      "path": "/output/container/environmentVariables/SAVING_INTERVAL_HOURS"
-    },
-    {
-      "op": "copy",
-      "from": "/input/MAX_NO_RESPONSE_TIME",
-      "path": "/output/container/environmentVariables/MAX_NO_RESPONSE_TIME"
     }
   ]
 ]
