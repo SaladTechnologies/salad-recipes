@@ -29,9 +29,9 @@ Generated images will be stored in the `./output/flux-1-schnell-s-bs1-paged` dir
 ## API Endpoints
 
 Your deployed container provides the following endpoints:
-- **Inference**: `{`https://${props.networking.dns}`}`
-- **Metadata**: `{`https://${props.networking.dns}/api/metadata`}`
+- **Inference**: <Link url={`https://${props.networking.dns}`}>{`https://${props.networking.dns}`}</Link>
+- **Metadata**: <Link url={`https://${props.networking.dns}/api/metadata`}>{`https://${props.networking.dns}/api/metadata`}</Link>
 - **Health Checks**:
-    - `{`https://${props.networking.dns}/startup`}`
-    - `{`https://${props.networking.dns}/live`}`
-    - `{`https://${props.networking.dns}/ready`}`
+    - <Link url={`https://${props.networking.dns}/startup`}>{`https://${props.networking.dns}/startup`}</Link>
+    - <Link url={`https://${props.networking.dns}/live`}>{`https://${props.networking.dns}/live`}</Link>
+    - <Link url={`https://${props.networking.dns}/ready`}>{`https://${props.networking.dns}/ready`}</Link>

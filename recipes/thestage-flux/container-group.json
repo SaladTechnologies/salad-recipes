@@ -18,7 +18,7 @@
   },
   "autostartPolicy": true,
   "restartPolicy": "always",
-  "replicas": 1,
+  "replicas": 3,
   "startupProbe": {
     "http": {
       "headers": [],
