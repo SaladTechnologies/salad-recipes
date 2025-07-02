@@ -15,18 +15,18 @@ Explore TheStage AI [model library](https://app.thestage.ai/models) to find more
 
 To generate an image, you'll need a Linux machine with Docker installed. Here's an example command:
 
-<CodeBlock language="bash">
-    docker run \\
-    -e THESTAGE_AUTH_TOKEN=YOUR_THESTAGE_AUTH_TOKEN \\
-    -e SALAD_ACCESS_DOMAIN_NAME=SALAD_ACCESS_DOMAIN_NAME \\
-    -v $(pwd)/output:/output \\
-    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \\
-    bash -c 'elastic-models client diffusion \\
-        --pos-prompt "photo of a cat" \\
-        --inference-url ${SALAD_ACCESS_DOMAIN_NAME} \\
-        --metadata-url ${SALAD_ACCESS_DOMAIN_NAME}/api/metadata \\
-        --authorization "YOUR_AUTH_TOKEN"'
-</CodeBlock>
+```shell
+docker run \\
+-e THESTAGE_AUTH_TOKEN=$YOUR_THESTAGE_AUTH_TOKEN \\
+-e SALAD_ACCESS_DOMAIN_NAME=$SALAD_ACCESS_DOMAIN_NAME \\
+-v $(pwd)/output:/output \\
+public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \\
+bash -c 'elastic-models client diffusion \\
+    --pos-prompt \"photo of a cat\" \\
+    --inference-url $SALAD_ACCESS_DOMAIN_NAME \\
+    --metadata-url $SALAD_ACCESS_DOMAIN_NAME/api/metadata \\
+    --authorization $AUTHORIZATION_TOKEN'
+```
 
 ## Authorization
 
