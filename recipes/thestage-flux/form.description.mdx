@@ -1,0 +1,33 @@
+Deploy optimized [TheStage AI FLUX.1-schnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell) on GeForce RTX 5090.
+Explore TheStage AI [model library](https://app.thestage.ai/models) to find more models.
+
+<Callout variation="info">This recipe provides an optimized FLUX.1-schnell implementation specifically tuned for RTX 5090 GPUs, offering improved performance over standard deployments.</Callout>
+
+## Prerequisites
+
+- **HuggingFace Access Token**: Your HuggingFace access token for model weight access. Make sure you have requested access to [black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) weights
+- **TheStage Auth Token**: Your TheStage API token for optimized model access. Generate this at [app.thestage.ai](https://app.thestage.ai) under Profile -> API tokens
+- **Authorization Token**: Custom token to protect your inference endpoint from public access
+
+<Callout variation="warning">Ensure you have proper access permissions for the FLUX.1-schnell model weights on HuggingFace before deploying.</Callout>
+
+## Generating Images
+
+To generate an image, you'll need a Linux machine with Docker installed. Here's an example command:
+
+<CodeBlock language="bash">{`docker run \\
+    -e THESTAGE_AUTH_TOKEN=YOUR_THESTAGE_AUTH_TOKEN \\
+    -e SALAD_ACCESS_DOMAIN_NAME=SALAD_ACCESS_DOMAIN_NAME \\
+    -v $(pwd)/output:/output \\
+    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \\
+    bash -c 'elastic-models client diffusion \\
+        --pos-prompt "photo of a cat" \\
+        --inference-url ${SALAD_ACCESS_DOMAIN_NAME} \\
+        --metadata-url ${SALAD_ACCESS_DOMAIN_NAME}/api/metadata \\
+        --authorization "YOUR_AUTH_TOKEN"'
+`}</CodeBlock>
+
+## Authorization
+
+If you don't want your endpoint to be public, set the `Authorization Token` when deploying the container group.
+When the authorization token is set, you must include the `--authorization "YOUR_AUTH_TOKEN"` option with your token to the client/benchmark generation command.

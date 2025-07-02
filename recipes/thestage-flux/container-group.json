@@ -1,0 +1,70 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {},
+    "image": "public.ecr.aws/i3f7g5s7/thestage/elastic-models:0.0.14.blackwell",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 4,
+      "memory": 8192,
+      "gpuClasses": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "storageAmount": 107374182400
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3,
+  "startupProbe": {
+    "http": {
+      "headers": [],
+      "path": "/startup",
+      "port": 80,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 60,
+    "periodSeconds": 90,
+    "timeoutSeconds": 10,
+    "successThreshold": 1,
+    "failureThreshold": 20
+  },
+  "readinessProbe": {
+    "http": {
+      "path": "/ready",
+      "port": 80,
+      "scheme": "http",
+      "headers": []
+    },
+    "initialDelaySeconds": 0,
+    "periodSeconds": 5,
+    "timeoutSeconds": 5,
+    "successThreshold": 1,
+    "failureThreshold": 3
+  },
+  "livenessProbe": {
+    "http": {
+      "path": "/live",
+      "port": 80,
+      "scheme": "http",
+      "headers": []
+    },
+    "initialDelaySeconds": 60,
+    "periodSeconds": 30,
+    "timeoutSeconds": 10,
+    "successThreshold": 1,
+    "failureThreshold": 3
+  },
+  "networking": {
+    "auth": false,
+    "clientRequestTimeout": 100000,
+    "serverResponseTimeout": 100000,
+    "loadBalancer": "round_robin",
+    "port": 80,
+    "protocol": "http",
+    "singleConnectionLimit": false
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "title": "TheStage AI Elastic Models: Flux 1 Schnell",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "huggingface_access_token",
+    "thestage_auth_token",
+    "auth_token"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+      "default": ""
+    },
+    "huggingface_access_token": {
+      "title": "HuggingFace Access Token",
+      "description": "Your HuggingFace access token for weight access. Make sure you have requested access to black-forest-labs/FLUX.1-schnell weights.",
+      "type": "string",
+      "format": "password",
+      "maxLength": 128,
+      "minLength": 1,
+      "default": ""
+    },
+    "thestage_auth_token": {
+      "title": "TheStage Auth Token",
+      "description": "Your TheStage auth token for optimized model access. Generate this token at app.thestage.ai under Profile -> API tokens.",
+      "type": "string",
+      "format": "password",
+      "maxLength": 300,
+      "minLength": 1,
+      "default": ""
+    },
+    "auth_token": {
+      "title": "Authorization Token",
+      "description": "Authorization token that will be used to protect the inference endpoint from public access.",
+      "type": "string",
+      "format": "password",
+      "maxLength": 100,
+      "minLength": 1,
+      "default": ""
+    }
+  }
+}

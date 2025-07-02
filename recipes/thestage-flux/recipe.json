@@ -1,0 +1,172 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# TheStage AI Elastic Models: FLUX.1-schnell\n\nThis recipe provides optimized [TheStage AI FLUX.1-schnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell) deployment on GeForce RTX 5090.\n\n## Resources\n\n- [TheStage AI FLUX.1-schnell Model](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell)\n- [TheStage AI Platform](https://app.thestage.ai/)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/thestage/)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=TheStage%20Recipe%20Issue&body=Issue%20with%20TheStage%20FLUX.1-schnell%20recipe%0A%0AImage:%20${props.container.image}%0A%0APlease%20describe%20the%20issue:`}>Report an Issue on GitHub</Link>\n\n## How to Generate Images\n\n<Callout variation=\"note\">The command below can only be run on machine with Docker installed. Omit the `--authorization` option if you have not set an `AUTH_TOKEN` environment variable during deployment.</Callout>\n\nGenerated images will be stored in the `./output/flux-1-schnell-s-bs1-paged` directory.\n\n<CodeBlock language=\"bash\">{`docker run \\\\\n    -e THESTAGE_AUTH_TOKEN=${props.container.environmentVariables.THESTAGE_AUTH_TOKEN} \\\\\n    -v $(pwd)/output:/output \\\\\n    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \\\\\n    bash -c 'elastic-models client diffusion \\\\\n        --pos-prompt \"photo of a cat\" \\\\\n        --inference-url https://${props.networking.dns} \\\\\n        --metadata-url https://${props.networking.dns}/api/metadata \\\\\n        --authorization \"${props.container.environmentVariables.AUTH_TOKEN}\"'\n`}</CodeBlock>\n\n## API Endpoints\n\nYour deployed container provides the following endpoints:\n- **Inference**: <Link url={`https://${props.networking.dns}`}>{`https://${props.networking.dns}`}</Link>\n- **Metadata**: <Link url={`https://${props.networking.dns}/api/metadata`}>{`https://${props.networking.dns}/api/metadata`}</Link>\n- **Health Checks**:\n    - <Link url={`https://${props.networking.dns}/startup`}>{`https://${props.networking.dns}/startup`}</Link>\n    - <Link url={`https://${props.networking.dns}/live`}>{`https://${props.networking.dns}/live`}</Link>\n    - <Link url={`https://${props.networking.dns}/ready`}>{`https://${props.networking.dns}/ready`}</Link>",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "public.ecr.aws/i3f7g5s7/thestage/elastic-models:0.0.14.blackwell",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 4,
+        "memory": 8192,
+        "gpuClasses": ["851399fb-7329-4195-a042-d6514b28cf33"],
+        "storageAmount": 107374182400
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "startupProbe": {
+      "http": {
+        "headers": [],
+        "path": "/startup",
+        "port": 80,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 60,
+      "periodSeconds": 90,
+      "timeoutSeconds": 10,
+      "successThreshold": 1,
+      "failureThreshold": 20
+    },
+    "readinessProbe": {
+      "http": {
+        "path": "/ready",
+        "port": 80,
+        "scheme": "http",
+        "headers": []
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 5,
+      "timeoutSeconds": 5,
+      "successThreshold": 1,
+      "failureThreshold": 3
+    },
+    "livenessProbe": {
+      "http": {
+        "path": "/live",
+        "port": 80,
+        "scheme": "http",
+        "headers": []
+      },
+      "initialDelaySeconds": 60,
+      "periodSeconds": 30,
+      "timeoutSeconds": 10,
+      "successThreshold": 1,
+      "failureThreshold": 3
+    },
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "serverResponseTimeout": 100000,
+      "loadBalancer": "round_robin",
+      "port": 80,
+      "protocol": "http",
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "TheStage AI Elastic Models: Flux 1 Schnell",
+    "description": "Deploy optimized [TheStage AI FLUX.1-schnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell) on GeForce RTX 5090.\nExplore TheStage AI [model library](https://app.thestage.ai/models) to find more models.\n\n<Callout variation=\"info\">This recipe provides an optimized FLUX.1-schnell implementation specifically tuned for RTX 5090 GPUs, offering improved performance over standard deployments.</Callout>\n\n## Prerequisites\n\n- **HuggingFace Access Token**: Your HuggingFace access token for model weight access. Make sure you have requested access to [black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) weights\n- **TheStage Auth Token**: Your TheStage API token for optimized model access. Generate this at [app.thestage.ai](https://app.thestage.ai) under Profile -> API tokens\n- **Authorization Token**: Custom token to protect your inference endpoint from public access\n\n<Callout variation=\"warning\">Ensure you have proper access permissions for the FLUX.1-schnell model weights on HuggingFace before deploying.</Callout>\n\n## Generating Images\n\nTo generate an image, you'll need a Linux machine with Docker installed. Here's an example command:\n\n<CodeBlock language=\"bash\">{`docker run \\\\\n    -e THESTAGE_AUTH_TOKEN=YOUR_THESTAGE_AUTH_TOKEN \\\\\n    -e SALAD_ACCESS_DOMAIN_NAME=SALAD_ACCESS_DOMAIN_NAME \\\\\n    -v $(pwd)/output:/output \\\\\n    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \\\\\n    bash -c 'elastic-models client diffusion \\\\\n        --pos-prompt \"photo of a cat\" \\\\\n        --inference-url ${SALAD_ACCESS_DOMAIN_NAME} \\\\\n        --metadata-url ${SALAD_ACCESS_DOMAIN_NAME}/api/metadata \\\\\n        --authorization \"YOUR_AUTH_TOKEN\"'\n`}</CodeBlock>\n\n## Authorization\n\nIf you don't want your endpoint to be public, set the `Authorization Token` when deploying the container group.\nWhen the authorization token is set, you must include the `--authorization \"YOUR_AUTH_TOKEN\"` option with your token to the client/benchmark generation command.\n",
+    "type": "object",
+    "required": ["container_group_name", "huggingface_access_token", "thestage_auth_token", "auth_token"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "huggingface_access_token": {
+        "title": "HuggingFace Access Token",
+        "description": "Your HuggingFace access token for weight access. Make sure you have requested access to black-forest-labs/FLUX.1-schnell weights.",
+        "type": "string",
+        "format": "password",
+        "maxLength": 128,
+        "minLength": 1,
+        "default": ""
+      },
+      "thestage_auth_token": {
+        "title": "TheStage Auth Token",
+        "description": "Your TheStage auth token for optimized model access. Generate this token at app.thestage.ai under Profile -> API tokens.",
+        "type": "string",
+        "format": "password",
+        "maxLength": 300,
+        "minLength": 1,
+        "default": ""
+      },
+      "auth_token": {
+        "title": "Authorization Token",
+        "description": "Authorization token that will be used to protect the inference endpoint from public access.",
+        "type": "string",
+        "format": "password",
+        "maxLength": 100,
+        "minLength": 1,
+        "default": ""
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/MODEL_REPO",
+        "value": "black-forest-labs/FLUX.1-schnell"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/MODEL_SIZE",
+        "value": "S"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/MODEL_BATCH_SIZE",
+        "value": 1
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/MODEL_TYPE",
+        "value": "diffusion"
+      },
+      {
+        "op": "copy",
+        "from": "/input/huggingface_access_token",
+        "path": "/output/container/environmentVariables/HUGGINGFACE_ACCESS_TOKEN"
+      },
+      {
+        "op": "copy",
+        "from": "/input/thestage_auth_token",
+        "path": "/output/container/environmentVariables/THESTAGE_AUTH_TOKEN"
+      },
+      {
+        "op": "copy",
+        "from": "/input/auth_token",
+        "path": "/output/container/environmentVariables/AUTH_TOKEN"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://app.thestage.ai/",
+  "short_description": "Optimized FLUX.1-schnell for RTX 5090 by TheStage AI - High-performance image generation",
+  "workload_types": ["imageGeneration"]
+}
