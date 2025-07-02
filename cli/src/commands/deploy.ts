@@ -369,6 +369,7 @@ export default class Deploy extends Command {
     const recipePaths = recipeDirs
       .filter((dir) => dir.isDirectory())
       .map((dir) => path.join(recipeRootDir, dir.name, 'recipe.json'))
+      .filter((file) => fs.existsSync(file))
     const recipes = recipePaths.map((recipePath) => {
       try {
         const content = fs.readFileSync(recipePath, 'utf-8')
