@@ -69,7 +69,7 @@
   },
   "form": {
     "title": "TheStage AI Elastic Models: Flux 1 Schnell",
-    "description": "Deploy optimized [TheStage AI FLUX.1-schnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell) on GeForce RTX 5090.\nExplore TheStage AI [model library](https://app.thestage.ai/models) to find more models.\n\n<Callout variation=\"info\">This recipe provides an optimized FLUX.1-schnell implementation specifically tuned for RTX 5090 GPUs, offering improved performance over standard deployments.</Callout>\n\n## Prerequisites\n\n- **HuggingFace Access Token**: Your HuggingFace access token for model weight access. Make sure you have requested access to [black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) weights\n- **TheStage Auth Token**: Your TheStage API token for optimized model access. Generate this at [app.thestage.ai](https://app.thestage.ai) under Profile -> API tokens\n- **Authorization Token**: Custom token to protect your inference endpoint from public access\n\n<Callout variation=\"warning\">Ensure you have proper access permissions for the FLUX.1-schnell model weights on HuggingFace before deploying.</Callout>\n\n## Generating Images\n\nTo generate an image, you'll need a Linux machine with Docker installed. Here's an example command:\n\n<CodeBlock language=\"bash\">{`docker run \\\\\n    -e THESTAGE_AUTH_TOKEN=YOUR_THESTAGE_AUTH_TOKEN \\\\\n    -e SALAD_ACCESS_DOMAIN_NAME=SALAD_ACCESS_DOMAIN_NAME \\\\\n    -v $(pwd)/output:/output \\\\\n    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \\\\\n    bash -c 'elastic-models client diffusion \\\\\n        --pos-prompt \"photo of a cat\" \\\\\n        --inference-url ${SALAD_ACCESS_DOMAIN_NAME} \\\\\n        --metadata-url ${SALAD_ACCESS_DOMAIN_NAME}/api/metadata \\\\\n        --authorization \"YOUR_AUTH_TOKEN\"'\n`}</CodeBlock>\n\n## Authorization\n\nIf you don't want your endpoint to be public, set the `Authorization Token` when deploying the container group.\nWhen the authorization token is set, you must include the `--authorization \"YOUR_AUTH_TOKEN\"` option with your token to the client/benchmark generation command.\n",
+    "description": "Deploy optimized [TheStage AI FLUX.1-schnell](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell) on GeForce RTX 5090.\nExplore TheStage AI [model library](https://app.thestage.ai/models) to find more models.\n\n<Callout variation=\"info\">This recipe provides an optimized FLUX.1-schnell implementation specifically tuned for RTX 5090 GPUs, offering improved performance over standard deployments.</Callout>\n\n## Prerequisites\n\n- **HuggingFace Access Token**: Your HuggingFace access token for model weight access. Make sure you have requested access to [black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) weights\n- **TheStage Auth Token**: Your TheStage API token for optimized model access. Generate this at [app.thestage.ai](https://app.thestage.ai) under Profile -> API tokens\n- **Authorization Token**: Custom token to protect your inference endpoint from public access\n\n<Callout variation=\"warning\">Ensure you have proper access permissions for the FLUX.1-schnell model weights on HuggingFace before deploying.</Callout>\n\n## Generating Images\n\nTo generate an image, you'll need a Linux machine with Docker installed. Here's an example command:\n\n<CodeBlock language=\"bash\">\n    docker run \\\\\n    -e THESTAGE_AUTH_TOKEN=YOUR_THESTAGE_AUTH_TOKEN \\\\\n    -e SALAD_ACCESS_DOMAIN_NAME=SALAD_ACCESS_DOMAIN_NAME \\\\\n    -v $(pwd)/output:/output \\\\\n    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \\\\\n    bash -c 'elastic-models client diffusion \\\\\n        --pos-prompt \"photo of a cat\" \\\\\n        --inference-url ${SALAD_ACCESS_DOMAIN_NAME} \\\\\n        --metadata-url ${SALAD_ACCESS_DOMAIN_NAME}/api/metadata \\\\\n        --authorization \"YOUR_AUTH_TOKEN\"'\n</CodeBlock>\n\n## Authorization\n\nIf you don't want your endpoint to be public, set the `Authorization Token` when deploying the container group.\nWhen the authorization token is set, you must include the `--authorization \"YOUR_AUTH_TOKEN\"` option with your token to the client/benchmark generation command.\n",
     "type": "object",
     "required": ["container_group_name", "huggingface_access_token", "thestage_auth_token", "auth_token"],
     "properties": {
@@ -79,8 +79,7 @@
         "type": "string",
         "maxLength": 63,
         "minLength": 2,
-        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
-        "default": ""
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
       },
       "huggingface_access_token": {
         "title": "HuggingFace Access Token",
@@ -88,8 +87,7 @@
         "type": "string",
         "format": "password",
         "maxLength": 128,
-        "minLength": 1,
-        "default": ""
+        "minLength": 1
       },
       "thestage_auth_token": {
         "title": "TheStage Auth Token",
@@ -97,8 +95,7 @@
         "type": "string",
         "format": "password",
         "maxLength": 300,
-        "minLength": 1,
-        "default": ""
+        "minLength": 1
       },
       "auth_token": {
         "title": "Authorization Token",
@@ -106,8 +103,7 @@
         "type": "string",
         "format": "password",
         "maxLength": 100,
-        "minLength": 1,
-        "default": ""
+        "minLength": 1
       }
     }
   },

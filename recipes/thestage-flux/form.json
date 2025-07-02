@@ -15,8 +15,7 @@
       "type": "string",
       "maxLength": 63,
       "minLength": 2,
-      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
-      "default": ""
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
     },
     "huggingface_access_token": {
       "title": "HuggingFace Access Token",
@@ -24,8 +23,7 @@
       "type": "string",
       "format": "password",
       "maxLength": 128,
-      "minLength": 1,
-      "default": ""
+      "minLength": 1
     },
     "thestage_auth_token": {
       "title": "TheStage Auth Token",
@@ -33,8 +31,7 @@
       "type": "string",
       "format": "password",
       "maxLength": 300,
-      "minLength": 1,
-      "default": ""
+      "minLength": 1
     },
     "auth_token": {
       "title": "Authorization Token",
@@ -42,8 +39,7 @@
       "type": "string",
       "format": "password",
       "maxLength": 100,
-      "minLength": 1,
-      "default": ""
+      "minLength": 1
     }
   }
 }
