@@ -1,0 +1,75 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {},
+      "image": "docker.io/saladtechnologies/mds:recipe-gromacs-srcg",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 16,
+        "memory": 24576,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "storageAmount": 53687091200
+      }
+    },
+    "name": "",
+    "replicas": 1,
+    "restartPolicy": "always",
+    "readme": "# GROMACS\n\n## Access\n- <Link url={`https://${props.networking.dns}/lab`}>JupyterLab</Link> (once running)\n- You can also click on a running instance in the Portal to access a browser-based terminal.\n\nFiles can be easily uploaded and downloaded through the JupyterLab interface. Keep in mind that SaladCloud instances are ephemeral and can be reallocated at any time, resetting to a fresh image. For production workloads, consider integrating your image with cloud storage to ensure data persistence.\n\n## Resources\n\n- [The GROMACS solution on SaladCloud](https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg)\n- [The GitHub repository](https://github.com/SaladTechnologies/mds/tree/main/gromacs-srcg)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/gromacs-srcg)\n- [GROMACS documentation](https://manual.gromacs.org/current/index.html)\n- [VS Code Remote Development](https://docs.salad.com/tutorials/vscode-remote-development#interactive-mode)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=GROMACS%20-%20SRCG&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n",
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8888,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "GROMACS",
+    "description": "[A basic GROMACS image](https://github.com/SaladTechnologies/mds/blob/main/gromacs-srcg/Dockerfile.recipe) run on a RTX 4090 (24GB) to get started with molecular dynamics simulations on SaladCloud.\n\nPlease familiarize yourself with [GROMACS](https://www.gromacs.org/) and the [GROMACS solution on SaladCloud](https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg) before running the recipe.\n\nIncludes JupyterLab for easy terminal access. The VS Code Server CLI is also pre-installed, allowing you to connect to the instance with VS Code for debugging. \n\nYou’ll need to provide the Container Group Name and set the Replica Count to 1 when launching the recipe. The hardware configuration—including vCPU, memory, and GPU—can be adjusted as needed. The Container Gateway is mandatory and cannot be disabled.\n\nThis will create a GROMACS playground environment with example .tpr files available in the /app/systems folder. You can open a JupyterLab terminal to run GROMACS CLI commands and perform simulations and tests.\n\nPlease note that you’ll need to shut down the instance manually in the Portal when you’re finished.\n",
+    "type": "object",
+    "required": ["container_group_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg",
+  "short_description": "Deploy a GROMACS playground for hands-on experimentation",
+  "workload_types": []
+}

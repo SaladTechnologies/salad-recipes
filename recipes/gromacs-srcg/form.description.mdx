@@ -1,0 +1,11 @@
+[A basic GROMACS image](https://github.com/SaladTechnologies/mds/blob/main/gromacs-srcg/Dockerfile.recipe) run on a RTX 4090 (24GB) to get started with molecular dynamics simulations on SaladCloud.
+
+Please familiarize yourself with [GROMACS](https://www.gromacs.org/) and the [GROMACS solution on SaladCloud](https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg) before running the recipe.
+
+Includes JupyterLab for easy terminal access. The VS Code Server CLI is also pre-installed, allowing you to connect to the instance with VS Code for debugging. 
+
+You’ll need to provide the Container Group Name and set the Replica Count to 1 when launching the recipe. The hardware configuration—including vCPU, memory, and GPU—can be adjusted as needed. The Container Gateway is mandatory and cannot be disabled.
+
+This will create a GROMACS playground environment with example .tpr files available in the /app/systems folder. You can open a JupyterLab terminal to run GROMACS CLI commands and perform simulations and tests.
+
+Please note that you’ll need to shut down the instance manually in the Portal when you’re finished.
