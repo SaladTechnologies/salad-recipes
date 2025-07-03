@@ -71,5 +71,5 @@
   "ui": {},
   "documentation_url": "https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg",
   "short_description": "Deploy a GROMACS playground for hands-on experimentation",
-  "workload_types": []
+  "workload_types": ["MDS"]
 }
