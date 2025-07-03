@@ -8,7 +8,6 @@ import { marked } from 'marked'
 import cliHtml from 'cli-html'
 import ora from 'ora'
 import { snakeAllKeys, camelAllKeys } from '../text-utils'
-import { boolean } from '@oclif/core/lib/flags'
 
 export default class Deploy extends Command {
   static override args = {
