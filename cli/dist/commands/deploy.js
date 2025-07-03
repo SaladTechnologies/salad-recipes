@@ -61,6 +61,7 @@ class Deploy extends core_1.Command {
             this.log(`Deploying recipe: ${recipePath}\n\n`);
             this.log((0, cli_html_1.default)(yield (0, marked_1.marked)(`# ${form.title}\n${form.description}`)));
             const inputs = yield this.getInputs(form, ui);
+            Object.assign(inputs, yield this.getConstantInputs(containerTemplate));
             const output = this.applyPatches(containerTemplate, inputs, patches);
             const readme = output.readme;
             delete output.readme; // Remove readme from the output to avoid sending it to the API
@@ -240,6 +241,29 @@ class Deploy extends core_1.Command {
                 }
             }
             return input;
+        });
+    }
+    getConstantInputs(containerGroup) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const constantInputs = {};
+            constantInputs['replicas'] = (yield inquirer_1.default.prompt([
+                {
+                    type: 'number',
+                    name: 'replicas',
+                    message: 'Number of replicas',
+                    default: containerGroup.replicas || 1,
+                },
+            ])).replicas;
+            constantInputs['autostartPolicy'] = (yield inquirer_1.default.prompt([
+                {
+                    type: 'confirm',
+                    name: 'autostartPolicy',
+                    message: 'Start the container group automatically?',
+                    default: (_a = containerGroup.autostartPolicy) !== null && _a !== void 0 ? _a : true,
+                },
+            ])).autostartPolicy;
+            return constantInputs;
         });
     }
     setNestedValue(obj, path, value) {

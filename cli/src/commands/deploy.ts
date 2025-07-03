@@ -8,6 +8,7 @@ import { marked } from 'marked'
 import cliHtml from 'cli-html'
 import ora from 'ora'
 import { snakeAllKeys, camelAllKeys } from '../text-utils'
+import { boolean } from '@oclif/core/lib/flags'
 
 export default class Deploy extends Command {
   static override args = {
@@ -88,6 +89,7 @@ export default class Deploy extends Command {
     this.log(cliHtml(await marked(`# ${form.title}\n${form.description}`)))
 
     const inputs = await this.getInputs(form, ui)
+    Object.assign(inputs, await this.getConstantInputs(containerTemplate))
     const output = this.applyPatches(containerTemplate, inputs, patches)
     const readme = output.readme
     delete output.readme // Remove readme from the output to avoid sending it to the API
@@ -281,7 +283,35 @@ export default class Deploy extends Command {
         }
       }
     }
+
     return input
+  }
+
+  async getConstantInputs(containerGroup: any): Promise<Record<string, any>> {
+    const constantInputs: Record<string, any> = {}
+    constantInputs['replicas'] = (
+      await inquirer.prompt([
+        {
+          type: 'number',
+          name: 'replicas',
+          message: 'Number of replicas',
+          default: containerGroup.replicas || 1,
+        },
+      ])
+    ).replicas
+
+    constantInputs['autostartPolicy'] = (
+      await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'autostartPolicy',
+          message: 'Start the container group automatically?',
+          default: containerGroup.autostartPolicy ?? true,
+        },
+      ])
+    ).autostartPolicy
+
+    return constantInputs
   }
 
   setNestedValue(obj: any, path: string[], value: any): any {
