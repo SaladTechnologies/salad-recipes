@@ -39,6 +39,11 @@ export default class Deploy extends Command {
       default: false,
       char: 'e',
     }),
+    'dry-run': Flags.boolean({
+      description: 'Show the recipe deployment without actually deploying it',
+      required: false,
+      default: false,
+    }),
   }
 
   private saladApiKey: string | undefined
@@ -46,7 +51,7 @@ export default class Deploy extends Command {
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Deploy)
     this.saladApiKey = process.env.SALAD_API_KEY
-    if (!this.saladApiKey) {
+    if (!flags['dry-run'] && !this.saladApiKey) {
       this.error('SALAD_API_KEY environment variable is not set.')
     }
 
@@ -63,10 +68,10 @@ export default class Deploy extends Command {
       execSync(`npx recipe export ${recipeDir}`)
     }
 
-    await this.deployRecipe(recipeFile!)
+    await this.deployRecipe(recipeFile!, flags['dry-run'])
   }
 
-  async deployRecipe(recipePath: string): Promise<void> {
+  async deployRecipe(recipePath: string, dryRun: boolean): Promise<void> {
     assert(fs.existsSync(recipePath), `Recipe file does not exist: ${recipePath}`)
     const recipe = JSON.parse(fs.readFileSync(recipePath, 'utf8'))
 
@@ -87,78 +92,91 @@ export default class Deploy extends Command {
     const readme = output.readme
     delete output.readme // Remove readme from the output to avoid sending it to the API
     const snakedOutput = snakeAllKeys(output) // Convert all keys to snake_case
-    this.log('\nSalad Organization:')
-    const org = (
-      await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'org',
-          message: 'Enter your Salad organization Name:',
-          required: true,
-        },
-      ])
-    ).org
-    if (!org) {
-      this.error('Organization is required.')
-      return
-    }
-    this.log('\nSalad Project:')
-    const project = (
-      await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'project',
-          message: 'Enter your Salad project Name:',
-          required: true,
-        },
-      ])
-    ).project
-    if (!project) {
-      this.error('Project is required.')
-      return
-    }
-    this.log(`Creating container group with the following configuration, in org '${org}', project '${project}':`)
-    this.log(JSON.stringify(snakedOutput, null, 2))
-    const confirmation = (
-      await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'confirm',
-          message: 'Do you want to proceed with the deployment?',
-          default: true,
-        },
-      ])
-    ).confirm
-    process.stdin.destroy()
-    if (!confirmation) {
-      this.log('Deployment cancelled.')
-      return
-    }
-    let containerGroup: any
-    try {
-      containerGroup = await this.createContainerGroup(org, project, snakedOutput)
-      this.log(`Container group created successfully: ${containerGroup.id}`)
-    } catch (error: any) {
-      this.error(`Error creating container group: ${error.message}`)
+    let containerGroup: any = snakedOutput
+    if (!dryRun) {
+      this.log('\nSalad Organization:')
+      const org = (
+        await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'org',
+            message: 'Enter your Salad organization Name:',
+            required: true,
+          },
+        ])
+      ).org
+      if (!org) {
+        this.error('Organization is required.')
+        return
+      }
+      this.log('\nSalad Project:')
+      const project = (
+        await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'project',
+            message: 'Enter your Salad project Name:',
+            required: true,
+          },
+        ])
+      ).project
+      if (!project) {
+        this.error('Project is required.')
+        return
+      }
+      this.log(`Creating container group with the following configuration, in org '${org}', project '${project}':`)
+      this.log(JSON.stringify(snakedOutput, null, 2))
+      const confirmation = (
+        await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'confirm',
+            message: 'Do you want to proceed with the deployment?',
+            default: true,
+          },
+        ])
+      ).confirm
+      process.stdin.destroy()
+      if (!confirmation) {
+        this.log('Deployment cancelled.')
+        return
+      }
+
+      try {
+        containerGroup = await this.createContainerGroup(org, project, snakedOutput)
+        containerGroup.apiKey = this.saladApiKey // Include API key in output for readme rendering
+
+        this.log(`Container group created successfully: ${containerGroup.id}`)
+      } catch (error: any) {
+        this.error(`Error creating container group: ${error.message}`)
+      }
+
+      const url = `https://portal.salad.com/organizations/${org}/projects/${project}/containers/${containerGroup.name}`
+      this.log(`\nYou can view the container group at: ${url}`)
+
+      try {
+        // open the URL in the default browser
+        execSync(`xdg-open "${url}"`, { stdio: 'ignore' })
+      } catch (error: any) {
+        this.error(`Failed to open URL in browser: ${error.message}`)
+      }
+    } else {
+      this.log('Dry run mode enabled. The following container group would be created:')
+      this.log(JSON.stringify(snakedOutput, null, 2))
+      this.log('No actual deployment will occur.')
+      if (containerGroup.networking) {
+        containerGroup.networking.dns = 'fake-placeholder-dsf8i7ukj.salad.cloud'
+      }
+      containerGroup.apiKey = 'thisisatotallyfakeapikeyforreadmegeneration'
     }
 
     const readmePath = path.resolve(`./${containerGroup.name}.readme.mdx`)
-    containerGroup.apiKey = this.saladApiKey // Include API key in output for readme rendering
+
     try {
       fs.writeFileSync(readmePath, this.renderReadme(readme, camelAllKeys(containerGroup)))
       this.log(`Readme written to: ${readmePath}`)
     } catch (error: any) {
       this.error(`Error writing readme: ${error.message}`)
-    }
-
-    const url = `https://portal.salad.com/organizations/${org}/projects/${project}/containers/${containerGroup.name}`
-    this.log(`\nYou can view the container group at: ${url}`)
-
-    try {
-      // open the URL in the default browser
-      execSync(`xdg-open "${url}"`, { stdio: 'ignore' })
-    } catch (error: any) {
-      this.error(`Failed to open URL in browser: ${error.message}`)
     }
   }
 

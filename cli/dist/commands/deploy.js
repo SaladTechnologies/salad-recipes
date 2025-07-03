@@ -27,7 +27,7 @@ class Deploy extends core_1.Command {
         return __awaiter(this, void 0, void 0, function* () {
             const { args, flags } = yield this.parse(Deploy);
             this.saladApiKey = process.env.SALAD_API_KEY;
-            if (!this.saladApiKey) {
+            if (!flags['dry-run'] && !this.saladApiKey) {
                 this.error('SALAD_API_KEY environment variable is not set.');
             }
             let recipeFile = args['recipe-file'];
@@ -42,10 +42,10 @@ class Deploy extends core_1.Command {
                 const recipeDir = path_1.default.dirname(recipeFile);
                 (0, child_process_1.execSync)(`npx recipe export ${recipeDir}`);
             }
-            yield this.deployRecipe(recipeFile);
+            yield this.deployRecipe(recipeFile, flags['dry-run']);
         });
     }
-    deployRecipe(recipePath) {
+    deployRecipe(recipePath, dryRun) {
         return __awaiter(this, void 0, void 0, function* () {
             (0, assert_1.default)(fs_1.default.existsSync(recipePath), `Recipe file does not exist: ${recipePath}`);
             const recipe = JSON.parse(fs_1.default.readFileSync(recipePath, 'utf8'));
@@ -65,72 +65,83 @@ class Deploy extends core_1.Command {
             const readme = output.readme;
             delete output.readme; // Remove readme from the output to avoid sending it to the API
             const snakedOutput = (0, text_utils_1.snakeAllKeys)(output); // Convert all keys to snake_case
-            this.log('\nSalad Organization:');
-            const org = (yield inquirer_1.default.prompt([
-                {
-                    type: 'input',
-                    name: 'org',
-                    message: 'Enter your Salad organization Name:',
-                    required: true,
-                },
-            ])).org;
-            if (!org) {
-                this.error('Organization is required.');
-                return;
+            let containerGroup = snakedOutput;
+            if (!dryRun) {
+                this.log('\nSalad Organization:');
+                const org = (yield inquirer_1.default.prompt([
+                    {
+                        type: 'input',
+                        name: 'org',
+                        message: 'Enter your Salad organization Name:',
+                        required: true,
+                    },
+                ])).org;
+                if (!org) {
+                    this.error('Organization is required.');
+                    return;
+                }
+                this.log('\nSalad Project:');
+                const project = (yield inquirer_1.default.prompt([
+                    {
+                        type: 'input',
+                        name: 'project',
+                        message: 'Enter your Salad project Name:',
+                        required: true,
+                    },
+                ])).project;
+                if (!project) {
+                    this.error('Project is required.');
+                    return;
+                }
+                this.log(`Creating container group with the following configuration, in org '${org}', project '${project}':`);
+                this.log(JSON.stringify(snakedOutput, null, 2));
+                const confirmation = (yield inquirer_1.default.prompt([
+                    {
+                        type: 'confirm',
+                        name: 'confirm',
+                        message: 'Do you want to proceed with the deployment?',
+                        default: true,
+                    },
+                ])).confirm;
+                process.stdin.destroy();
+                if (!confirmation) {
+                    this.log('Deployment cancelled.');
+                    return;
+                }
+                try {
+                    containerGroup = yield this.createContainerGroup(org, project, snakedOutput);
+                    containerGroup.apiKey = this.saladApiKey; // Include API key in output for readme rendering
+                    this.log(`Container group created successfully: ${containerGroup.id}`);
+                }
+                catch (error) {
+                    this.error(`Error creating container group: ${error.message}`);
+                }
+                const url = `https://portal.salad.com/organizations/${org}/projects/${project}/containers/${containerGroup.name}`;
+                this.log(`\nYou can view the container group at: ${url}`);
+                try {
+                    // open the URL in the default browser
+                    (0, child_process_1.execSync)(`xdg-open "${url}"`, { stdio: 'ignore' });
+                }
+                catch (error) {
+                    this.error(`Failed to open URL in browser: ${error.message}`);
+                }
             }
-            this.log('\nSalad Project:');
-            const project = (yield inquirer_1.default.prompt([
-                {
-                    type: 'input',
-                    name: 'project',
-                    message: 'Enter your Salad project Name:',
-                    required: true,
-                },
-            ])).project;
-            if (!project) {
-                this.error('Project is required.');
-                return;
-            }
-            this.log(`Creating container group with the following configuration, in org '${org}', project '${project}':`);
-            this.log(JSON.stringify(snakedOutput, null, 2));
-            const confirmation = (yield inquirer_1.default.prompt([
-                {
-                    type: 'confirm',
-                    name: 'confirm',
-                    message: 'Do you want to proceed with the deployment?',
-                    default: true,
-                },
-            ])).confirm;
-            process.stdin.destroy();
-            if (!confirmation) {
-                this.log('Deployment cancelled.');
-                return;
-            }
-            let containerGroup;
-            try {
-                containerGroup = yield this.createContainerGroup(org, project, snakedOutput);
-                this.log(`Container group created successfully: ${containerGroup.id}`);
-            }
-            catch (error) {
-                this.error(`Error creating container group: ${error.message}`);
+            else {
+                this.log('Dry run mode enabled. The following container group would be created:');
+                this.log(JSON.stringify(snakedOutput, null, 2));
+                this.log('No actual deployment will occur.');
+                if (containerGroup.networking) {
+                    containerGroup.networking.dns = 'fake-placeholder-dsf8i7ukj.salad.cloud';
+                }
+                containerGroup.apiKey = 'thisisatotallyfakeapikeyforreadmegeneration';
             }
             const readmePath = path_1.default.resolve(`./${containerGroup.name}.readme.mdx`);
-            containerGroup.apiKey = this.saladApiKey; // Include API key in output for readme rendering
             try {
                 fs_1.default.writeFileSync(readmePath, this.renderReadme(readme, (0, text_utils_1.camelAllKeys)(containerGroup)));
                 this.log(`Readme written to: ${readmePath}`);
             }
             catch (error) {
                 this.error(`Error writing readme: ${error.message}`);
-            }
-            const url = `https://portal.salad.com/organizations/${org}/projects/${project}/containers/${containerGroup.name}`;
-            this.log(`\nYou can view the container group at: ${url}`);
-            try {
-                // open the URL in the default browser
-                (0, child_process_1.execSync)(`xdg-open "${url}"`, { stdio: 'ignore' });
-            }
-            catch (error) {
-                this.error(`Failed to open URL in browser: ${error.message}`);
             }
         });
     }
@@ -390,6 +401,11 @@ Deploy.flags = {
         required: false,
         default: false,
         char: 'e',
+    }),
+    'dry-run': core_1.Flags.boolean({
+        description: 'Show the recipe deployment without actually deploying it',
+        required: false,
+        default: false,
     }),
 };
 exports.default = Deploy;
