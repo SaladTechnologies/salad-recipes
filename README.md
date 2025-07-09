@@ -38,6 +38,9 @@ This repo includes a CLI tool to help you develop recipes. It can be used to cre
 The recommended flow for developing recipes is:
 
 1. Get your application running reliably and as intended in a Salad Container Group.
+   1. [Understanding Health Probes](https://docs.salad.com/products/sce/container-groups/health-probes/health-probes)
+   2. [Troubleshooting Common Issues](https://docs.salad.com/guides/troubleshooting)
+   3. [Use VS Code](https://docs.salad.com/tutorials/vscode-remote-development) to develop and test in a live Salad Container Group. There is an [integrated terminal](https://docs.salad.com/tutorials/interactive-terminal) in the Portal, but VS Code or JupyterLab are a better experience for development.
 2. Create a fork or branch of this repository.
 3. Create a new directory in the `recipes/` directory for your recipe.
 4. Populate the directory with boilerplate files using the [`npx recipe`](#recipe-cli-tool) `new recipes/<recipe-name>` command. You can use the `--from-container-group <container-group-name>` option to create the recipe from an existing container group. Ensure that your Salad API key is set in the `SALAD_API_KEY` environment variable. This tool will set the replica count to 3, so override this if your recipe has a better default value.
@@ -49,6 +52,7 @@ The recommended flow for developing recipes is:
 7. If your recipe has multiple variants, or configuration options, extend `patches.json` to include the necessary patches, and create additional readme files as needed.
 8. Use the [`npx recipe`](#recipe-cli-tool) `export recipes/<your-recipe> recipes/<your-recipe>/recipe.json` command to export your recipe to a single file format, which is what we ultimately publish to the SaladCloud Portal.
 9. Use the [`npx recipe`](#recipe-cli-tool) `deploy recipes/<your-recipe>/recipe.json` command to test deploying your recipe to Salad. This will prompt you for any required configuration values and deploy the recipe to Salad. After deployment, it will output the readme for the recipe, which you can use to verify that everything is working as expected.
+    1. You may provide the argument `--dry-run` to the `deploy` command to skip the actual deployment and just output the readme.
 10. Finally, create a pull request with your changes, and ensure that the Salad team reviews and approves your recipe.
 
 Explore the other recipes in the `recipes/` directory to see how they are structured and [what files they include](#recipes).
@@ -60,6 +64,8 @@ Explore the other recipes in the `recipes/` directory to see how they are struct
 - If your recipe uses the container gateway, make sure to use a readiness probe to ensure that traffic is not sent to the container until it is ready to handle requests. This can be done by adding a `readinessProbe` to your `container-group.json` file.
 
 ### Using Variables in Recipe Readmes
+
+If you aren't familiar with MDX, it is a markdown format that allows you to include JSX components in your markdown files. [Here is a good primer.](https://mdxjs.com/docs/what-is-mdx/) This is useful for dynamically rendering content based on the properties of the container group, such as links, code blocks, and other dynamic content.
 
 You can access a variety of information about the deployed container group to dynamically populate your readme files. This is accomplished using JSX syntax in the `.mdx` files. This only works in the post-deployment readme, not in the pre-deployment form description. Here are some examples of what you can access:
 
