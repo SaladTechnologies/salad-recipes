@@ -2,5 +2,7 @@
   "ui": {},
   "documentation_url": "https://docs.qu.ai/learn/introduction",
   "short_description": "Mine Quai using the official Quai GPU Miner.",
-  "workload_types": ["blockchain"]
+  "workload_types": [
+    "blockchain"
+  ]
 }

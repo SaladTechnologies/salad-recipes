@@ -16,7 +16,7 @@
     "name": "",
     "replicas": 1,
     "restartPolicy": "always",
-    "readme": "# GROMACS\n\n## Access\n- <Link url={`https://${props.networking.dns}/lab`}>JupyterLab</Link> (once running)\n- You can also click on a running instance in the Portal to access a browser-based terminal.\n\nFiles can be easily uploaded and downloaded through the JupyterLab interface. Keep in mind that SaladCloud instances are ephemeral and can be reallocated at any time, resetting to a fresh image. For production workloads, consider integrating your image with cloud storage to ensure data persistence.\n\n## Resources\n\n- [The GROMACS solution on SaladCloud](https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg)\n- [The GitHub repository](https://github.com/SaladTechnologies/mds/tree/main/gromacs-srcg)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/gromacs-srcg)\n- [GROMACS documentation](https://manual.gromacs.org/current/index.html)\n- [VS Code Remote Development](https://docs.salad.com/tutorials/vscode-remote-development#interactive-mode)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=GROMACS%20-%20SRCG&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n",
+    "readme": "# GROMACS\n\n## Access\n- <Link url={`https://${props.networking.dns}/lab`}>JupyterLab</Link> (once running)\n- You can also click on a running instance in the Portal to access a browser-based terminal.\n\nFiles can be easily uploaded and downloaded through the JupyterLab interface. Keep in mind that SaladCloud instances are ephemeral and can be reallocated at any time, resetting to a fresh image. For production workloads, consider integrating your image with cloud storage to ensure data persistence.\n\n## Resources\n\n- [The GROMACS solution on SaladCloud](https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg)\n- [The GitHub repository](https://github.com/SaladTechnologies/mds/tree/main/gromacs-srcg)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/gromacs-srcg)\n- [VS Code Remote Development](https://docs.salad.com/tutorials/vscode-remote-development#interactive-mode)\n\n",
     "networking": {
       "auth": false,
       "clientRequestTimeout": 100000,
@@ -35,12 +35,11 @@
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
-        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
         "type": "string",
         "maxLength": 63,
         "minLength": 2,
-        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
-        "default": ""
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
       }
     }
   },

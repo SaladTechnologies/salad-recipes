@@ -9,12 +9,11 @@
   "properties": {
     "container_group_name": {
       "title": "Container Group Name",
-      "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
       "type": "string",
       "maxLength": 63,
       "minLength": 2,
-      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
-      "default": ""
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
     },
     "networking_auth": {
       "title": "Require Container Gateway Authentication",
@@ -24,7 +23,7 @@
     },
     "model_name": {
       "title": "Model Name",
-      "description": "The name of the model to use from the YOLO family. Example: 'yolo11l.pt'.",
+      "description": "Required* The name of the model to use from the YOLO family. Example: 'yolo11l.pt'.",
       "type": "string",
       "default": "yolo11l.pt",
       "minLength": 1

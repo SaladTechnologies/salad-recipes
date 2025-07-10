@@ -2,5 +2,7 @@
   "ui": {},
   "documentation_url": "https://app.thestage.ai/",
   "short_description": "Optimized FLUX.1-schnell for RTX 5090 by TheStage AI - High-performance image generation",
-  "workload_types": ["imageGeneration"]
+  "workload_types": [
+    "imageGeneration"
+  ]
 }

@@ -327,5 +327,5 @@
   },
   "documentation_url": "https://docs.salad.com/products/recipes/overview",
   "short_description": "Run popular LLMs and VLMs with 🤗 Text Generation Inference.",
-  "workload_types": ["LLM"]
+  "workload_types": ["LLM", "objectDetection"]
 }

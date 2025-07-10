@@ -13,3 +13,4 @@ comfyui-api
 nohup.out
 venv
 node_modules
+import-all-recipes-from-prod.sh
