@@ -14,3 +14,4 @@ nohup.out
 venv
 node_modules
 import-all-recipes-from-prod.sh
+export-all-recipes-to-prod.sh

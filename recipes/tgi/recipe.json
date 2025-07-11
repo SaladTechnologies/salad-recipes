@@ -325,7 +325,7 @@
       "ui:enumNames": ["Disabled", "bits-and-bytes", "GPT-Q", "AWQ", "Marlin", "EXL2", "EETQ", "fp8"]
     }
   },
-  "documentation_url": "https://docs.salad.com/products/recipes/overview",
+  "documentation_url": "https://docs.salad.com/products/recipes/tgi",
   "short_description": "Run popular LLMs and VLMs with 🤗 Text Generation Inference.",
   "workload_types": ["LLM", "objectDetection"]
 }

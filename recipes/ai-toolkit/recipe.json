@@ -115,7 +115,7 @@
     ]
   ],
   "ui": {},
-  "documentation_url": "https://github.com/SaladTechnologies/salad-recipes/tree/master/src/flux1-dev-ai-toolkit",
+  "documentation_url": "https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/ai-toolkit",
   "short_description": "Deploy AI Toolkit with Flux 1 Dev",
   "workload_types": ["imageGeneration"]
 }
