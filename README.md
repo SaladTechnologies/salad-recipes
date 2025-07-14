@@ -38,7 +38,7 @@ This repo includes a CLI tool to help you develop recipes. It can be used to cre
 The recommended flow for developing recipes is:
 
 1. Get your application running reliably and as intended in a Salad Container Group.
-   1. If you are brand new to Salad, we recommend starting with the [Architectural Overview](https://docs.salad.com/products/sce/getting-started/architectural-overview)([:video_camera:]([:video_camera:](https://vimeo.com/1088518526?p=1t))) and the [First Deployment Quickstart](https://docs.salad.com/products/sce/getting-started/quickstart)([:video_camera:](https://vimeo.com/1081576659?p=1t)).
+   1. If you are brand new to Salad, we recommend starting with the [Architectural Overview](https://docs.salad.com/products/sce/getting-started/architectural-overview)([:video_camera:](https://vimeo.com/1088518526?p=1t)) and the [First Deployment Quickstart](https://docs.salad.com/products/sce/getting-started/quickstart)([:video_camera:](https://vimeo.com/1081576659?p=1t)).
    2. [Understanding Health Probes](https://docs.salad.com/products/sce/container-groups/health-probes/health-probes)
    3. [Troubleshooting Common Issues](https://docs.salad.com/guides/troubleshooting)
    4. (optional) [Use VS Code](https://docs.salad.com/tutorials/vscode-remote-development) to develop and test in a live Salad Container Group. There is an [integrated terminal](https://docs.salad.com/tutorials/interactive-terminal) in the Portal, but VS Code or JupyterLab are a better experience for development.
