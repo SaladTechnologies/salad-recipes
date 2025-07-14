@@ -10,7 +10,7 @@
         "cpu": 4,
         "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
         "memory": 30720,
-        "storageAmount": 53687091200
+        "storageAmount": 268435456000
       }
     },
     "livenessProbe": {
