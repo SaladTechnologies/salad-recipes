@@ -1,0 +1,31 @@
+{
+  "autostartPolicy": true,
+  "container": {
+    "environmentVariables": {},
+    "image": "docker.io/saladtechnologies/mds:recipe-openmm-srcg",
+    "imageCaching": true,
+    "priority": "high",
+    "resources": {
+      "cpu": 16,
+      "memory": 24576,
+      "gpuClasses": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "storageAmount": 53687091200
+    }
+  },
+  "name": "",
+  "replicas": 1,
+  "restartPolicy": "always",
+  "readme": "$replace",
+  "networking": {
+    "auth": false,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 8000,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  }
+
+}
