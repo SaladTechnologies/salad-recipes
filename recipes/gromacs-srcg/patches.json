@@ -1,4 +1,4 @@
-[
+[ 
   [
     {
       "op": "copy",
@@ -21,4 +21,4 @@
       "path": "/output/networking/auth"
     }
   ]
-]
+] 
