@@ -1,4 +1,4 @@
-{
+{ 
   "autostartPolicy": true,
   "container": {
     "environmentVariables": {},

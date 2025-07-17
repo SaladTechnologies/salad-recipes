@@ -72,3 +72,4 @@
   "short_description": "Deploy a OpenMM playground for hands-on experimentation",
   "workload_types": ["MDS"]
 }
+ 
