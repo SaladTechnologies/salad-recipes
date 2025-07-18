@@ -1,0 +1,74 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {},
+      "image": "docker.io/saladtechnologies/mds:recipe-openmm-srcg",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 16,
+        "memory": 24576,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "storageAmount": 53687091200
+      }
+    },
+    "name": "",
+    "replicas": 1,
+    "restartPolicy": "always",
+    "readme": "# OpenMM \n\n## Access\n- <Link url={`https://${props.networking.dns}`}>OpenMM Playground</Link> (once running)\n- You can also click on a running instance in the Portal to access a browser-based terminal.\n\nUse OpenMM Setup to run simulations interactively. Files can be easily uploaded and downloaded through the JupyterLab interface. \n\nKeep in mind that SaladCloud instances are ephemeral and can be reallocated at any time, resetting to a fresh image. For production workloads, consider integrating your image with cloud storage to ensure data persistence.\n\n## Resources\n\n- [The OpenMM solution on SaladCloud](https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/openmm-srcg)\n- [The GitHub repository](https://github.com/SaladTechnologies/mds/tree/main/openmm-srcg)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/openmm-srcg)\n- [VS Code Remote Development](https://docs.salad.com/tutorials/vscode-remote-development#interactive-mode)\n\n",
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "OpenMM",
+    "description": "[A basic OpenMM image](https://github.com/SaladTechnologies/mds/blob/main/openmm-srcg/Dockerfile.recipe) run on a RTX 4090 (24GB) to get started with molecular dynamics simulations on SaladCloud.\n \nPlease familiarize yourself with [OpenMM](https://openmm.org/) and the [OpenMM solution on SaladCloud](https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/openmm-srcg) before running the recipe.\n                                                                                                       \n[OpenMM Setup](https://github.com/openmm/openmm-setup) is provided to run simulations interactively.\n\nIncludes JupyterLab for easy terminal access. The VS Code Server CLI is also pre-installed, allowing you to connect to the instance with VS Code for debugging. \n\nYou’ll need to provide the Container Group Name and set the Replica Count to 1 when launching the recipe. The hardware configuration—including vCPU, memory, and GPU—can be adjusted as needed. The Container Gateway is mandatory and cannot be disabled.\n\nThis will create a OpenMM playground environment with example files available in the /app/examples folder. \n\nPlease note that you’ll need to shut down the instance manually in the Portal when you’re finished.\n",
+    "type": "object",
+    "required": ["container_group_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/guides/molecular-dynamics-simulation/openmm-srcg",
+  "short_description": "Deploy a OpenMM playground for hands-on experimentation",
+  "workload_types": ["MDS"]
+}
