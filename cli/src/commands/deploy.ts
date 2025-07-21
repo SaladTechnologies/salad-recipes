@@ -85,7 +85,12 @@ export default class Deploy extends Command {
     assert(recipe.short_description, 'Recipe must contain a "short_description" property')
     this.log(`===Recipe Deployment Wizard===`)
     this.log(`Deploying recipe: ${recipePath}\n\n`)
-    this.log(cliHtml(await marked(`# ${form.title}\n${form.description}`)))
+    try {
+      const html = await marked(`# ${form.title}\n${form.description}`)
+      this.log(cliHtml(html))
+    } catch (e: any) {
+      this.error(`Error rendering recipe description: ${e.message}`)
+    }
 
     const inputs = await this.getInputs(form, ui)
     Object.assign(inputs, await this.getConstantInputs(containerTemplate))
