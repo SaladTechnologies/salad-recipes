@@ -1,0 +1,147 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# Text Generation Inference (DataCenter GPUs)\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)\n- [🤗 Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index)\n- [Additional Configuration](https://huggingface.co/docs/text-generation-inference/reference/launcher)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/tgi-dc)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Text%20Generation%20Inference%20DataCenter&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n### Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\"model\": \"tgi\",\"messages\": [{\"role\": \"system\",\"content\": \"You are a helpful assistant.\"},{\"role\": \"user\",\"content\": \"What is deep learning?\"}],\"stream\": true,\"max_tokens\": 20}'\n`}</CodeBlock>\n",
+    "container": {
+      "environmentVariables": {
+        "HOSTNAME": "::",
+        "PORT": "3000"
+      },
+      "image": "ghcr.io/huggingface/text-generation-inference:3.3.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 128,
+        "memory": 2097152,
+        "gpuClasses": ["97b905f3-e8ed-42d6-90cf-d2a395afa1eb"],
+        "storageAmount": 26843545600,
+        "shmSize": 64
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "readinessProbe": {
+      "failureThreshold": 1,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 3000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 10
+    },
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 3000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "Text Generation Inference (DataCenter)",
+    "description": "Run popular LLMs and VLMs with [Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index), a production-ready inference server for large-scale text generation tasks. TGI supports [OpenAI Messages API](https://huggingface.co/docs/text-generation-inference/reference/api_reference), streaming output, JSON mode, and more.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nModels are not bundled with the container and will be downloaded at runtime based on your configuration. **This means container startup may take several minutes**, especially for large models.\n\nTGI has many [configuration options](https://huggingface.co/docs/text-generation-inference/reference/launcher) that can be set using environment variables in the *Advanced Configuration* section. TGI automatically detects hardware, but you should manually configure key options.\n---\n\n## Multi-GPU and Datacenter Support\n\nOn SaladCloud Secure, you can access **8-GPU datacenter nodes** to serve very large models, including **70B LLMs**, using TGI’s sharded inference mode. To run models across multiple GPUs, configure the following environment variables:\n\n- `CUDA Visible Devices` — Defines which GPUs the container can access. Example: `0,1,2,3,4,5,6,7` exposes all 8 GPUs. **Required** for multi-GPU support.\n- `Number of Shards` — Number of shards to split the model across. Must be equal to or less than the number of visible GPUs.\n\n- [See supported models](https://huggingface.co/docs/text-generation-inference/supported_models)\n- This recipe is defaulted to run on 8×L40S GPUs per node (48GB VRAM each). These nodes are ideal for serving large models with high throughput and parallelism.\n",
+    "type": "object",
+    "required": [
+      "container_group_name",
+      "container_image_model",
+      "networking_auth",
+      "num_of_shards",
+      "cuda_visible_devices"
+    ],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "container_image_model": {
+        "title": "Model",
+        "type": "string",
+        "description": "The Hugging Face model ID or custom image that supports TGI. This determines which model will be loaded and served.",
+        "default": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+      },
+      "num_of_shards": {
+        "title": "Number of Shards",
+        "description": "The number of shards to split the model across. Should match the number of GPUs you want to use. Required for multi-GPU inference.",
+        "type": "string",
+        "default": 8
+      },
+      "cuda_visible_devices": {
+        "title": "CUDA Visible Devices",
+        "description": "Comma-separated list of GPU device IDs to expose to the container. Controls which GPUs the TGI container can use (e.g. '0,1,2').",
+        "type": "string",
+        "default": "0,1,2,3,4,5,6,7"
+      },
+      "hf_token": {
+        "title": "Hugging Face Token",
+        "description": "Optional. Required only if using a private or gated Hugging Face model. You can create a token at huggingface.co/settings/tokens.",
+        "type": "string",
+        "default": ""
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_image_model",
+        "path": "/output/container/environmentVariables/MODEL_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/num_of_shards",
+        "path": "/output/container/environmentVariables/NUM_SHARD"
+      },
+      {
+        "op": "copy",
+        "from": "/input/cuda_visible_devices",
+        "path": "/output/container/environmentVariables/CUDA_VISIBLE_DEVICES"
+      },
+      {
+        "op": "copy",
+        "from": "/input/hf_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/products/recipes/tgi-dc",
+  "short_description": "Serve large LLMs and VLMs using Hugging Face TGI on 8×L40S GPUs with multi-GPU sharding support",
+  "workload_types": ["LLM"]
+}
