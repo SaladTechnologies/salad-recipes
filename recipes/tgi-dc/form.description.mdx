@@ -13,6 +13,15 @@ On SaladCloud Secure, you can access **8-GPU datacenter nodes** to serve very la
 
 - `CUDA Visible Devices` — Defines which GPUs the container can access. Example: `0,1,2,3,4,5,6,7` exposes all 8 GPUs. **Required** for multi-GPU support.
 - `Number of Shards` — Number of shards to split the model across. Must be equal to or less than the number of visible GPUs.
+- `Model` — Hugging Face model to load. 
 
-- [See supported models](https://huggingface.co/docs/text-generation-inference/supported_models)
-- This recipe is defaulted to run on 8×L40S GPUs per node (48GB VRAM each). These nodes are ideal for serving large models with high throughput and parallelism.
+This recipe is defaulted to run on **8×L40S GPUs per node (48GB VRAM each)**. These nodes are ideal for serving large models with high throughput and parallelism.
+
+[See all supported models](https://huggingface.co/docs/text-generation-inference/supported_models)
+
+### Example Supported Models
+
+- **Llama 2 70B** — `meta-llama/Llama-2-70b-chat-hf`  
+- **Llama 3 70B** — `meta-llama/Meta-Llama-3-70B-Instruct`  
+- **Mixtral 8x7B** — `mistralai/Mixtral-8x7B-Instruct-v0.1`  
+- **DeepSeek R1 Distill Llama 70B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-70B` (default)  

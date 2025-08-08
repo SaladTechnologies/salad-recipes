@@ -8,6 +8,21 @@
 - [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/tgi-dc)
 - <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Text%20Generation%20Inference%20DataCenter&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>
 
+## Example Models for 8×L40S Sharded Inference
+
+With SaladCloud Secure’s **8×L40S GPU** nodes (24GB VRAM each), you can run very large models by sharding them across all GPUs. Below are some example models that work well with this setup:
+
+- **Llama 2 70B** — `meta-llama/Llama-2-70b-chat-hf`
+- **Llama 3 70B** — `meta-llama/Meta-Llama-3-70B-Instruct`
+- **Mixtral 8x7B** — `mistralai/Mixtral-8x7B-Instruct-v0.1`
+- **DeepSeek R1 Distill Llama 70B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-70B`
+
+To use one of these models, specify its Hugging Face ID either in the **Model** field when deploying the recipe or by setting the `MODEL_ID` environment variable.
+
+<Callout variation="info">
+These models will be downloaded at container startup, so initial deployment may take several minutes depending on model size.
+</Callout>
+
 ### Curl Example
 
 <Callout variation="note">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>
