@@ -2,6 +2,7 @@
   "name": "",
   "readme": "$replace",
   "container": {
+    "command": [],
     "environmentVariables": {
       "HOSTNAME": "::",
       "PORT": "3000"
@@ -14,7 +15,7 @@
       "gpuClasses": [
         "97b905f3-e8ed-42d6-90cf-d2a395afa1eb"
       ],
-      "storageAmount": 26843545600,
+      "storageAmount": 536870912000,
       "shmSize": 64
     },
     "priority": "high"
@@ -36,7 +37,7 @@
     "timeoutSeconds": 10
   },
   "networking": {
-    "auth": false,
+    "auth": true,
     "clientRequestTimeout": 100000,
     "loadBalancer": "least_number_of_connections",
     "port": 3000,

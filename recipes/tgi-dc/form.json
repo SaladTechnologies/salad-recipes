@@ -27,7 +27,7 @@
     "num_of_shards": {
       "title": "Number of Shards",
       "description": "The number of shards to split the model across. Should match the number of GPUs you want to use. Required for multi-GPU inference.",
-      "type": "string",
+      "type": "number",
       "default": 8
     },
     "cuda_visible_devices": {
