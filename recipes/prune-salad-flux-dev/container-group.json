@@ -1,0 +1,44 @@
+{
+  "autostartPolicy": true,
+  "container": {
+    "environmentVariables": {},
+    "image": "gtregoatpruna/prune-salad-flux-dev",
+    "imageCaching": true,
+    "priority": "high",
+    "resources": {
+      "cpu": 16,
+      "gpu": 1,
+      "memory": 38912,
+      "gpuClasses": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "storageAmount": 53687091200
+    }
+  },
+  "name": "",
+  "networking": {
+    "auth": true,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 8080,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  },
+  "replicas": 2,
+  "restartPolicy": "always",
+  "readme": "$replace",
+  "readinessProbe": {
+    "failureThreshold": 1,
+    "http": {
+      "headers": [],
+      "path": "/ping",
+      "port": 8080,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 180,
+    "periodSeconds": 3,
+    "successThreshold": 1,
+    "timeoutSeconds": 10
+  }
+}
