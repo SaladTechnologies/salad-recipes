@@ -5,9 +5,7 @@
   "required": [
     "container_group_name",
     "container_image_model",
-    "networking_auth",
-    "num_of_shards",
-    "cuda_visible_devices"
+    "networking_auth"
   ],
   "properties": {
     "container_group_name": {
@@ -23,18 +21,6 @@
       "type": "string",
       "description": "The Hugging Face model ID or custom image that supports TGI. This determines which model will be loaded and served.",
       "default": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
-    },
-    "num_of_shards": {
-      "title": "Number of Shards",
-      "description": "The number of shards to split the model across. Should match the number of GPUs you want to use. Required for multi-GPU inference.",
-      "type": "number",
-      "default": 8
-    },
-    "cuda_visible_devices": {
-      "title": "CUDA Visible Devices",
-      "description": "Comma-separated list of GPU device IDs to expose to the container. Controls which GPUs the TGI container can use (e.g. '0,1,2').",
-      "type": "string",
-      "default": "0,1,2,3,4,5,6,7"
     },
     "hf_token": {
       "title": "Hugging Face Token",

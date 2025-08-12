@@ -1,12 +1,14 @@
 {
   "container_template": {
     "name": "",
-    "readme": "# Text Generation Inference (DataCenter GPUs)\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)\n- [🤗 Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index)\n- [Additional Configuration](https://huggingface.co/docs/text-generation-inference/reference/launcher)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/tgi-dc)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Text%20Generation%20Inference%20DataCenter&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## Example Models for 8×L40S Sharded Inference\n\nWith SaladCloud Secure’s **8×L40S GPU** nodes (24GB VRAM each), you can run very large models by sharding them across all GPUs. Below are some example models that work well with this setup:\n\n- **Llama 2 70B** — `meta-llama/Llama-2-70b-chat-hf`\n- **Llama 3 70B** — `meta-llama/Meta-Llama-3-70B-Instruct`\n- **Mixtral 8x7B** — `mistralai/Mixtral-8x7B-Instruct-v0.1`\n- **DeepSeek R1 Distill Llama 70B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-70B`\n\nTo use one of these models, specify its Hugging Face ID either in the **Model** field when deploying the recipe or by setting the `MODEL_ID` environment variable.\n\n<Callout variation=\"info\">\nThese models will be downloaded at container startup, so initial deployment may take several minutes depending on model size.\n</Callout>\n\n### Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\"model\": \"tgi\",\"messages\": [{\"role\": \"system\",\"content\": \"You are a helpful assistant.\"},{\"role\": \"user\",\"content\": \"What is deep learning?\"}],\"stream\": true,\"max_tokens\": 20}'\n`}</CodeBlock>\n",
+    "readme": "# Text Generation Inference (DataCenter GPUs)\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)\n- [Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index)\n- [Additional Configuration](https://huggingface.co/docs/text-generation-inference/reference/launcher)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/tgi-dc)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Text%20Generation%20Inference%20DataCenter&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## Example Models for 8×L40S Sharded Inference\n\nWith SaladCloud Secure’s **8×L40S GPU** nodes (24GB VRAM each), you can run very large models by sharding them across all GPUs. Below are some example models that work well with this setup:\n\n- **Llama 2 70B** — `meta-llama/Llama-2-70b-chat-hf`\n- **Llama 3 70B** — `meta-llama/Meta-Llama-3-70B-Instruct`\n- **Mixtral 8x7B** — `mistralai/Mixtral-8x7B-Instruct-v0.1`\n- **DeepSeek R1 Distill Llama 70B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-70B`\n\nTo use one of these models, specify its Hugging Face ID either in the **Model** field when deploying the recipe or by setting the `MODEL_ID` environment variable.\n\n<Callout variation=\"info\">\nThese models will be downloaded at container startup, so initial deployment may take several minutes depending on model size.\n</Callout>\n\n### Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\"model\": \"tgi\",\"messages\": [{\"role\": \"system\",\"content\": \"You are a helpful assistant.\"},{\"role\": \"user\",\"content\": \"What is deep learning?\"}],\"stream\": true,\"max_tokens\": 20}'\n`}</CodeBlock>\n",
     "container": {
       "command": [],
       "environmentVariables": {
         "HOSTNAME": "::",
-        "PORT": "3000"
+        "PORT": "3000",
+        "CUDA_VISIBLE_DEVICES": "0,1,2,3,4,5,6,7",
+        "NUM_SHARDS": "8"
       },
       "image": "ghcr.io/huggingface/text-generation-inference:3.3.0",
       "imageCaching": true,
@@ -47,15 +49,9 @@
   },
   "form": {
     "title": "Text Generation Inference (DataCenter)",
-    "description": "Run popular LLMs and VLMs with [Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index), a production-ready inference server for large-scale text generation tasks. TGI supports [OpenAI Messages API](https://huggingface.co/docs/text-generation-inference/reference/api_reference), streaming output, JSON mode, and more.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nModels are not bundled with the container and will be downloaded at runtime based on your configuration. **This means container startup may take several minutes**, especially for large models.\n\nTGI has many [configuration options](https://huggingface.co/docs/text-generation-inference/reference/launcher) that can be set using environment variables in the *Advanced Configuration* section. TGI automatically detects hardware, but you should manually configure key options.\n---\n\n## Multi-GPU and Datacenter Support\n\nOn SaladCloud Secure, you can access **8-GPU datacenter nodes** to serve very large models, including **70B LLMs**, using TGI’s sharded inference mode. To run models across multiple GPUs, configure the following environment variables:\n\n- `CUDA Visible Devices` — Defines which GPUs the container can access. Example: `0,1,2,3,4,5,6,7` exposes all 8 GPUs. **Required** for multi-GPU support.\n- `Number of Shards` — Number of shards to split the model across. Must be equal to or less than the number of visible GPUs.\n- `Model` — Hugging Face model to load. \n\nThis recipe is defaulted to run on **8×L40S GPUs per node (48GB VRAM each)**. These nodes are ideal for serving large models with high throughput and parallelism.\n\n[See all supported models](https://huggingface.co/docs/text-generation-inference/supported_models)\n\n### Example Supported Models\n\n- **Llama 2 70B** — `meta-llama/Llama-2-70b-chat-hf`  \n- **Llama 3 70B** — `meta-llama/Meta-Llama-3-70B-Instruct`  \n- **Mixtral 8x7B** — `mistralai/Mixtral-8x7B-Instruct-v0.1`  \n- **DeepSeek R1 Distill Llama 70B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-70B` (default)  ",
+    "description": "Run popular LLMs and VLMs with [Text Generation Inference](https://huggingface.co/docs/text-generation-inference/index), a production-ready inference server for large-scale text generation tasks. TGI supports [OpenAI Messages API](https://huggingface.co/docs/text-generation-inference/reference/api_reference), streaming output, JSON mode, and more.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nModels are not bundled with the container and will be downloaded at runtime based on your configuration. **This means container startup may take several minutes**, especially for large models.\n\nTGI has many [configuration options](https://huggingface.co/docs/text-generation-inference/reference/launcher) that can be set using environment variables in the *Advanced Configuration* section. TGI automatically detects hardware, but you should manually configure key options.\n---\n\n## Multi-GPU and Datacenter Support\n\nOn SaladCloud Secure, you can access **8-GPU datacenter nodes** to serve very large models, including **70B LLMs**, using TGI’s sharded inference mode. To run models across multiple GPUs, configure the following environment variables:\n\n- `Model` — Hugging Face model to load.\n- `Hugging Face Token` — Your Hugging Face access token (if the model is private).\n\nThis recipe is defaulted to run on **8×L40S GPUs per node (48GB VRAM each)**. These nodes are ideal for serving large models with high throughput and parallelism.\n\n[See all supported models](https://huggingface.co/docs/text-generation-inference/supported_models)\n\n### Example Supported Models\n\n- **Llama 2 70B** — `meta-llama/Llama-2-70b-chat-hf`  \n- **Llama 3 70B** — `meta-llama/Meta-Llama-3-70B-Instruct`  \n- **Mixtral 8x7B** — `mistralai/Mixtral-8x7B-Instruct-v0.1`  \n- **DeepSeek R1 Distill Llama 70B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-70B` (default)  ",
     "type": "object",
-    "required": [
-      "container_group_name",
-      "container_image_model",
-      "networking_auth",
-      "num_of_shards",
-      "cuda_visible_devices"
-    ],
+    "required": ["container_group_name", "container_image_model", "networking_auth"],
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
@@ -70,18 +66,6 @@
         "type": "string",
         "description": "The Hugging Face model ID or custom image that supports TGI. This determines which model will be loaded and served.",
         "default": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
-      },
-      "num_of_shards": {
-        "title": "Number of Shards",
-        "description": "The number of shards to split the model across. Should match the number of GPUs you want to use. Required for multi-GPU inference.",
-        "type": "number",
-        "default": 8
-      },
-      "cuda_visible_devices": {
-        "title": "CUDA Visible Devices",
-        "description": "Comma-separated list of GPU device IDs to expose to the container. Controls which GPUs the TGI container can use (e.g. '0,1,2').",
-        "type": "string",
-        "default": "0,1,2,3,4,5,6,7"
       },
       "hf_token": {
         "title": "Hugging Face Token",
@@ -126,23 +110,13 @@
       },
       {
         "op": "copy",
-        "from": "/input/num_of_shards",
-        "path": "/output/container/environmentVariables/NUM_SHARD"
-      },
-      {
-        "op": "copy",
-        "from": "/input/cuda_visible_devices",
-        "path": "/output/container/environmentVariables/CUDA_VISIBLE_DEVICES"
-      },
-      {
-        "op": "copy",
         "from": "/input/hf_token",
         "path": "/output/container/environmentVariables/HF_TOKEN"
       }
     ]
   ],
   "ui": {},
-  "documentation_url": "https://docs.salad.com/products/recipes/tgi-dc",
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/tgi-dc",
   "short_description": "Serve large LLMs and VLMs using Hugging Face TGI on 8×L40S GPUs with multi-GPU sharding support",
   "workload_types": ["LLM"]
 }
