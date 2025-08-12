@@ -1,0 +1,34 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/networking_auth",
+      "path": "/output/networking/auth"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_image_model",
+      "path": "/output/container/environmentVariables/MODEL_ID"
+    },
+    {
+      "op": "copy",
+      "from": "/input/hf_token",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
+    }
+  ]
+]
