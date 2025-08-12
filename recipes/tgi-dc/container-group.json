@@ -18,7 +18,7 @@
         "97b905f3-e8ed-42d6-90cf-d2a395afa1eb"
       ],
       "storageAmount": 536870912000,
-      "shmSize": 64
+      "shmSize": 2048
     },
     "priority": "high"
   },
