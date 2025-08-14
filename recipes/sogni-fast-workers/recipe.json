@@ -291,7 +291,7 @@
   },
   "form": {
     "title": "Sogni Fast Worker",
-    "description": "Deploy Sogni Flux or Stable Diffusion workers for image generation. ",
+    "description": "Deploy Sogni Flux or Stable Diffusion workers for image generation.",
     "type": "object",
     "required": ["container_group_name", "sogni_worker_type", "sogni_api_key", "sogni_nft_token_id"],
     "properties": {

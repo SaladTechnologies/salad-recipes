@@ -1,4 +1,4 @@
-{ 
+{
   "autostartPolicy": true,
   "container": {
     "environmentVariables": {},
@@ -27,5 +27,4 @@
     "serverResponseTimeout": 100000,
     "singleConnectionLimit": false
   }
-
 }
