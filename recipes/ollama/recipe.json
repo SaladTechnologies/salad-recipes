@@ -121,7 +121,7 @@
     ]
   ],
   "ui": {},
-  "documentation_url": "https://docs.salad.com/products/recipes/ollama",
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/ollama",
   "short_description": "Run popular LLMs with Ollama.",
   "workload_types": ["LLM"]
 }

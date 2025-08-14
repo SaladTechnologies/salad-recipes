@@ -410,7 +410,7 @@
       "ui:enumNames": ["Flux", "Stable Diffusion"]
     }
   },
-  "documentation_url": "https://docs.salad.com/products/recipes/sogni-fast-worker",
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/sogni-fast-worker",
   "short_description": "Deploy Sogni Flux and Stable Diffusion fast workers for high-quality image generation.",
   "workload_types": ["imageGeneration", "blockchain"]
 }
