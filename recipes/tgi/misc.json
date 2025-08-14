@@ -16,7 +16,7 @@
     },
     "container_environment_quantize": {
       "ui:enumNames": [
-        "Disabled",
+        "(unquantized)",
         "bits-and-bytes",
         "GPT-Q",
         "AWQ",
