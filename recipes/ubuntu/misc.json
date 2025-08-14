@@ -1,6 +1,6 @@
 {
   "ui": {},
-  "documentation_url": "https://docs.salad.com/products/recipes/ubuntu",
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/ubuntu",
   "short_description": "Deploy a basic Ubuntu environment with JupyterLab and VS Code.",
   "workload_types": []
 }

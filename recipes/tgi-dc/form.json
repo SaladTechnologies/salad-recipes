@@ -1,6 +1,6 @@
 {
   "title": "Text Generation Inference (DataCenter)",
-  "description": "Deploy a Hugging Face-compatible Text Generation Inference (TGI) container using SaladCloud Secure nodes with multi-GPU support.",
+  "description": "$replace",
   "type": "object",
   "required": [
     "container_group_name",
@@ -10,7 +10,7 @@
   "properties": {
     "container_group_name": {
       "title": "Container Group Name",
-      "description": "Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+      "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
       "type": "string",
       "maxLength": 63,
       "minLength": 2,
@@ -19,7 +19,7 @@
     "container_image_model": {
       "title": "Model",
       "type": "string",
-      "description": "The Hugging Face model ID or custom image that supports TGI. This determines which model will be loaded and served.",
+      "description": "Required* The Hugging Face model ID or custom image that supports TGI. This determines which model will be loaded and served.",
       "default": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
     },
     "hf_token": {
