@@ -300,7 +300,7 @@ class Deploy extends core_1.Command {
                 else if (patch.op === 'copy') {
                     const sourceField = patch.from.split('/').pop();
                     const sourceValue = inputs[sourceField];
-                    if (sourceValue === undefined) {
+                    if (sourceValue === undefined || sourceValue === '') {
                         continue;
                     }
                     const targetField = patch.path.split('/').slice(2);
