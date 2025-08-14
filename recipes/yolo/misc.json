@@ -1,6 +1,6 @@
 {
   "ui": {},
-  "documentation_url": "https://docs.salad.com/products/recipes/yolo",
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/yolo",
   "short_description": "Run YOLO Object Detection Models.",
   "workload_types": [
     "objectDetection"

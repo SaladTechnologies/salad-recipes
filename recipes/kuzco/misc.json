@@ -1,6 +1,6 @@
 {
   "ui": {},
-  "documentation_url": "https://docs.devnet.inference.net/advanced/docker",
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/kuzco",
   "short_description": "Run Kuzco worker for distributed LLM workloads and earn $INT points.",
   "workload_types": [
     "blockchain",

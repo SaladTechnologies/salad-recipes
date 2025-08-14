@@ -13,7 +13,7 @@
       "ui:placeholder": "Authentication"
     }
   },
-  "documentation_url": "https://docs.salad.com/products/recipes/comfyui",
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/comfyui",
   "short_description": "Run popular image generation models with ComfyUI and ComfyUI API.",
   "workload_types": [
     "imageGeneration"

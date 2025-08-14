@@ -1,6 +1,6 @@
 {
   "ui": {},
-  "documentation_url": "https://docs.salad.com/guides/molecular-dynamics-simulation/openmm-srcg",
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/opemm-srcg",
   "short_description": "Deploy a OpenMM playground for hands-on experimentation",
   "workload_types": [
     "MDS"
