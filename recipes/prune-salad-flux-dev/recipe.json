@@ -1,0 +1,106 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {},
+      "image": "gtregoatpruna/prune-salad-flux-dev",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 16,
+        "gpu": 1,
+        "memory": 38912,
+        "gpuClasses": ["851399fb-7329-4195-a042-d6514b28cf33"],
+        "storageAmount": 53687091200
+      }
+    },
+    "name": "",
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8080,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    },
+    "replicas": 2,
+    "restartPolicy": "always",
+    "readme": "# FLUX.1-dev Text-to-Image API\n\nHigh-performance text-to-image generation using FLUX.1-dev model optimized with Pruna compression for RTX 5090 GPUs.\n\n## Useful links\n\n- [FLUX.1-dev Model](https://huggingface.co/black-forest-labs/FLUX.1-dev)\n- [Pruna AI](https://pruna.ai/)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/prune-salad-flux-dev/)\n\n## Requirements\n\n<Callout variation=\"warning\">This container requires an RTX 5090 GPU with ~30GB VRAM. It may not work on other consumer GPU models due to memory requirements.</Callout>\n\n<Callout variation=\"note\">You must provide a valid Hugging Face token with access to FLUX.1-dev model. Visit the [FLUX.1-dev model page](https://huggingface.co/black-forest-labs/FLUX.1-dev) and agree to the license terms before using.</Callout>\n\n## API Usage\n\nThe API accepts POST requests to generate images from text prompts. Each inference takes approximately **20 seconds**.\nNote that you may need to provide a salad API key to the requests if you\nturn on authentication with the gateway.\n\n### Request Format\n\n<CodeBlock language=\"json\">{`{\n  \"prompt\": \"A cat jumping in the sky\",\n  \"num_inference_steps\": 28,\n  \"guidance_scale\": 3.5\n}`}</CodeBlock>\n\n- `prompt` (required): Text description of the image to generate\n- `num_inference_steps` (optional): Number of denoising steps (default: 28)\n- `guidance_scale` (optional): How closely to follow the prompt (default: 3.5)\n\n### Response Format\n\n<CodeBlock language=\"json\">{`{\n  \"image\": \"iVBORw0KGgoAAAANSUhEUgAA...\"\n}`}</CodeBlock>\n\nThe response contains a base64-encoded *PNG* image (the server\nwill convert the image to PNG, which adds some small / negligible time to \nthe inference but gets an easy to work with image format).\n\n### Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/invocations \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -H \"Salad-Api-Key: ${props.apiKey}\" \\\\\n  -d '{\n    \"prompt\": \"A majestic dragon soaring through clouds at sunset\",\n    \"num_inference_steps\": 28,\n    \"guidance_scale\": 3.5\n  }' | jq -r .image | base64 --decode > generated_image.png`}</CodeBlock>\n\n## Environment Variables\n\n- `HF_TOKEN` (required): Your Hugging Face access token with FLUX.1-dev permissions\n\n## Performance Notes\n\n- **Inference Time**: ~22 seconds per image\n- **GPU Memory**: ~30GB VRAM required\n- **Model Loading**: Initial startup takes several minutes for model download and optimization\n- **Warm-up**: The first inference after startup may take longer due to model compilation\n  ",
+    "readinessProbe": {
+      "failureThreshold": 1,
+      "http": {
+        "headers": [],
+        "path": "/ping",
+        "port": 8080,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 180,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 10
+    }
+  },
+  "form": {
+    "title": "My Recipe",
+    "description": "# Recipe Description\n\nDeploy high-performance text-to-image generation using the [FLUX.1-dev model](https://huggingface.co/black-forest-labs/FLUX.1-dev) optimized with [Pruna](https://pruna.ai/) open source ([github](https://github.com/PrunaAI/pruna)) for RTX 5090 GPUs.\n(This may be extended to any GPU with enough memory).\n\nFLUX.1-dev is a state-of-the-art diffusion model that generates high-quality images from text prompts, which will be \noptimized to fit on \"smaller\" GPUs thanks to quantization (torchao) and to generate images in approximately 22 seconds per inference.\n\n<Callout variation=\"warning\">\nThis container requires an RTX 5090 GPU with ~30GB VRAM. It may not work on other consumer GPU models due to memory requirements.\n</Callout>\n\n<Callout variation=\"note\">\nYou must provide a valid Hugging Face token with access to FLUX.1-dev model. Visit the [FLUX.1-dev model page](https://huggingface.co/black-forest-labs/FLUX.1-dev) and agree to the license terms before using.\n</Callout>\n\n## Getting Started\n\n1. Create a [Hugging Face account](https://huggingface.co/join) if you don't have one\n2. Go to the [FLUX.1-dev model page](https://huggingface.co/black-forest-labs/FLUX.1-dev)\n3. Click **Agree and access repository** to accept the license terms\n4. Generate a Hugging Face token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)\n5. Paste your token into the **Hugging Face Token** field in this recipe\n\nThe API will be available at `/invocations` and accepts JSON requests with text prompts to generate images.\n\nHealth checks happen on `/ping`.",
+    "type": "object",
+    "required": ["container_group_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "HF_TOKEN": {
+        "title": "HuggingFace Token",
+        "description": "Token to access private or gated models from HuggingFace Hub.",
+        "type": "string",
+        "default": ""
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/HF_TOKEN",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://www.pruna.ai",
+  "short_description": "Deploy Flux Dev optimized with Pruna (open source, https://github.com/PrunaAI/pruna)",
+  "workload_types": []
+}
