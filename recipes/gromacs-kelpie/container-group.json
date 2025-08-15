@@ -1,0 +1,21 @@
+{
+  "autostartPolicy": true,
+  "container": {
+    "environmentVariables": {},
+    "image": "docker.io/saladtechnologies/mds:001-gromacs-kelpie-no-sync",
+    "imageCaching": true,
+    "priority": "high",
+    "resources": {
+      "cpu": 16,
+      "memory": 24576,
+      "gpuClasses": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "storageAmount": 53687091200
+    }
+  }, 
+  "name": "",
+  "replicas": 2,
+  "restartPolicy": "always",
+  "readme": "$replace"
+}

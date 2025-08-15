@@ -1,0 +1,11 @@
+[A GROMACS image integrated with Salad Kelpie](https://github.com/SaladTechnologies/mds/blob/main/gromacs-kelpie/no_sync_image/Dockerfile) runs on RTX 4090 (24GB).
+
+Please familiarize yourself with [GROMACS](https://www.gromacs.org/) and [GROMACS with Job Queue](https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/gromacs-job-queue) on SaladCloud before running the recipe.
+
+You’ll need to provide the Container Group Name and access to S3-compatible storage when launching the recipe. The hardware configuration—including vCPU, memory, and GPU—can be adjusted as needed.
+
+Once the container group is running, its instances retrieve jobs from Salad Kelpie, download the required files from the storage, run simulations, and upload the state and results.
+
+Ensure that all job input files are uploaded to the storage before submitting the jobs. See [this link](https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/gromacs-job-queue#submitting-jobs) for more details.
+
+

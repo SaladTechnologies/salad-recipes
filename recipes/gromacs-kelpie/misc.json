@@ -1,0 +1,8 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/gromacs-job-queue",
+  "short_description": "Deploy a GROMACS workload using Salad Kelpie",
+  "workload_types": [
+    "MDS"
+  ]
+}
