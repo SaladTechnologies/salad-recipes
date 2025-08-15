@@ -1,0 +1,111 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {},
+      "image": "docker.io/saladtechnologies/mds:001-gromacs-kelpie-no-sync",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 16,
+        "memory": 24576,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "storageAmount": 53687091200
+      }
+    },
+    "name": "",
+    "replicas": 2,
+    "restartPolicy": "always",
+    "readme": "# GROMACS with Salad Kelpie\n\n## Submit Jobs using the Salad Container Group ID: \n{`${props.id}`}\n\n## Resources\n- [Submit jobs to Salad Kelpie](https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/gromacs-job-queue#submitting-jobs)\n- [Salad Kelpie](https://docs.salad.com/container-engine/how-to-guides/job-processing/kelpie)\n- [GROMACS with Job Queue on SaladCloud](https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/gromacs-job-queue)\n- [GROMACS on SaladCloud](https://docs.salad.com/guides/molecular-dynamics-simulation/gromacs-srcg)\n- [The GitHub repository](https://github.com/SaladTechnologies/mds/tree/main/gromacs-kelpie)\n"
+  },
+  "form": {
+    "title": "GROMACS with Salad Kelpie",
+    "description": "[A GROMACS image integrated with Salad Kelpie](https://github.com/SaladTechnologies/mds/blob/main/gromacs-kelpie/no_sync_image/Dockerfile) runs on RTX 4090 (24GB).\n\nPlease familiarize yourself with [GROMACS](https://www.gromacs.org/) and [GROMACS with Job Queue](https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/gromacs-job-queue) on SaladCloud before running the recipe.\n\nYou’ll need to provide the Container Group Name and access to S3-compatible storage when launching the recipe. The hardware configuration—including vCPU, memory, and GPU—can be adjusted as needed.\n\nOnce the container group is running, its instances retrieve jobs from Salad Kelpie, download the required files from the storage, run simulations, and upload the state and results.\n\nEnsure that all job input files are uploaded to the storage before submitting the jobs. See [this link](https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/gromacs-job-queue#submitting-jobs) for more details.\n\n\n",
+    "type": "object",
+    "required": ["container_group_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$",
+        "default": ""
+      },
+      "AWS_ENDPOINT_URL": {
+        "title": "AWS_ENDPOINT_URL",
+        "description": "The base URL of the S3-compatible API.",
+        "type": "string"
+      },
+      "AWS_ACCESS_KEY_ID": {
+        "title": "AWS_ACCESS_KEY_ID",
+        "description": "Your access key (public identifier) for authenticating with the storage service.",
+        "type": "string"
+      },
+      "AWS_SECRET_ACCESS_KEY": {
+        "title": "AWS_SECRET_ACCESS_KEY",
+        "description": "The secret key (private) that pairs with the access key to sign requests.",
+        "type": "string"
+      },
+      "AWS_REGION": {
+        "title": "AWS_REGION",
+        "description": "The region name used by the client library.",
+        "type": "string"
+      },
+      "SALAD_PROJECT": {
+        "title": "SALAD_PROJECT",
+        "description": "The project name on SaladCloud.",
+        "type": "string"
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/AWS_ENDPOINT_URL",
+        "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+      },
+      {
+        "op": "copy",
+        "from": "/input/AWS_ACCESS_KEY_ID",
+        "path": "/output/container/environmentVariables/AWS_ACCESS_KEY_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/AWS_SECRET_ACCESS_KEY",
+        "path": "/output/container/environmentVariables/AWS_SECRET_ACCESS_KEY"
+      },
+      {
+        "op": "copy",
+        "from": "/input/AWS_REGION",
+        "path": "/output/container/environmentVariables/AWS_REGION"
+      },
+      {
+        "op": "copy",
+        "from": "/input/SALAD_PROJECT",
+        "path": "/output/container/environmentVariables/SALAD_PROJECT"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/how-to-guides/molecular-dynamics-simulation/gromacs-job-queue",
+  "short_description": "Deploy a GROMACS workload using Salad Kelpie",
+  "workload_types": ["MDS"]
+}

@@ -1,0 +1,44 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/AWS_ENDPOINT_URL",
+      "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+    },
+    {
+      "op": "copy",
+      "from": "/input/AWS_ACCESS_KEY_ID",
+      "path": "/output/container/environmentVariables/AWS_ACCESS_KEY_ID"
+    },
+    {
+      "op": "copy",
+      "from": "/input/AWS_SECRET_ACCESS_KEY",
+      "path": "/output/container/environmentVariables/AWS_SECRET_ACCESS_KEY"
+    },
+    {
+      "op": "copy",
+      "from": "/input/AWS_REGION",
+      "path": "/output/container/environmentVariables/AWS_REGION"
+    },
+    {
+      "op": "copy",
+      "from": "/input/SALAD_PROJECT",
+      "path": "/output/container/environmentVariables/SALAD_PROJECT"
+    }
+  ]
+]
