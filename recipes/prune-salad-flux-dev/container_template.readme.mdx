@@ -16,7 +16,7 @@ High-performance text-to-image generation using FLUX.1-dev model optimized with 
 
 ## API Usage
 
-The API accepts POST requests to generate images from text prompts. Each inference takes approximately **20 seconds**.
+The API accepts POST requests to generate images from text prompts. Each inference takes approximately **3.5 seconds**.
 Note that you may need to provide a salad API key to the requests if you
 turn on authentication with the gateway.
 
@@ -61,7 +61,7 @@ the inference but gets an easy to work with image format).
 
 ## Performance Notes
 
-- **Inference Time**: ~22 seconds per image
+- **Inference Time**: ~3.5 seconds per image
 - **GPU Memory**: ~30GB VRAM required
 - **Model Loading**: Initial startup takes several minutes for model download and optimization
 - **Warm-up**: The first inference after startup may take longer due to model compilation
