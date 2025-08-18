@@ -1,0 +1,27 @@
+# Recipe Description
+
+Deploy high-performance text-to-image generation using the [FLUX.1-dev model](https://huggingface.co/black-forest-labs/FLUX.1-dev) optimized with [Pruna](https://pruna.ai/) open source ([github](https://github.com/PrunaAI/pruna)) for RTX 5090 GPUs.
+(This may be extended to any GPU with enough memory).
+
+FLUX.1-dev is a state-of-the-art diffusion model that generates high-quality images from text prompts, which will be 
+optimized to fit on "smaller" GPUs thanks to quantization (torchao) and to generate images in approximately 3.5 seconds per inference.
+
+<Callout variation="warning">
+This container requires an RTX 5090 GPU with ~30GB VRAM. It may not work on other consumer GPU models due to memory requirements.
+</Callout>
+
+<Callout variation="note">
+You must provide a valid Hugging Face token with access to FLUX.1-dev model. Visit the [FLUX.1-dev model page](https://huggingface.co/black-forest-labs/FLUX.1-dev) and agree to the license terms before using.
+</Callout>
+
+## Getting Started
+
+1. Create a [Hugging Face account](https://huggingface.co/join) if you don't have one
+2. Go to the [FLUX.1-dev model page](https://huggingface.co/black-forest-labs/FLUX.1-dev)
+3. Click **Agree and access repository** to accept the license terms
+4. Generate a Hugging Face token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+5. Paste your token into the **Hugging Face Token** field in this recipe
+
+The API will be available at `/invocations` and accepts JSON requests with text prompts to generate images.
+
+Health checks happen on `/ping`.

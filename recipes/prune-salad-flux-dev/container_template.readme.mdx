@@ -1,0 +1,68 @@
+# FLUX.1-dev Text-to-Image API
+
+High-performance text-to-image generation using FLUX.1-dev model optimized with Pruna compression for RTX 5090 GPUs.
+
+## Useful links
+
+- [FLUX.1-dev Model](https://huggingface.co/black-forest-labs/FLUX.1-dev)
+- [Pruna AI](https://pruna.ai/)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/prune-salad-flux-dev/)
+
+## Requirements
+
+<Callout variation="warning">This container requires an RTX 5090 GPU with ~30GB VRAM. It may not work on other consumer GPU models due to memory requirements.</Callout>
+
+<Callout variation="note">You must provide a valid Hugging Face token with access to FLUX.1-dev model. Visit the [FLUX.1-dev model page](https://huggingface.co/black-forest-labs/FLUX.1-dev) and agree to the license terms before using.</Callout>
+
+## API Usage
+
+The API accepts POST requests to generate images from text prompts. Each inference takes approximately **3.5 seconds**.
+Note that you may need to provide a salad API key to the requests if you
+turn on authentication with the gateway.
+
+### Request Format
+
+<CodeBlock language="json">{`{
+  "prompt": "A cat jumping in the sky",
+  "num_inference_steps": 28,
+  "guidance_scale": 3.5
+}`}</CodeBlock>
+
+- `prompt` (required): Text description of the image to generate
+- `num_inference_steps` (optional): Number of denoising steps (default: 28)
+- `guidance_scale` (optional): How closely to follow the prompt (default: 3.5)
+
+### Response Format
+
+<CodeBlock language="json">{`{
+  "image": "iVBORw0KGgoAAAANSUhEUgAA..."
+}`}</CodeBlock>
+
+The response contains a base64-encoded *PNG* image (the server
+will convert the image to PNG, which adds some small / negligible time to 
+the inference but gets an easy to work with image format).
+
+### Curl Example
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>
+
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/invocations \\
+  -H "Content-Type: application/json" \\
+  -H "Salad-Api-Key: ${props.apiKey}" \\
+  -d '{
+    "prompt": "A majestic dragon soaring through clouds at sunset",
+    "num_inference_steps": 28,
+    "guidance_scale": 3.5
+  }' | jq -r .image | base64 --decode > generated_image.png`}</CodeBlock>
+
+## Environment Variables
+
+- `HF_TOKEN` (required): Your Hugging Face access token with FLUX.1-dev permissions
+
+## Performance Notes
+
+- **Inference Time**: ~3.5 seconds per image
+- **GPU Memory**: ~30GB VRAM required
+- **Model Loading**: Initial startup takes several minutes for model download and optimization
+- **Warm-up**: The first inference after startup may take longer due to model compilation
+  
