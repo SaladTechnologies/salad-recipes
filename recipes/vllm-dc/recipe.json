@@ -1,0 +1,131 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# vLLM (DataCenter GPUs)\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)\n- [vLLM Documentation](https://docs.vllm.ai/)\n- [Engine Arguments](https://docs.vllm.ai/en/latest/configuration/engine_args.html)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/vllm-dc)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=vLLM%20DataCenter&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## Example Models for DataCenter GPUs\n\n- **Llama 3.1 70B** — `meta-llama/Meta-Llama-3.1-70B-Instruct`\n- **Mixtral 8×7B** — `mistralai/Mixtral-8x7B-Instruct-v0.1`\n- **DeepSeek R1 Distill 70B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-70B`\n- **Qwen2.5 72B** — `Qwen/Qwen2.5-72B-Instruct`\n\n<Callout variation=\"info\">\nThese models will be downloaded at container startup, so deployment may take several minutes depending on model size.\n</Callout>\n\n### Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if auth is disabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n  -X POST \\\\\n  -H 'Content-Type: application/json' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -d '{\"messages\":[{\"role\":\"user\",\"content\":\"List three colors.\"}], \"stream\": false, \"max_tokens\": 24}'\n    `}</CodeBlock>\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {
+        "CUDA_VISIBLE_DEVICES": "0,1,2,3,4,5,6,7",
+        "TP_SIZE": "8"
+      },
+      "image": "saladtechnologies/salad-vllm-server:1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 128,
+        "memory": 2097152,
+        "gpuClasses": ["97b905f3-e8ed-42d6-90cf-d2a395afa1eb"],
+        "storageAmount": 536870912000,
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "readinessProbe": {
+      "failureThreshold": 1,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 1
+    },
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "vLLM (DataCenter)",
+    "description": "Run large language models with [vLLM](https://docs.vllm.ai/), a high-performance inference engine built for fast and efficient serving. vLLM implements [PagedAttention](https://blog.vllm.ai/2023/06/20/vllm.html) for optimized memory use and supports the [OpenAI Messages API](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html), streaming responses, JSON mode, and more.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nModels are **not bundled with the container** and will be downloaded at runtime. **Startup may take several minutes**, especially for 70B+ parameter models.\n\n---\n\n## Multi-GPU and Datacenter Support\n\nOn SaladCloud Secure, you can run vLLM on **8-GPU datacenter nodes** to serve very large models (70B+), with weights sharded automatically across available GPUs. This allows you to reach high throughput and parallelism for production workloads.\n\n### Key Configuration Options\n\nWhen deploying, you can customize the container using these options:\n\n- **Model** — Required. Hugging Face model ID to load (default: `deepseek-ai/DeepSeek-R1-Distill-Llama-70B`).  \n- **Hugging Face Token** — Your HF access token (only required for gated/private models).  \n- **GPU Memory Utilization** — Fraction of GPU VRAM vLLM can use (default: `0.92`). Adjust if you need to leave memory headroom for monitoring or other processes.  \n\n<Callout variation=\"info\">\nDefaults are tuned for running 70B models on multi-GPU datacenter nodes. You can override them in *Advanced Configuration*.\n</Callout>\n\n---\n\n### Example Supported Models\n\n- **Llama 3.1 70B** — `meta-llama/Meta-Llama-3.1-70B-Instruct` \n- **Mixtral 8×7B** — `mistralai/Mixtral-8x7B-Instruct-v0.1`  \n- **DeepSeek R1 Distill 70B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-70B` (default)\n- **Qwen2.5 72B** — `Qwen/Qwen2.5-72B-Instruct`  \n\n\n",
+    "type": "object",
+    "required": ["container_group_name", "model_id", "networking_auth"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "model_id": {
+        "title": "Model",
+        "type": "string",
+        "description": "Required* Hugging Face model ID to load and serve with vLLM.",
+        "default": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+      },
+      "hf_token": {
+        "title": "Hugging Face Token",
+        "description": "Optional. Required only for private or gated Hugging Face models.",
+        "type": "string",
+        "default": ""
+      },
+      "gpu_memory_util": {
+        "title": "GPU Memory Utilization",
+        "description": "Fraction of GPU VRAM vLLM may use (0.0–1.0). Lower this if you need more headroom.",
+        "type": "string",
+        "default": 0.92
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_id",
+        "path": "/output/container/environmentVariables/MODEL_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/hf_token",
+        "path": "/output/container/environmentVariables/HUGGING_FACE_HUB_TOKEN"
+      },
+      {
+        "op": "copy",
+        "from": "/input/gpu_memory_util",
+        "path": "/output/container/environmentVariables/GPU_MEM_UTIL"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/vllm-dc",
+  "short_description": "Serve large LLMs using vLLM with multi‑GPU sharding on DataCenter GPUs",
+  "workload_types": ["LLM"]
+}

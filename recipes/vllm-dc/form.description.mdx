@@ -1,0 +1,34 @@
+Run large language models with [vLLM](https://docs.vllm.ai/), a high-performance inference engine built for fast and efficient serving. vLLM implements [PagedAttention](https://blog.vllm.ai/2023/06/20/vllm.html) for optimized memory use and supports the [OpenAI Messages API](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html), streaming responses, JSON mode, and more.
+
+<Callout variation="warning">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>
+
+Models are **not bundled with the container** and will be downloaded at runtime. **Startup may take several minutes**, especially for 70B+ parameter models.
+
+---
+
+## Multi-GPU and Datacenter Support
+
+On SaladCloud Secure, you can run vLLM on **8-GPU datacenter nodes** to serve very large models (70B+), with weights sharded automatically across available GPUs. This allows you to reach high throughput and parallelism for production workloads.
+
+### Key Configuration Options
+
+When deploying, you can customize the container using these options:
+
+- **Model** — Required. Hugging Face model ID to load (default: `deepseek-ai/DeepSeek-R1-Distill-Llama-70B`).  
+- **Hugging Face Token** — Your HF access token (only required for gated/private models).  
+- **GPU Memory Utilization** — Fraction of GPU VRAM vLLM can use (default: `0.92`). Adjust if you need to leave memory headroom for monitoring or other processes.  
+
+<Callout variation="info">
+Defaults are tuned for running 70B models on multi-GPU datacenter nodes. You can override them in *Advanced Configuration*.
+</Callout>
+
+---
+
+### Example Supported Models
+
+- **Llama 3.1 70B** — `meta-llama/Meta-Llama-3.1-70B-Instruct` 
+- **Mixtral 8×7B** — `mistralai/Mixtral-8x7B-Instruct-v0.1`  
+- **DeepSeek R1 Distill 70B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-70B` (default)
+- **Qwen2.5 72B** — `Qwen/Qwen2.5-72B-Instruct`  
+
+

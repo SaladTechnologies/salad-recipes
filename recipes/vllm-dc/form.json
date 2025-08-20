@@ -1,0 +1,44 @@
+{
+  "title": "vLLM (DataCenter)",
+  "description": "Deploy a vLLM server on SaladCloud Secure nodes with multi-GPU support.",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "model_id",
+    "networking_auth"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "model_id": {
+      "title": "Model",
+      "type": "string",
+      "description": "Required* Hugging Face model ID to load and serve with vLLM.",
+      "default": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+    },
+    "hf_token": {
+      "title": "Hugging Face Token",
+      "description": "Optional. Required only for private or gated Hugging Face models.",
+      "type": "string",
+      "default": ""
+    },
+    "gpu_memory_util": {
+      "title": "GPU Memory Utilization",
+      "description": "Fraction of GPU VRAM vLLM may use (0.0–1.0). Lower this if you need more headroom.",
+      "type": "string",
+      "default": 0.92
+    },
+    "networking_auth": {
+      "title": "Require Container Gateway Authentication",
+      "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

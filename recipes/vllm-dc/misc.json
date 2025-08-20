@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/vllm-dc",
+  "short_description": "Serve large LLMs using vLLM with multi‑GPU sharding on DataCenter GPUs",
+  "workload_types": ["LLM"]
+}
