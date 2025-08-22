@@ -1,0 +1,111 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# GPT-OSS-120B on vLLM\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)  \n- [Model Card](https://huggingface.co/openai/gpt-oss-120b) – License, usage, and weights  \n- [vLLM Docs](https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html) – Configuration & API reference  \n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/vllm-gpt-oss-120b)  \n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=vLLM%20GPT-OSS-120B&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>  \n\n<Callout variation=\"info\">\nThese model will be downloaded at container startup, so deployment may take several minutes.\n</Callout>\n\n### Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if auth is disabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n  -X POST \\\\\n  -H 'Content-Type: application/json' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -d '{\"messages\":[{\"role\":\"user\",\"content\":\"List three colors.\"}], \"stream\": false, \"max_tokens\": 24}'\n    `}</CodeBlock>\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {
+        "CUDA_VISIBLE_DEVICES": "0,1,2,3,4,5,6,7",
+        "TP_SIZE": "8",
+        "MODEL_ID": "openai/gpt-oss-120b",
+        "ASYNC_SCHEDULING": "true"
+      },
+      "image": "saladtechnologies/salad-vllm-server:gpt-oss-v2",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 128,
+        "memory": 262144,
+        "gpuClasses": ["32adf1e3-2e66-4e43-87f5-ce10d5b6b280"],
+        "storageAmount": 536870912000,
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "readinessProbe": {
+      "failureThreshold": 1,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 1
+    },
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "GPT-OSS-120B (vLLM)",
+    "description": "Run **OpenAI GPT‑OSS‑120B** with **vLLM** on SaladCloud’s DataCenter GPUs. GPT‑OSS‑120B is OpenAI’s most capable open‑weight model (Apache‑2.0), designed for production‑grade reasoning and general tasks. Weights are hosted on Hugging Face and ship **natively quantized in MXFP4**, enabling efficient serving on H100‑class GPUs. This recipe defaults to multi‑GPU sharding for high throughput.\n\nModel is **not bundled** and will download at startup. First boot can take several minutes depending on bandwidth and cache warmup.\n\n---\n\nAll required settings are pre‑configured for vLLM and multi‑GPU. You can optionally adjust:\n\n- **GPU Memory Utilization** — Fraction of VRAM vLLM may use (default **0.95**). Lower this if you need more headroom for monitoring or other processes.\nEverything else is already preset for you.\n\n",
+    "type": "object",
+    "required": ["container_group_name", "networking_auth"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "gpu_memory_util": {
+        "title": "GPU Memory Utilization",
+        "description": "Fraction of GPU VRAM vLLM may use (0.0–1.0). Lower this if you need more headroom.",
+        "type": "string",
+        "default": 0.95
+      },
+      "networking_auth": {
+        "title": "Required* Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/gpu_memory_util",
+        "path": "/output/container/environmentVariables/GPU_MEM_UTIL"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/vllm-gpt-oss-120b",
+  "short_description": "Serve OpenAI gpt‑oss‑120b model using vLLM with multi‑GPU sharding (default: 8× H100)",
+  "workload_types": ["LLM"]
+}

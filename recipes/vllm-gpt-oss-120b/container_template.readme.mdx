@@ -1,0 +1,24 @@
+# GPT-OSS-120B on vLLM
+
+## Resources
+
+- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)  
+- [Model Card](https://huggingface.co/openai/gpt-oss-120b) – License, usage, and weights  
+- [vLLM Docs](https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html) – Configuration & API reference  
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/vllm-gpt-oss-120b)  
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=vLLM%20GPT-OSS-120B&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>  
+
+<Callout variation="info">
+These model will be downloaded at container startup, so deployment may take several minutes.
+</Callout>
+
+### Curl Example
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if auth is disabled.</Callout>
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/chat/completions \\
+  -X POST \\
+  -H 'Content-Type: application/json' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -d '{"messages":[{"role":"user","content":"List three colors."}], "stream": false, "max_tokens": 24}'
+    `}</CodeBlock>
