@@ -1,0 +1,11 @@
+Run **OpenAI GPT‑OSS‑120B** with **vLLM** on SaladCloud’s DataCenter GPUs. GPT‑OSS‑120B is OpenAI’s most capable open‑weight model (Apache‑2.0), designed for production‑grade reasoning and general tasks. Weights are hosted on Hugging Face and ship **natively quantized in MXFP4**, enabling efficient serving on H100‑class GPUs. This recipe defaults to multi‑GPU sharding for high throughput.
+
+Model is **not bundled** and will download at startup. First boot can take several minutes depending on bandwidth and cache warmup.
+
+---
+
+All required settings are pre‑configured for vLLM and multi‑GPU. You can optionally adjust:
+
+- **GPU Memory Utilization** — Fraction of VRAM vLLM may use (default **0.95**). Lower this if you need more headroom for monitoring or other processes.
+Everything else is already preset for you.
+

@@ -1,0 +1,31 @@
+{
+  "title": "GPT-OSS-120B (vLLM)",
+  "description": "Serve OpenAI gpt‑oss‑120b model using vLLM on SaladCloud Secure nodes with multi-GPU support.",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "networking_auth"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "gpu_memory_util": {
+      "title": "GPU Memory Utilization",
+      "description": "Fraction of GPU VRAM vLLM may use (0.0–1.0). Lower this if you need more headroom.",
+      "type": "string",
+      "default": 0.95
+    },
+    "networking_auth": {
+      "title": "Required* Container Gateway Authentication",
+      "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/vllm-gpt-oss-120b",
+  "short_description": "Serve OpenAI gpt‑oss‑120b model using vLLM with multi‑GPU sharding (default: 8× H100)",
+  "workload_types": ["LLM"]
+}
