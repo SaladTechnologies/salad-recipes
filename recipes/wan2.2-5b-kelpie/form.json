@@ -1,0 +1,42 @@
+{
+  "title": "Wan 2.2 TI2V-5B using Kelpie",
+  "description": "Deploy Wan 2.2 TI2V-5B worker that generates high-quality videos (text-to-video and image-to-video) using S3-compatible storage and Kelpie.",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "storage_id",
+    "storage_key",
+    "storage_url",
+    "salad_project"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "storage_id": {
+      "title": "Storage Access Key ID",
+      "description": "Required* Access Key ID for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+      "type": "string"
+    },
+    "storage_key": {
+      "title": "Storage Secret Access Key",
+      "description": "Required* Secret Access Key for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+      "type": "string"
+    },
+    "storage_url": {
+      "title": "Storage Endpoint URL",
+      "description": "Required* Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+      "type": "string"
+    },
+    "salad_project": {
+      "title": "Salad Project",
+      "description": "Required* Salad project name where the container group will be associated.",
+      "type": "string"
+    }
+  }
+}
