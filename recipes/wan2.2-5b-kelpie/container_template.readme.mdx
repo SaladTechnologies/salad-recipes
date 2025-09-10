@@ -89,6 +89,7 @@ Upload your reference image to s3 bucket
 
 Submit a job that downloads it into assets/ first:
 
+```bash
 curl -s -X POST "https://kelpie.saladexamples.com/jobs" \
   -H "Content-Type: application/json" \
   -H "Salad-Api-Key: $SALAD_API_KEY" \
