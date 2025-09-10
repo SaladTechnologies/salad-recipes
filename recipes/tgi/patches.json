@@ -139,5 +139,16 @@
       "from": "/input/container_environment_quantize",
       "path": "/output/container/environmentVariables/QUANTIZE"
     }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_environment_quantize",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/QUANTIZE"
+    }
   ]
 ]

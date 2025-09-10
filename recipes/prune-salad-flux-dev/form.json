@@ -8,7 +8,7 @@
   "properties": {
     "container_group_name": {
       "title": "Container Group Name",
-      "description": "Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
       "type": "string",
       "maxLength": 63,
       "minLength": 2,

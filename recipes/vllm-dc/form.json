@@ -1,6 +1,6 @@
 {
   "title": "vLLM (DataCenter)",
-  "description": "Deploy a vLLM server on SaladCloud Secure nodes with multi-GPU support.",
+  "description": "$replace",
   "type": "object",
   "required": [
     "container_group_name",
@@ -32,7 +32,7 @@
       "title": "GPU Memory Utilization",
       "description": "Fraction of GPU VRAM vLLM may use (0.0–1.0). Lower this if you need more headroom.",
       "type": "string",
-      "default": 0.92
+      "default": "0.92"
     },
     "networking_auth": {
       "title": "Require Container Gateway Authentication",
