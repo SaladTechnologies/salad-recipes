@@ -336,6 +336,26 @@ export default class Deploy extends Command {
     return obj
   }
 
+  removeNestedValue(obj: any, path: string[]): any {
+    const lastKey = path[path.length - 1]
+    const parentPath = path.slice(0, -1)
+
+    // Navigate to the parent object
+    let current = obj
+    for (const key of parentPath) {
+      if (!(key in current)) {
+        return obj // Path does not exist, nothing to remove
+      }
+      current = current[key]
+    }
+
+    // Remove the value
+    if (current && lastKey && lastKey in current) {
+      delete current[lastKey]
+    }
+    return obj
+  }
+
   applyPatches(containerTemplate: any, inputs: Record<string, any>, patches: any[][]): any {
     const output = JSON.parse(JSON.stringify(containerTemplate)) // Deep copy to avoid mutating the original
     for (const patchBlock of patches) {
@@ -357,6 +377,11 @@ export default class Deploy extends Command {
           const targetField = patch.path.split('/').slice(2)
           // Traverse output to find the target field, and add the value
           this.setNestedValue(output, targetField, patch.value)
+        } else if (patch.op === 'remove') {
+          const targetField = patch.path.split('/').slice(2)
+          this.removeNestedValue(output, targetField)
+        } else {
+          throw new Error(`Unsupported patch operation: ${patch.op}`)
         }
       }
     }
