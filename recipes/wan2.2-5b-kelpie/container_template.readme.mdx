@@ -134,4 +134,4 @@ curl -s "https://kelpie.saladexamples.com/jobs/<kelpie-job-id>" \
 - **Image ignored** — Bad base64 or unreachable URL. Check if the image exist and correctly specified.
 - **No output uploaded** — ensure your job includes the `sync.after` rule for `outputs/`.
 
-> Need to scale automatically? Kelpie supports **queue-aware autoscaling**, including **scale-to-zero** when the queue is empty.
+> Need to scale automatically? Kelpie supports **queue-aware autoscaling**, including **scale-to-zero** when the queue is empty. You can enable autoscaling by first adding the kelpie user (currently shawn.rushefsky@salad.com) to your organization, and then creating an autoscaling rule through the Kelpie API with the [Create Scaling Rule Endpoint](https://kelpie.saladexamples.com/docs#/default/post_CreateScalingRule) 

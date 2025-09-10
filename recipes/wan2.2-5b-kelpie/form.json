@@ -30,7 +30,7 @@
     },
     "storage_url": {
       "title": "Storage Endpoint URL",
-      "description": "Required* Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+      "description": "Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
       "type": "string"
     },
     "salad_project": {
