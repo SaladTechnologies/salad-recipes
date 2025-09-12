@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/wan-5b-kelpie-dc",
+  "short_description": "High-throughput Wan 2.2 TI2V-5B video generation on DataCenter GPUs (L40S) with Kelpie",
+  "workload_types": ["VideoGeneration"]
+}

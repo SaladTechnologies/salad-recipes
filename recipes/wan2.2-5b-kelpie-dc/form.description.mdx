@@ -1,0 +1,9 @@
+**Wan 2.2 TI2V-5B** is a text-to-video / image-to-video generative model that produces cinematic clips from a single prompt, or from a prompt and  a reference image.
+**DataCenter (DC) variant:** Built for 8-GPU nodes (default L40S). The container launches one Kelpie worker per GPU (8 total), sharing model weights and running up to eight jobs in parallel.
+
+This recipe uses [Kelpie](https://github.com/SaladTechnologies/kelpie) and the [Kelpie API](https://kelpie.saladexamples.com/docs). Jobs are enqueued to the Kelpie job queue and processed asynchronously; inputs (optional for images) and outputs are synced to S3-compatible storage (we recommend Cloudflare R2). It also supports queue-based autoscaling—including scaling replicas down to zero when the queue is empty.
+
+<Callout variation="note">
+<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for inputs (optional for images) and outputs (e.g., <em>Cloudflare R2</em>).  
+To deploy this recipe you will need to provide your storage Access Key ID, Secret Access Key, and the Endpoint URL.
+</Callout>

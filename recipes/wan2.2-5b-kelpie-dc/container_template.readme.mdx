@@ -1,0 +1,137 @@
+# Wan 2.2 TI2V-5B (DataCenter GPUs) – Kelpie Recipe
+
+This recipe runs the **Wan 2.2 5B** text/image-to-video model using Kelpie and S3-compatible storage. It targets **8-GPU DataCenter nodes (default: L40S)** and launches one worker per GPU - up to 8 jobs can run in parallel on a single node. Use the examples below to submit jobs into the Kelpie queue.
+
+## Resources
+
+- [Kelpie API Docs](https://kelpie.saladexamples.com/docs)
+- [Wan 2.2 Repository](https://github.com/Wan-Video/Wan2.2)
+- [Kelpie Worker Binary](https://github.com/SaladTechnologies/kelpie)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/wan2.2-5b-kelpie-dc)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Wan2.2-5B-DC%20Kelpie%20Recipe&body=Image:%20${props.container.image}`}>Report an Issue</Link>
+
+## Folders structure used by the worker
+
+- **`/opt/outputs`** — final videos (`.mp4`) are written here  
+- **`/opt/assets`** — optional reference images placed here 
+
+> Your Kelpie job **must** include a `sync.after` rule to upload `/opt/outputs/` to your bucket, and—if providing a reference image—a `sync.before` rule to download it into `/opt/assets/`.
+
+## What you can submit
+
+- **Text → Video** — provide a **prompt** only  
+- **Image → Video** — provide a **prompt** and **one image**, supplied via:
+  `--image-b64` (raw base64 or `data:image/...;base64,` URI)  
+  `--image-url` (public URL)  
+  `--image-path` (a file preloaded to assets folder)  
+
+## Parameters supported by the worker
+
+Pass these `arguments` in Kelpie request to control video generation. Most arguments mirror arguments passed to Wan2.2's `generate.py`:
+
+
+- `--prompt` (string, **required**) — scene description.  
+- `--size` (string, default **`1280*704`**) — output resolution.  
+- `--frame-num` (int, default **`121`**) — total frames (~24 fps ⇒ ~5 s around 120–121).  
+- `--sample-steps` (int, default **`50`**).  
+- `--base-seed` (int, optional) — reproducibility seed.  
+- `--sample-solver` (`unipc` or `dpm++`, optional) — sampler choice; omit for model default.  
+- `--sample-shift` (float, optional) — advanced tuning knob.  
+- `--sample-guide-scale` (float, optional) — CFG guidance strength.  
+- `--output-filename` (string, optional) — base name (worker appends `.mp4`); defaults to job id.  
+- **Image inputs** (optional, pick one):  
+  - `--image-b64` (string) — raw base64 or `data:image/...;base64,` URI.  
+  - `--image-url` (string) — public image URL.  
+  - `--image-path` (string) — path to a file already present in the assets folder.  
+- `--extra-args-json` (JSON, default `{}`) — pass-through for additional `generate.py` flags.  
+- `--id` (string, optional) — job id for logs/filenames; defaults to a random UUID.
+
+> The worker fixes `--task ti2v-5B`, always enables `--offload_model` and `--t5_cpu`, and writes to `/opt/outputs/<output-filename or job-id>.mp4`.
+
+
+## Quick Start — Text → Video
+
+Replace the placeholders and run:
+
+```bash
+export SALAD_API_KEY="<salad-api-key>"
+export SALAD_ORGANIZATION="<organization>"
+export SALAD_PROJECT="<project>"
+
+curl -s -X POST "https://kelpie.saladexamples.com/jobs" \
+  -H "Content-Type: application/json" \
+  -H "Salad-Api-Key: $SALAD_API_KEY" \
+  -H "Salad-Organization: $SALAD_ORGANIZATION" \
+  -H "Salad-Project: $SALAD_PROJECT" \
+  -d @- <<'JSON'
+{
+  "container_group_id": "<container_group_id>",
+  "command": "python",
+  "arguments": [
+    "/opt/wan_worker.py",
+    "--prompt", "A moody cyberpunk street in the rain, neon reflections, shallow depth of field",
+    "--size", "1280*704",
+    "--frame-num", "120",
+    "--sample-steps", "50"
+  ],
+  "sync": {
+    "after": [
+      { "bucket": "<bucket>", "prefix": "outputs/", "local_path": "/opt/outputs/", "direction": "upload" }
+    ]
+  }
+}
+JSON
+```
+
+## Quick Start — Image → Video
+
+Upload your reference image to s3 bucket
+
+Submit a job that downloads it into assets/ first:
+
+```bash
+curl -s -X POST "https://kelpie.saladexamples.com/jobs" \
+  -H "Content-Type: application/json" \
+  -H "Salad-Api-Key: $SALAD_API_KEY" \
+  -H "Salad-Organization: $SALAD_ORGANIZATION" \
+  -H "Salad-Project: $SALAD_PROJECT" \
+  -d @- <<'JSON'
+{
+  "container_group_id": "<container_group_id>",
+  "command": "python",
+  "arguments": [
+    "/opt/wan_worker.py",
+    "--id", "job-002",
+    "--prompt", "Dreamy golden-hour dolly shot through wildflowers",
+    "--size", "1280*704",
+    "--frame-num", "120",
+    "--sample-steps", "50",
+    "--image-path", "assets/input.jpg"
+  ],
+  "sync": {
+    "before": [
+      { "bucket": "<bucket>", "prefix": "assets/", "local_path": "/opt/assets/", "direction": "download" }
+    ],
+    "after": [
+      { "bucket": "<bucket>", "prefix": "outputs/", "local_path": "/opt/outputs/", "direction": "upload" }
+    ]
+  }
+}
+JSON
+```
+## Monitor a job
+
+```bash
+curl -s "https://kelpie.saladexamples.com/jobs/<kelpie-job-id>" \
+  -H "Salad-Api-Key: $SALAD_API_KEY" \
+  -H "Salad-Organization: $SALAD_ORGANIZATION" \
+  -H "Salad-Project: $SALAD_PROJECT" | jq .
+```
+## Troubleshooting
+
+- **Container exits immediately** — Missing/invalid Salad credentials. Verify API key, organization, and project headers.
+- **Job “succeeded” but no MP4** — Check your output folder path.
+- **Image ignored** — Bad base64 or unreachable URL. Check if the image exist and correctly specified.
+- **No output uploaded** — ensure your job includes the `sync.after` rule for `outputs/`.
+
+> Need to scale automatically? Kelpie supports **queue-aware autoscaling**, including **scale-to-zero** when the queue is empty. You can enable autoscaling by first adding the kelpie user (currently shawn.rushefsky@salad.com) to your organization, and then creating an autoscaling rule through the Kelpie API with the [Create Scaling Rule Endpoint](https://kelpie.saladexamples.com/docs#/default/post_CreateScalingRule) 
