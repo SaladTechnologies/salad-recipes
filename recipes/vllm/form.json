@@ -20,7 +20,7 @@
       "title": "Model",
       "type": "string",
       "description": "Required* Hugging Face model ID to load and serve with vLLM.",
-      "default": "Qwen/Qwen2.5-7B-Instruct"
+      "default": "Qwen/Qwen2.5-1.5B-Instruct"
     },
     "hf_token": {
       "title": "Hugging Face Token",
