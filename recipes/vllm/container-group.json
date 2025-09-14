@@ -9,13 +9,13 @@
     "image": "saladtechnologies/salad-vllm-server:1.0.0",
     "imageCaching": true,
     "resources": {
-      "cpu": 4,
+      "cpu": 8,
       "memory": 30720,
       "gpuClasses": [
         "ed563892-aacd-40f5-80b7-90c9be6c759b"
       ],
       "storageAmount": 53687091200,
-      "shmSize": 64
+      "shmSize": 2048
     },
     "priority": "high"
   },

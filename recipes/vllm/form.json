@@ -34,12 +34,6 @@
       "type": "string",
       "default": "4096"
     },
-    "gpu_memory_util": {
-      "title": "GPU Memory Utilization",
-      "description": "Optional. Fraction of GPU VRAM vLLM may use (0.0–1.0). Lower this if you need more headroom.",
-      "type": "string",
-      "default": "1"
-    },
     "networking_auth": {
       "title": "Required* Container Gateway Authentication",
       "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",

@@ -34,11 +34,6 @@
       "op": "copy",
       "from": "/input/hf_token",
       "path": "/output/container/environmentVariables/HUGGING_FACE_HUB_TOKEN"
-    },
-    {
-      "op": "copy",
-      "from": "/input/gpu_memory_util",
-      "path": "/output/container/environmentVariables/GPU_MEM_UTIL"
     }
   ]
 ]

@@ -10,11 +10,11 @@
       "image": "saladtechnologies/salad-vllm-server:1.0.0",
       "imageCaching": true,
       "resources": {
-        "cpu": 4,
+        "cpu": 8,
         "memory": 30720,
         "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
         "storageAmount": 53687091200,
-        "shmSize": 64
+        "shmSize": 2048
       },
       "priority": "high"
     },
@@ -46,7 +46,7 @@
   },
   "form": {
     "title": "vLLM",
-    "description": "Run large language models with [vLLM](https://docs.vllm.ai/), a high-performance inference engine built for fast and efficient model serving. vLLM implements [PagedAttention](https://blog.vllm.ai/2023/06/20/vllm.html) for optimized memory use and supports the [OpenAI Messages API](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html), streaming responses, JSON mode, and more.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nModels are **not bundled with the container** and will be downloaded at runtime.  \n**Startup may take several minutes**, especially for larger checkpoints.\nFor production use, we recommend prebuilding your model into the image.\n\n---\n\n## Running on Consumer GPUs\n\nThis recipe is designed for modern **consumer GPUs** (default: RTX 4090 24GB). These cards can comfortably handle models up to ~8B parameters, depending on precision and memory utilization settings.  \n\n### Key Configuration Options\n\nWhen deploying, you can customize the container using these options:\n\n- **Model** — Required. Hugging Face model ID to load (default: `Qwen/Qwen2.5-7B-Instruct`).  \n- **Hugging Face Token** — Your HF access token (only required for gated/private models).  \n- **GPU Memory Utilization** — Fraction of GPU VRAM vLLM can use (default: `1`). Adjust if you need to leave memory headroom for monitoring or other processes.\n- **Max Model Length** — Model context length (default: `4096`). \n\n<Callout variation=\"info\">\nDefaults are tuned for running 7B–8B models on a single RTX 4090. You can override them in *Advanced Configuration*.\n</Callout>\n\n---\n\n### Example Supported Models\n\n- **Qwen2.5 1.5B Instruct** — `Qwen/Qwen2.5-1.5B-Instruct` (default)\n- **Qwen2.5 7B Instruct** — `Qwen/Qwen2.5-7B-Instruct` (default)\n- **Llama 3.1 8B Instruct** — `meta-llama/Meta-Llama-3.1-8B-Instruct`\n- **DeepSeek R1 Distill Llama 8B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-8B`\n\n\n",
+    "description": "Run large language models with [vLLM](https://docs.vllm.ai/), a high-performance inference engine built for fast and efficient model serving. vLLM implements [PagedAttention](https://blog.vllm.ai/2023/06/20/vllm.html) for optimized memory use and supports the [OpenAI Messages API](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html), streaming responses, JSON mode, and more.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nModels are **not bundled with the container** and will be downloaded at runtime.  \n**Startup may take several minutes**, especially for larger checkpoints.\nFor production use, we recommend prebuilding your model into the image.\n\n---\n\n## Running on Consumer GPUs\n\nThis recipe is designed for modern **consumer GPUs** (default: RTX 4090 24GB). These cards can comfortably handle models up to ~8B parameters, depending on precision and memory utilization settings.  \n\n### Key Configuration Options\n\nWhen deploying, you can customize the container using these options:\n\n- **Model** — Required. Hugging Face model ID to load (default: `Qwen/Qwen2.5-7B-Instruct`).  \n- **Hugging Face Token** — Your HF access token (only required for gated/private models).  \n- **Max Model Length** — Model context length (default: `4096`). \n\n<Callout variation=\"info\">\nDefaults are tuned for running 7B–8B models on a single RTX 4090. You can override them in *Advanced Configuration*.\n</Callout>\n\n---\n\n### Example Supported Models\n\n- **Qwen2.5 1.5B Instruct** — `Qwen/Qwen2.5-1.5B-Instruct` (default)\n- **Qwen2.5 7B Instruct** — `Qwen/Qwen2.5-7B-Instruct` (default)\n- **Llama 3.1 8B Instruct** — `meta-llama/Meta-Llama-3.1-8B-Instruct`\n- **DeepSeek R1 Distill Llama 8B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-8B`\n\n\n",
     "type": "object",
     "required": ["container_group_name", "model_id", "networking_auth"],
     "properties": {
@@ -75,12 +75,6 @@
         "description": "Optional. Maximum sequence length for the model (in tokens). Adjust based on your model's and compute capabilities.",
         "type": "string",
         "default": "4096"
-      },
-      "gpu_memory_util": {
-        "title": "GPU Memory Utilization",
-        "description": "Optional. Fraction of GPU VRAM vLLM may use (0.0–1.0). Lower this if you need more headroom.",
-        "type": "string",
-        "default": "1"
       },
       "networking_auth": {
         "title": "Required* Container Gateway Authentication",
@@ -126,11 +120,6 @@
         "op": "copy",
         "from": "/input/hf_token",
         "path": "/output/container/environmentVariables/HUGGING_FACE_HUB_TOKEN"
-      },
-      {
-        "op": "copy",
-        "from": "/input/gpu_memory_util",
-        "path": "/output/container/environmentVariables/GPU_MEM_UTIL"
       }
     ]
   ],
