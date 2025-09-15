@@ -1,0 +1,25 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {
+      "AWS_REGION": "auto"
+    },
+    "image": "saladtechnologies/wan2.2-5b-kelpie:cons-1.0.0",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 16,
+      "memory": 30720,
+      "gpuClasses": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "storageAmount": 268435456000,
+      "shmSize": 2048
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3
+}

@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/wan-5b-kelpie",
+  "short_description": "Generate high-quality videos with Wan 2.2 TI2V-5B using Kelpie job queue (text-to-video and image-to-video).",
+  "workload_types": ["VideoGeneration"]
+}
