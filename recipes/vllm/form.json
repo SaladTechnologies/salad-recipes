@@ -1,0 +1,44 @@
+{
+  "title": "vLLM",
+  "description": "Deploy a vLLM server on SaladCloud nodes with consumer GPUs (default: RTX 4090).",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "model_id",
+    "networking_auth"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "model_id": {
+      "title": "Model",
+      "type": "string",
+      "description": "Required* Hugging Face model ID to load and serve with vLLM.",
+      "default": "Qwen/Qwen2.5-1.5B-Instruct"
+    },
+    "hf_token": {
+      "title": "Hugging Face Token",
+      "description": "Optional. Required only for private or gated Hugging Face models.",
+      "type": "string",
+      "default": ""
+    },
+    "max_model_len": {
+      "title": "Max Model Length",
+      "description": "Optional. Maximum sequence length for the model (in tokens). Adjust based on your model's and compute capabilities.",
+      "type": "string",
+      "default": "4096"
+    },
+    "networking_auth": {
+      "title": "Required* Container Gateway Authentication",
+      "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

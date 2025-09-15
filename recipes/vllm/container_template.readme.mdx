@@ -1,0 +1,34 @@
+# vLLM
+
+## Resources
+
+- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)
+- [vLLM Documentation](https://docs.vllm.ai/)
+- [Engine Arguments](https://docs.vllm.ai/en/latest/configuration/engine_args.html)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/vllm)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=vLLM%20Consumer%20GPUs&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>
+
+## Example Models for DataCenter GPUs
+
+- **Qwen2.5 1.5B Instruct** — `Qwen/Qwen2.5-1.5B-Instruct` (default)
+- **Qwen2.5 7B Instruct** — `Qwen/Qwen2.5-7B-Instruct`
+- **Llama 3.1 8B Instruct** — `meta-llama/Meta-Llama-3.1-8B-Instruct`
+- **DeepSeek R1 Distill Llama 8B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-8B`
+
+<Callout variation="info">
+These models will be downloaded at container startup, so deployment may take several minutes depending on model size. For production use we recommend to prebuild your model into the image
+</Callout>
+
+### Curl Example
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if auth is disabled.</Callout>
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/chat/completions \\
+    -X POST \\
+    -H 'Content-Type: application/json' \\
+    -H 'Salad-Api-Key: ${props.apiKey}' \\
+    -d '{"model": "${props.container.environmentVariables.MODEL_ID}","messages": [{"role": "system","content": "You are a helpful assistant."},{"role": "user","content": "What is deep learning?"}]}'
+`}</CodeBlock>
+
+
+

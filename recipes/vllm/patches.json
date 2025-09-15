@@ -1,0 +1,39 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/networking_auth",
+      "path": "/output/networking/auth"
+    },
+    {
+      "op": "copy",
+      "from": "/input/model_id",
+      "path": "/output/container/environmentVariables/MODEL_ID"
+    },
+    {
+      "op": "copy",
+      "from": "/input/max_model_len",
+      "path": "/output/container/environmentVariables/MAX_MODEL_LEN"
+    },
+    {
+      "op": "copy",
+      "from": "/input/hf_token",
+      "path": "/output/container/environmentVariables/HUGGING_FACE_HUB_TOKEN"
+    }
+  ]
+]

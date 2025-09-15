@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/vllm",
+  "short_description": "Serve LLMs using vLLM on SaladCloud GPUs",
+  "workload_types": ["LLM"]
+}
