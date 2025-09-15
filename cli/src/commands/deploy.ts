@@ -47,10 +47,14 @@ export default class Deploy extends Command {
   }
 
   private saladApiKey: string | undefined
+  private saladOrg: string | undefined
+  private saladProject: string | undefined
 
   public async run(): Promise<void> {
     const { args, flags } = await this.parse(Deploy)
     this.saladApiKey = process.env.SALAD_API_KEY
+    this.saladOrg = process.env.SALAD_ORGANIZATION_NAME
+    this.saladProject = process.env.SALAD_PROJECT_NAME
     if (!flags['dry-run'] && !this.saladApiKey) {
       this.error('SALAD_API_KEY environment variable is not set.')
     }
@@ -107,6 +111,7 @@ export default class Deploy extends Command {
             type: 'input',
             name: 'org',
             message: 'Enter your Salad organization Name:',
+            default: this.saladOrg,
             required: true,
           },
         ])
@@ -122,6 +127,7 @@ export default class Deploy extends Command {
             type: 'input',
             name: 'project',
             message: 'Enter your Salad project Name:',
+            default: this.saladProject,
             required: true,
           },
         ])

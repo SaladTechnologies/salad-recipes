@@ -27,6 +27,8 @@ class Deploy extends core_1.Command {
         return __awaiter(this, void 0, void 0, function* () {
             const { args, flags } = yield this.parse(Deploy);
             this.saladApiKey = process.env.SALAD_API_KEY;
+            this.saladOrg = process.env.SALAD_ORGANIZATION_NAME;
+            this.saladProject = process.env.SALAD_PROJECT_NAME;
             if (!flags['dry-run'] && !this.saladApiKey) {
                 this.error('SALAD_API_KEY environment variable is not set.');
             }
@@ -80,6 +82,7 @@ class Deploy extends core_1.Command {
                         type: 'input',
                         name: 'org',
                         message: 'Enter your Salad organization Name:',
+                        default: this.saladOrg,
                         required: true,
                     },
                 ])).org;
@@ -93,6 +96,7 @@ class Deploy extends core_1.Command {
                         type: 'input',
                         name: 'project',
                         message: 'Enter your Salad project Name:',
+                        default: this.saladProject,
                         required: true,
                     },
                 ])).project;
