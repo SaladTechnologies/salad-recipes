@@ -97,6 +97,17 @@
         "from": "/input/salad_project",
         "path": "/output/container/environmentVariables/SALAD_PROJECT"
       }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/storage_url",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+      }
     ]
   ],
   "ui": {},
