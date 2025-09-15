@@ -40,5 +40,16 @@
       "from": "/input/SALAD_PROJECT",
       "path": "/output/container/environmentVariables/SALAD_PROJECT"
     }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/AWS_ENDPOINT_URL",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+    }
   ]
 ]

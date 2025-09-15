@@ -1,6 +1,6 @@
 {
-  "title": "vLLM (DataCenter)",
-  "description": "$replace",
+  "title": "vLLM",
+  "description": "Deploy a vLLM server on SaladCloud nodes with consumer GPUs (default: RTX 4090).",
   "type": "object",
   "required": [
     "container_group_name",
@@ -20,7 +20,7 @@
       "title": "Model",
       "type": "string",
       "description": "Required* Hugging Face model ID to load and serve with vLLM.",
-      "default": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+      "default": "Qwen/Qwen2.5-1.5B-Instruct"
     },
     "hf_token": {
       "title": "Hugging Face Token",
@@ -28,14 +28,14 @@
       "type": "string",
       "default": ""
     },
-    "gpu_memory_util": {
-      "title": "GPU Memory Utilization",
-      "description": "Fraction of GPU VRAM vLLM may use (0.0–1.0). Lower this if you need more headroom.",
+    "max_model_len": {
+      "title": "Max Model Length",
+      "description": "Optional. Maximum sequence length for the model (in tokens). Adjust based on your model's and compute capabilities.",
       "type": "string",
-      "default": "0.92"
+      "default": "4096"
     },
     "networking_auth": {
-      "title": "Require Container Gateway Authentication",
+      "title": "Required* Container Gateway Authentication",
       "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
       "type": "boolean",
       "default": true

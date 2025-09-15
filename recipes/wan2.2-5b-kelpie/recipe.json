@@ -26,7 +26,7 @@
     "title": "Wan 2.2 TI2V-5B using Kelpie",
     "description": "**Wan 2.2 TI2V-5B** is a text-to-video / image-to-video generative model that produces cinematic 720p clips from a single prompt, or from a prompt and  a reference image.\n\n\nThis recipe uses [Kelpie](https://github.com/SaladTechnologies/kelpie) and the [Kelpie API](https://kelpie.saladexamples.com/docs). Jobs are enqueued to the Kelpie job queue and processed asynchronously; inputs (optional for images) and outputs are synced to S3-compatible storage (we recommend Cloudflare R2). It also supports queue-based autoscaling—including scaling replicas down to zero when the queue is empty.\n\n<Callout variation=\"note\">\n<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for inputs (optional for images) and outputs (e.g., <em>Cloudflare R2</em>).  \nTo deploy this recipe you will need to provide your storage Access Key ID, Secret Access Key, and the Endpoint URL.\n</Callout>\n",
     "type": "object",
-    "required": ["container_group_name", "storage_id", "storage_key", "storage_url", "salad_project"],
+    "required": ["container_group_name", "storage_id", "storage_key", "salad_project"],
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
@@ -48,7 +48,7 @@
       },
       "storage_url": {
         "title": "Storage Endpoint URL",
-        "description": "Required* Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "description": "Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
         "type": "string"
       },
       "salad_project": {
@@ -94,6 +94,17 @@
         "op": "copy",
         "from": "/input/salad_project",
         "path": "/output/container/environmentVariables/SALAD_PROJECT"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/storage_url",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
       }
     ]
   ],

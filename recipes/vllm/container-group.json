@@ -1,0 +1,47 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {
+      "TP_SIZE": "1"
+    },
+    "image": "saladtechnologies/salad-vllm-server:1.0.0",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 8,
+      "memory": 30720,
+      "gpuClasses": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "storageAmount": 53687091200,
+      "shmSize": 2048
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3,
+  "readinessProbe": {
+    "failureThreshold": 1,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 0,
+    "periodSeconds": 3,
+    "successThreshold": 1,
+    "timeoutSeconds": 1
+  },
+  "networking": {
+    "auth": true,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 8000,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  }
+}

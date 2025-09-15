@@ -6,7 +6,6 @@
     "container_group_name",
     "storage_id",
     "storage_key",
-    "storage_url",
     "salad_project"
   ],
   "properties": {

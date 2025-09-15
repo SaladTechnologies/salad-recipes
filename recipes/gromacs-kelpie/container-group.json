@@ -13,7 +13,7 @@
       ],
       "storageAmount": 53687091200
     }
-  }, 
+  },
   "name": "",
   "replicas": 2,
   "restartPolicy": "always",

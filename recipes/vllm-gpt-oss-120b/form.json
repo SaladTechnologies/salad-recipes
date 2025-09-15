@@ -1,6 +1,6 @@
 {
   "title": "GPT-OSS-120B (vLLM)",
-  "description": "Serve OpenAI gpt‑oss‑120b model using vLLM on SaladCloud Secure nodes with multi-GPU support.",
+  "description": "$replace",
   "type": "object",
   "required": [
     "container_group_name",

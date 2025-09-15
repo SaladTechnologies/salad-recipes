@@ -1,0 +1,130 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# vLLM\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)\n- [vLLM Documentation](https://docs.vllm.ai/)\n- [Engine Arguments](https://docs.vllm.ai/en/latest/configuration/engine_args.html)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/vllm)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=vLLM%20Consumer%20GPUs&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## Example Models for DataCenter GPUs\n\n- **Qwen2.5 1.5B Instruct** — `Qwen/Qwen2.5-1.5B-Instruct` (default)\n- **Qwen2.5 7B Instruct** — `Qwen/Qwen2.5-7B-Instruct`\n- **Llama 3.1 8B Instruct** — `meta-llama/Meta-Llama-3.1-8B-Instruct`\n- **DeepSeek R1 Distill Llama 8B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-8B`\n\n<Callout variation=\"info\">\nThese models will be downloaded at container startup, so deployment may take several minutes depending on model size. For production use we recommend to prebuild your model into the image\n</Callout>\n\n### Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if auth is disabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\"model\": \"${props.container.environmentVariables.MODEL_ID}\",\"messages\": [{\"role\": \"system\",\"content\": \"You are a helpful assistant.\"},{\"role\": \"user\",\"content\": \"What is deep learning?\"}]}'\n`}</CodeBlock>\n\n\n\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {
+        "TP_SIZE": "1"
+      },
+      "image": "saladtechnologies/salad-vllm-server:1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 30720,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "storageAmount": 53687091200,
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "readinessProbe": {
+      "failureThreshold": 1,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 1
+    },
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "vLLM",
+    "description": "Run large language models with [vLLM](https://docs.vllm.ai/), a high-performance inference engine built for fast and efficient model serving. vLLM implements [PagedAttention](https://blog.vllm.ai/2023/06/20/vllm.html) for optimized memory use and supports the [OpenAI Messages API](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html), streaming responses, JSON mode, and more.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nModels are **not bundled with the container** and will be downloaded at runtime.  \n**Startup may take several minutes**, especially for larger checkpoints.\nFor production use, we recommend prebuilding your model into the image.\n\n---\n\n## Running on Consumer GPUs\n\nThis recipe is designed for modern **consumer GPUs** (default: RTX 4090 24GB). These cards can comfortably handle models up to ~8B parameters, depending on precision and memory utilization settings.  \n\n### Key Configuration Options\n\nWhen deploying, you can customize the container using these options:\n\n- **Model** — Required. Hugging Face model ID to load (default: `Qwen/Qwen2.5-7B-Instruct`).  \n- **Hugging Face Token** — Your HF access token (only required for gated/private models).  \n- **Max Model Length** — Model context length (default: `4096`). \n\n<Callout variation=\"info\">\nDefaults are tuned for running 7B–8B models on a single RTX 4090. You can override them in *Advanced Configuration*.\n</Callout>\n\n---\n\n### Example Supported Models\n\n- **Qwen2.5 1.5B Instruct** — `Qwen/Qwen2.5-1.5B-Instruct` (default)\n- **Qwen2.5 7B Instruct** — `Qwen/Qwen2.5-7B-Instruct` (default)\n- **Llama 3.1 8B Instruct** — `meta-llama/Meta-Llama-3.1-8B-Instruct`\n- **DeepSeek R1 Distill Llama 8B** — `deepseek-ai/DeepSeek-R1-Distill-Llama-8B`\n\n\n",
+    "type": "object",
+    "required": ["container_group_name", "model_id", "networking_auth"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "model_id": {
+        "title": "Model",
+        "type": "string",
+        "description": "Required* Hugging Face model ID to load and serve with vLLM.",
+        "default": "Qwen/Qwen2.5-1.5B-Instruct"
+      },
+      "hf_token": {
+        "title": "Hugging Face Token",
+        "description": "Optional. Required only for private or gated Hugging Face models.",
+        "type": "string",
+        "default": ""
+      },
+      "max_model_len": {
+        "title": "Max Model Length",
+        "description": "Optional. Maximum sequence length for the model (in tokens). Adjust based on your model's and compute capabilities.",
+        "type": "string",
+        "default": "4096"
+      },
+      "networking_auth": {
+        "title": "Required* Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_id",
+        "path": "/output/container/environmentVariables/MODEL_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/max_model_len",
+        "path": "/output/container/environmentVariables/MAX_MODEL_LEN"
+      },
+      {
+        "op": "copy",
+        "from": "/input/hf_token",
+        "path": "/output/container/environmentVariables/HUGGING_FACE_HUB_TOKEN"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/vllm",
+  "short_description": "Serve LLMs using vLLM on SaladCloud GPUs",
+  "workload_types": ["LLM"]
+}
