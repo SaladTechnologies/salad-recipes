@@ -5,16 +5,16 @@
     "command": [],
     "environmentVariables": {
     },
-    "image": "saladtechnologies/wan2.2-5b-kelpie:cons-1.0.0",
+    "image": "saladtechnologies/wan2.2-5b-kelpie:dc-1.0.0",
     "imageCaching": true,
     "resources": {
-      "cpu": 16,
-      "memory": 30720,
+      "cpu": 128,
+      "memory": 2097152,
       "gpuClasses": [
-        "851399fb-7329-4195-a042-d6514b28cf33"
+        "97b905f3-e8ed-42d6-90cf-d2a395afa1eb"
       ],
-      "storageAmount": 268435456000,
-      "shmSize": 2048
+      "storageAmount": 536870912000,
+      "shmSize": 1048576
     },
     "priority": "high"
   },

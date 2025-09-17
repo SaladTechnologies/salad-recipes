@@ -4,9 +4,7 @@
     "readme": "# Wan 2.2 TI2V-5B (Text/Image to Video) – Kelpie Recipe\n\nThis recipe runs the Wan 2.2 5B text/image-to-video model using Kelpie and S3-compatible storage. Use the included submission helpers to add jobs into the queue.\n\n## Resources\n\n- [Kelpie API Docs](https://kelpie.saladexamples.com/docs)\n- [Wan 2.2 Repository](https://github.com/Wan-Video/Wan2.2)\n- [Kelpie Worker Binary](https://github.com/SaladTechnologies/kelpie)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/wan2.2-5b-kelpie)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Wan2.2-5B%20Kelpie%20Recipe&body=Image:%20${props.container.image}`}>Report an Issue</Link>\n\n## Folders structure used by the worker\n\n- **`/opt/outputs`** — final videos (`.mp4`) are written here  \n- **`/opt/assets`** — optional reference images placed here \n\n> Your Kelpie job **must** include a `sync.after` rule to upload `/opt/outputs/` to your bucket, and—if providing a reference image—a `sync.before` rule to download it into `/opt/assets/`.\n\n## What you can submit\n\n- **Text → Video** — provide a **prompt** only  \n- **Image → Video** — provide a **prompt** and **one image**, supplied via:\n  `--image-b64` (raw base64 or `data:image/...;base64,` URI)  \n  `--image-url` (public URL)  \n  `--image-path` (a file preloaded to assets folder)  \n\n## Parameters supported by the worker\n\nPass these `arguments` in Kelpie request to control video generation. Most arguments mirror arguments passed to Wan2.2's `generate.py`:\n\n\n- `--prompt` (string, **required**) — scene description.  \n- `--size` (string, default **`1280*704`**) — output resolution.  \n- `--frame-num` (int, default **`121`**) — total frames (~24 fps ⇒ ~5 s around 120–121).  \n- `--sample-steps` (int, default **`50`**).  \n- `--base-seed` (int, optional) — reproducibility seed.  \n- `--sample-solver` (`unipc` or `dpm++`, optional) — sampler choice; omit for model default.  \n- `--sample-shift` (float, optional) — advanced tuning knob.  \n- `--sample-guide-scale` (float, optional) — CFG guidance strength.  \n- `--output-filename` (string, optional) — base name (worker appends `.mp4`); defaults to job id.  \n- **Image inputs** (optional, pick one):  \n  - `--image-b64` (string) — raw base64 or `data:image/...;base64,` URI.  \n  - `--image-url` (string) — public image URL.  \n  - `--image-path` (string) — path to a file already present in the assets folder.  \n- `--extra-args-json` (JSON, default `{}`) — pass-through for additional `generate.py` flags.  \n- `--id` (string, optional) — job id for logs/filenames; defaults to a random UUID.\n\n> The worker fixes `--task ti2v-5B`, always enables `--offload_model` and `--t5_cpu`, and writes to `/opt/outputs/<output-filename or job-id>.mp4`.\n\n\n## Quick Start — Text → Video\n\nReplace the placeholders and run:\n\n```bash\nexport SALAD_API_KEY=\"<salad-api-key>\"\nexport SALAD_ORGANIZATION=\"<organization>\"\nexport SALAD_PROJECT=\"<project>\"\n\ncurl -s -X POST \"https://kelpie.saladexamples.com/jobs\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Salad-Api-Key: $SALAD_API_KEY\" \\\n  -H \"Salad-Organization: $SALAD_ORGANIZATION\" \\\n  -H \"Salad-Project: $SALAD_PROJECT\" \\\n  -d @- <<'JSON'\n{\n  \"container_group_id\": \"<container_group_id>\",\n  \"command\": \"python\",\n  \"arguments\": [\n    \"/opt/wan_worker.py\",\n    \"--prompt\", \"A moody cyberpunk street in the rain, neon reflections, shallow depth of field\",\n    \"--size\", \"1280*704\",\n    \"--frame-num\", \"120\",\n    \"--sample-steps\", \"50\"\n  ],\n  \"sync\": {\n    \"after\": [\n      { \"bucket\": \"<bucket>\", \"prefix\": \"outputs/\", \"local_path\": \"/opt/outputs/\", \"direction\": \"upload\" }\n    ]\n  }\n}\nJSON\n```\n\n## Quick Start — Image → Video\n\nUpload your reference image to s3 bucket\n\nSubmit a job that downloads it into assets/ first:\n\n```bash\ncurl -s -X POST \"https://kelpie.saladexamples.com/jobs\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Salad-Api-Key: $SALAD_API_KEY\" \\\n  -H \"Salad-Organization: $SALAD_ORGANIZATION\" \\\n  -H \"Salad-Project: $SALAD_PROJECT\" \\\n  -d @- <<'JSON'\n{\n  \"container_group_id\": \"<container_group_id>\",\n  \"command\": \"python\",\n  \"arguments\": [\n    \"/opt/wan_worker.py\",\n    \"--id\", \"job-002\",\n    \"--prompt\", \"Dreamy golden-hour dolly shot through wildflowers\",\n    \"--size\", \"1280*704\",\n    \"--frame-num\", \"120\",\n    \"--sample-steps\", \"50\",\n    \"--image-path\", \"assets/input.jpg\"\n  ],\n  \"sync\": {\n    \"before\": [\n      { \"bucket\": \"<bucket>\", \"prefix\": \"assets/\", \"local_path\": \"/opt/assets/\", \"direction\": \"download\" }\n    ],\n    \"after\": [\n      { \"bucket\": \"<bucket>\", \"prefix\": \"outputs/\", \"local_path\": \"/opt/outputs/\", \"direction\": \"upload\" }\n    ]\n  }\n}\nJSON\n```\n## Monitor a job\n\n```bash\ncurl -s \"https://kelpie.saladexamples.com/jobs/<kelpie-job-id>\" \\\n  -H \"Salad-Api-Key: $SALAD_API_KEY\" \\\n  -H \"Salad-Organization: $SALAD_ORGANIZATION\" \\\n  -H \"Salad-Project: $SALAD_PROJECT\" | jq .\n```\n## Troubleshooting\n\n- **Container exits immediately** — Missing/invalid Salad credentials. Verify API key, organization, and project headers.\n- **Job “succeeded” but no MP4** — Check your output folder path.\n- **Image ignored** — Bad base64 or unreachable URL. Check if the image exist and correctly specified.\n- **No output uploaded** — ensure your job includes the `sync.after` rule for `outputs/`.\n\n> Need to scale automatically? Kelpie supports **queue-aware autoscaling**, including **scale-to-zero** when the queue is empty. You can enable autoscaling by first adding the kelpie user (currently shawn.rushefsky@salad.com) to your organization, and then creating an autoscaling rule through the Kelpie API with the [Create Scaling Rule Endpoint](https://kelpie.saladexamples.com/docs#/default/post_CreateScalingRule) \n",
     "container": {
       "command": [],
-      "environmentVariables": {
-        "AWS_REGION": "auto"
-      },
+      "environmentVariables": {},
       "image": "saladtechnologies/wan2.2-5b-kelpie:cons-1.0.0",
       "imageCaching": true,
       "resources": {
@@ -26,7 +24,7 @@
     "title": "Wan 2.2 TI2V-5B using Kelpie",
     "description": "**Wan 2.2 TI2V-5B** is a text-to-video / image-to-video generative model that produces cinematic 720p clips from a single prompt, or from a prompt and  a reference image.\n\n\nThis recipe uses [Kelpie](https://github.com/SaladTechnologies/kelpie) and the [Kelpie API](https://kelpie.saladexamples.com/docs). Jobs are enqueued to the Kelpie job queue and processed asynchronously; inputs (optional for images) and outputs are synced to S3-compatible storage (we recommend Cloudflare R2). It also supports queue-based autoscaling—including scaling replicas down to zero when the queue is empty.\n\n<Callout variation=\"note\">\n<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for inputs (optional for images) and outputs (e.g., <em>Cloudflare R2</em>).  \nTo deploy this recipe you will need to provide your storage Access Key ID, Secret Access Key, and the Endpoint URL.\n</Callout>\n",
     "type": "object",
-    "required": ["container_group_name", "storage_id", "storage_key", "salad_project"],
+    "required": ["container_group_name", "storage_id", "storage_key", "salad_project", "storage_region"],
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
@@ -50,6 +48,14 @@
         "title": "Storage Endpoint URL",
         "description": "Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
         "type": "string"
+      },
+      "storage_region": {
+        "title": "AWS Region",
+        "description": "Required* Region where your S3 bucket is located.",
+        "type": "string",
+        "maxLength": 64,
+        "minLength": 1,
+        "default": "us-east-1"
       },
       "salad_project": {
         "title": "Salad Project",
@@ -89,6 +95,11 @@
         "op": "copy",
         "from": "/input/storage_url",
         "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_region",
+        "path": "/output/container/environmentVariables/AWS_REGION"
       },
       {
         "op": "copy",
