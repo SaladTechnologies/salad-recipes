@@ -6,7 +6,8 @@
     "container_group_name",
     "storage_id",
     "storage_key",
-    "salad_project"
+    "salad_project",
+    "storage_region"
   ],
   "properties": {
     "container_group_name": {
@@ -33,6 +34,14 @@
       "type": "string",
       "maxLength": 256,
       "minLength": 0
+    },
+    "storage_region": {
+      "title": "AWS Region",
+      "description": "Required* Region where your S3 bucket is located.",
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1,
+      "default": "us-east-1"
     },
     "salad_project": {
       "title": "Salad Project",

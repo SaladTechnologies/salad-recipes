@@ -4,7 +4,6 @@
   "container": {
     "command": [],
     "environmentVariables": {
-      "AWS_REGION": "auto"
     },
     "image": "saladtechnologies/wan2.2-5b-kelpie:cons-1.0.0",
     "imageCaching": true,

@@ -32,6 +32,11 @@
     },
     {
       "op": "copy",
+      "from": "/input/storage_region",
+      "path": "/output/container/environmentVariables/AWS_REGION"
+    },
+    {
+      "op": "copy",
       "from": "/input/salad_project",
       "path": "/output/container/environmentVariables/SALAD_PROJECT"
     }
