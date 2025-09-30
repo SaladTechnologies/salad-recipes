@@ -9,7 +9,7 @@ ENV CHECKPOINT_DIR=${MODEL_DIR}/checkpoints
 COPY models/flux1-schnell-fp8.safetensors ${CHECKPOINT_DIR}/
 
 # The comfyui wrapper api supports a warmup mode, where it will run a provided workflow before starting the server.
-COPY warmups/flux1schnell.json warmup.json
+COPY warmups/fluxschnell.json warmup.json
 ENV WARMUP_PROMPT_FILE=warmup.json
 
 # We can add custom endpoints to the comfyui wrapper by populating a workflows directory.
