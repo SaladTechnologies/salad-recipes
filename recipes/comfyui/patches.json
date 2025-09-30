@@ -30,7 +30,7 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-dreamshaper8"
+      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-dreamshaper8"
     },
     {
       "op": "add",
@@ -47,7 +47,7 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-sdxl-with-refiner"
+      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-sdxl-with-refiner"
     },
     {
       "op": "add",
@@ -64,7 +64,7 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-flux1-schnell-fp8"
+      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-flux1-schnell-fp8"
     },
     {
       "op": "add",
@@ -81,7 +81,7 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-flux1-dev-fp8"
+      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-flux1-dev-fp8"
     },
     {
       "op": "add",
@@ -98,7 +98,7 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-sd3.5-medium"
+      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-sd3.5-medium"
     },
     {
       "op": "add",
