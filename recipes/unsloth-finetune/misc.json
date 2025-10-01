@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/unsloth-finetune",
+  "short_description": "Deploy Unsloth worker for efficient fine-tuning of large language models orchestrated by Kelpie.",
+  "workload_types": ["LLM"]
+}

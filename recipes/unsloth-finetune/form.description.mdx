@@ -1,0 +1,11 @@
+**Unsloth Fine-Tuning** is a highly optimized framework for efficiently fine-tuning LLM's.  
+This recipe integrates [Unsloth](https://docs.unsloth.ai/get-started/fine-tuning-llms-guide) with [Kelpie](https://github.com/SaladTechnologies/kelpie) on SaladCloud, enabling distributed fine-tuning with checkpointing and resume support.
+Unsloth is an open-source framework that makes LLM fine-tuning up to **30× faster** while using **60% less memory**.  
+It achieves this through custom kernel optimizations in Triton, Flash Attention, and manual autograd, while maintaining or even improving accuracy.  
+This recipe uses the official [unsloth cli](https://github.com/unslothai/unsloth/blob/main/unsloth-cli.py)  as a base, with a few modifications to enable **checkpoint saving and resuming**. Jobs are submitted to the Kelpie queue and processed asynchronously. Checkpoints and outputs are automatically synced to your S3-compatible storage. The workflow ensures resilience against interruptions by downloading prior checkpoints before training, uploading intermediate checkpoints during training, and saving final models after training. It also supports queue-based autoscaling—including scaling replicas down to zero when the queue is empty.
+This makes Unsloth ideal for efficient large-scale fine-tuning on Salad’s distributed GPUs.
+
+<Callout variation="note">
+<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for checkpoints and outputs (e.g., <em>Cloudflare R2</em>).  
+To deploy this recipe you will need to provide your storage Access Key ID, Secret Access Key, and the Endpoint URL.
+</Callout>
