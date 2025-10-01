@@ -1,0 +1,24 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {
+    },
+    "image": "saladtechnologies/wan2.2-a14b-kelpie:dc-1.0.0",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 128,
+      "memory": 2097152,
+      "gpuClasses": [
+        "97b905f3-e8ed-42d6-90cf-d2a395afa1eb"
+      ],
+      "storageAmount": 536870912000,
+      "shmSize": 1048576
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3
+}

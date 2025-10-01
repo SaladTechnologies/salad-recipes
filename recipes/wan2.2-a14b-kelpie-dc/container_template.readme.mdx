@@ -1,0 +1,96 @@
+# Wan 2.2 T2V A14B (DataCenter GPUs) – Kelpie Recipe
+
+This recipe runs the **Wan 2.2 Text-to-Video A14B** model using Kelpie and S3‑compatible storage. It targets **8‑GPU DataCenter nodes (default: L40S)** and launches one worker per GPU – up to 8 jobs can run in parallel on a single node. Use the examples below to submit jobs into the Kelpie queue.
+
+## Resources
+
+- [Kelpie API Docs](https://kelpie.saladexamples.com/docs)
+- [Wan 2.2 Repository](https://github.com/Wan-Video/Wan2.2)
+- [Wan 2.2 Diffusers](https://huggingface.co/DFloat11/Wan2.2-T2V-A14B-2-DF11)
+- [Kelpie Worker Binary](https://github.com/SaladTechnologies/kelpie)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/wan2.2-a14b-kelpie-dc)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Wan2.2-A14B-DC%20Kelpie%20Recipe&body=Image:%20${props.container.image}`}>Report an Issue</Link>
+
+## Folder structure used by the worker
+
+- **`/opt/outputs`** — default final videos (`.mp4`) are written here.
+
+> Your Kelpie job **must** include a `sync.after` rule to upload `/opt/outputs/` to your bucket.
+
+
+## Parameters supported by the worker
+
+Pass these `arguments` in the Kelpie request to control video generation. They map directly to the diffusers pipeline in `wan_worker.py`.
+
+- `--prompt` (string, required) — scene description.
+- `--negative_prompt` (string, optional) — content to suppress (default includes common quality negatives; you may override or omit).
+- `--width` (int, default `1280`) — output width in pixels.
+- `--height` (int, default `720`) — output height in pixels.
+- `--num_frames` (int, default `81`) — number of frames (at default `--fps 16` ≈ 5.0 s).
+- `--guidance_scale` (float, default `4.0`) — first‑stage guidance strength.
+- `--guidance_scale_2` (float, default `3.0`) — second‑stage guidance strength.
+- `--num_inference_steps` (int, default `40`) — diffusion steps.
+- `--cpu_offload` (flag) — enable CPU offload for DFloat11 model weights.
+- `--fps` (int, default `16`) — output video frames per second.
+- `--output` (string, optional) — full output path; default `/opt/outputs/<job-id>.mp4`.
+- `--id` (string, optional) — job id (used for logging & default filename). Random UUID if omitted.
+
+Notes:
+- The pipeline automatically enables model CPU offload (`pipe.enable_model_cpu_offload()`).
+- If you do not pass `--output`, the worker writes to `/opt/outputs/<id>.mp4`.
+- Ensure width & height are multiples supported by the model (defaults known-good).
+
+## Quick Start
+
+Replace the placeholders and run:
+
+```bash
+export SALAD_API_KEY="<salad-api-key>"
+export SALAD_ORGANIZATION="<organization>"
+export SALAD_PROJECT="<project>"
+
+curl -s -X POST "https://kelpie.saladexamples.com/jobs" \
+  -H "Content-Type: application/json" \
+  -H "Salad-Api-Key: $SALAD_API_KEY" \
+  -H "Salad-Organization: $SALAD_ORGANIZATION" \
+  -H "Salad-Project: $SALAD_PROJECT" \
+  -d @- <<'JSON'
+{
+  "container_group_id": "<container_group_id>",
+  "command": "python",
+  "arguments": [
+    "/opt/t2v.py",
+    "--prompt", "A moody cyberpunk street in the rain, neon reflections, shallow depth of field",
+    "--width", "1280",
+    "--height", "720",
+    "--num_frames", "81",
+    "--cpu_offload"
+  ],
+  "sync": {
+    "after": [
+      { "bucket": "<bucket>", "prefix": "video_gen", "local_path": "/opt/outputs/", "direction": "upload" }
+    ]
+  }
+}
+JSON
+```
+
+
+## Monitor a job
+
+```bash
+curl -s "https://kelpie.saladexamples.com/jobs/<kelpie-job-id>" \
+  -H "Salad-Api-Key: $SALAD_API_KEY" \
+  -H "Salad-Organization: $SALAD_ORGANIZATION" \
+  -H "Salad-Project: $SALAD_PROJECT" | jq .
+```
+
+## Troubleshooting
+
+- **Container exits immediately** — Missing/invalid Salad credentials. Verify API key, organization, and project headers.
+- **Job “succeeded” but no MP4** — Check that `sync.after` uploads `/opt/outputs/` and that you didn't override `--output` to a different folder.
+- **Out-of-memory (OOM)** — Try enabling `--cpu_offload`, reducing `--width/--height`, or lowering `--num_frames` / `--num_inference_steps`.
+- **Unexpected artifacts** — Adjust `--guidance_scale` / `--guidance_scale_2` (slightly lower values can reduce oversaturation) or shorten `--num_inference_steps`.
+- **Slow generation** — Reduce `--num_frames` or `--num_inference_steps`.
+
+> Need to scale automatically? Kelpie supports **queue-aware autoscaling**, including **scale-to-zero** when the queue is empty. You can enable autoscaling by first adding the kelpie user (currently shawn.rushefsky@salad.com) to your organization, and then creating an autoscaling rule through the Kelpie API with the [Create Scaling Rule Endpoint](https://kelpie.saladexamples.com/docs#/default/post_CreateScalingRule)

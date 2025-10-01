@@ -1,0 +1,52 @@
+{
+  "title": "Wan 2.2 A14B (Text-Video) using Kelpie (DataCenter)",
+  "description": "Deploy a Kelpie-powered Wan 2.2 A14B worker on DataCenter GPUs (default: L40S/H100) to generate high-quality videos.",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "storage_id",
+    "storage_key",
+    "salad_project",
+    "storage_region"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "storage_id": {
+      "title": "Storage Access Key ID",
+      "description": "Required* Access Key ID for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+      "type": "string"
+    },
+    "storage_key": {
+      "title": "Storage Secret Access Key",
+      "description": "Required* Secret Access Key for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+      "type": "string"
+    },
+    "storage_url": {
+      "title": "Storage Endpoint URL",
+      "description": "Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+      "type": "string",
+      "maxLength": 256,
+      "minLength": 0
+    },
+    "storage_region": {
+      "title": "AWS Region",
+      "description": "Required* Region where your S3 bucket is located.",
+      "type": "string",
+      "maxLength": 64,
+      "minLength": 1,
+      "default": "us-east-1"
+    },
+    "salad_project": {
+      "title": "Salad Project",
+      "description": "Required* Salad project name where the container group will be associated.",
+      "type": "string"
+    }
+  }
+}

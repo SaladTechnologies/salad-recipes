@@ -1,0 +1,128 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# Wan 2.2 T2V A14B (DataCenter GPUs) – Kelpie Recipe\n\nThis recipe runs the **Wan 2.2 Text-to-Video A14B** model using Kelpie and S3‑compatible storage. It targets **8‑GPU DataCenter nodes (default: L40S)** and launches one worker per GPU – up to 8 jobs can run in parallel on a single node. Use the examples below to submit jobs into the Kelpie queue.\n\n## Resources\n\n- [Kelpie API Docs](https://kelpie.saladexamples.com/docs)\n- [Wan 2.2 Repository](https://github.com/Wan-Video/Wan2.2)\n- [Wan 2.2 Diffusers](https://huggingface.co/DFloat11/Wan2.2-T2V-A14B-2-DF11)\n- [Kelpie Worker Binary](https://github.com/SaladTechnologies/kelpie)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/wan2.2-a14b-kelpie-dc)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Wan2.2-A14B-DC%20Kelpie%20Recipe&body=Image:%20${props.container.image}`}>Report an Issue</Link>\n\n## Folder structure used by the worker\n\n- **`/opt/outputs`** — default final videos (`.mp4`) are written here.\n\n> Your Kelpie job **must** include a `sync.after` rule to upload `/opt/outputs/` to your bucket.\n\n\n## Parameters supported by the worker\n\nPass these `arguments` in the Kelpie request to control video generation. They map directly to the diffusers pipeline in `wan_worker.py`.\n\n- `--prompt` (string, required) — scene description.\n- `--negative_prompt` (string, optional) — content to suppress (default includes common quality negatives; you may override or omit).\n- `--width` (int, default `1280`) — output width in pixels.\n- `--height` (int, default `720`) — output height in pixels.\n- `--num_frames` (int, default `81`) — number of frames (at default `--fps 16` ≈ 5.0 s).\n- `--guidance_scale` (float, default `4.0`) — first‑stage guidance strength.\n- `--guidance_scale_2` (float, default `3.0`) — second‑stage guidance strength.\n- `--num_inference_steps` (int, default `40`) — diffusion steps.\n- `--cpu_offload` (flag) — enable CPU offload for DFloat11 model weights.\n- `--fps` (int, default `16`) — output video frames per second.\n- `--output` (string, optional) — full output path; default `/opt/outputs/<job-id>.mp4`.\n- `--id` (string, optional) — job id (used for logging & default filename). Random UUID if omitted.\n\nNotes:\n- The pipeline automatically enables model CPU offload (`pipe.enable_model_cpu_offload()`).\n- If you do not pass `--output`, the worker writes to `/opt/outputs/<id>.mp4`.\n- Ensure width & height are multiples supported by the model (defaults known-good).\n\n## Quick Start\n\nReplace the placeholders and run:\n\n```bash\nexport SALAD_API_KEY=\"<salad-api-key>\"\nexport SALAD_ORGANIZATION=\"<organization>\"\nexport SALAD_PROJECT=\"<project>\"\n\ncurl -s -X POST \"https://kelpie.saladexamples.com/jobs\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Salad-Api-Key: $SALAD_API_KEY\" \\\n  -H \"Salad-Organization: $SALAD_ORGANIZATION\" \\\n  -H \"Salad-Project: $SALAD_PROJECT\" \\\n  -d @- <<'JSON'\n{\n  \"container_group_id\": \"<container_group_id>\",\n  \"command\": \"python\",\n  \"arguments\": [\n    \"/opt/t2v.py\",\n    \"--prompt\", \"A moody cyberpunk street in the rain, neon reflections, shallow depth of field\",\n    \"--width\", \"1280\",\n    \"--height\", \"720\",\n    \"--num_frames\", \"81\",\n    \"--cpu_offload\"\n  ],\n  \"sync\": {\n    \"after\": [\n      { \"bucket\": \"<bucket>\", \"prefix\": \"video_gen\", \"local_path\": \"/opt/outputs/\", \"direction\": \"upload\" }\n    ]\n  }\n}\nJSON\n```\n\n\n## Monitor a job\n\n```bash\ncurl -s \"https://kelpie.saladexamples.com/jobs/<kelpie-job-id>\" \\\n  -H \"Salad-Api-Key: $SALAD_API_KEY\" \\\n  -H \"Salad-Organization: $SALAD_ORGANIZATION\" \\\n  -H \"Salad-Project: $SALAD_PROJECT\" | jq .\n```\n\n## Troubleshooting\n\n- **Container exits immediately** — Missing/invalid Salad credentials. Verify API key, organization, and project headers.\n- **Job “succeeded” but no MP4** — Check that `sync.after` uploads `/opt/outputs/` and that you didn't override `--output` to a different folder.\n- **Out-of-memory (OOM)** — Try enabling `--cpu_offload`, reducing `--width/--height`, or lowering `--num_frames` / `--num_inference_steps`.\n- **Unexpected artifacts** — Adjust `--guidance_scale` / `--guidance_scale_2` (slightly lower values can reduce oversaturation) or shorten `--num_inference_steps`.\n- **Slow generation** — Reduce `--num_frames` or `--num_inference_steps`.\n\n> Need to scale automatically? Kelpie supports **queue-aware autoscaling**, including **scale-to-zero** when the queue is empty. You can enable autoscaling by first adding the kelpie user (currently shawn.rushefsky@salad.com) to your organization, and then creating an autoscaling rule through the Kelpie API with the [Create Scaling Rule Endpoint](https://kelpie.saladexamples.com/docs#/default/post_CreateScalingRule)\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "saladtechnologies/wan2.2-a14b-kelpie:dc-1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 128,
+        "memory": 2097152,
+        "gpuClasses": ["97b905f3-e8ed-42d6-90cf-d2a395afa1eb"],
+        "storageAmount": 536870912000,
+        "shmSize": 1048576
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3
+  },
+  "form": {
+    "title": "Wan 2.2 A14B (Text-Video) using Kelpie (DataCenter)",
+    "description": "**Wan 2.2 A14B** is a text-to-video generative model that produces cinematic clips from a single prompt.  \nDesigned for multi-GPU DataCenter nodes (e.g., **8× L40S**). The container launches **one Kelpie worker per GPU**, sharing model weights between GPUs on a single node; each worker handles one job, enabling up to **8 parallel T2V jobs** per node.\n\nThis recipe uses [Kelpie](https://github.com/SaladTechnologies/kelpie) and the [Kelpie API](https://kelpie.saladexamples.com/docs). Jobs are enqueued to the Kelpie queue and processed asynchronously; outputs are synced to **S3-compatible storage**. It supports queue-aware autoscaling—including scaling replicas down to zero when the queue is empty.\n\n<Callout variation=\"note\">\n<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for outputs (and optionally inputs).  \nProvide your Access Key ID, Secret Access Key, and Endpoint URL to deploy this recipe.\n</Callout>\n",
+    "type": "object",
+    "required": ["container_group_name", "storage_id", "storage_key", "salad_project", "storage_region"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "storage_id": {
+        "title": "Storage Access Key ID",
+        "description": "Required* Access Key ID for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "type": "string"
+      },
+      "storage_key": {
+        "title": "Storage Secret Access Key",
+        "description": "Required* Secret Access Key for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "type": "string"
+      },
+      "storage_url": {
+        "title": "Storage Endpoint URL",
+        "description": "Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "type": "string",
+        "maxLength": 256,
+        "minLength": 0
+      },
+      "storage_region": {
+        "title": "AWS Region",
+        "description": "Required* Region where your S3 bucket is located.",
+        "type": "string",
+        "maxLength": 64,
+        "minLength": 1,
+        "default": "us-east-1"
+      },
+      "salad_project": {
+        "title": "Salad Project",
+        "description": "Required* Salad project name where the container group will be associated.",
+        "type": "string"
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_id",
+        "path": "/output/container/environmentVariables/AWS_ACCESS_KEY_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_key",
+        "path": "/output/container/environmentVariables/AWS_SECRET_ACCESS_KEY"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_url",
+        "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_region",
+        "path": "/output/container/environmentVariables/AWS_REGION"
+      },
+      {
+        "op": "copy",
+        "from": "/input/salad_project",
+        "path": "/output/container/environmentVariables/SALAD_PROJECT"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/storage_url",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/wan-a14b-kelpie-dc",
+  "short_description": "Wan 2.2 A14B text-to-video generation on DataCenter GPUs with Kelpie",
+  "workload_types": ["VideoGeneration"]
+}
