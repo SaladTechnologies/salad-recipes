@@ -1,0 +1,197 @@
+# Unsloth Fine-Tuning Recipe
+
+This recipe runs [Unsloth](https://docs.unsloth.ai/get-started/fine-tuning-llms-guide) fine-tuning jobs on SaladCloud, orchestrated by [Kelpie](https://github.com/SaladTechnologies/kelpie), with S3-compatible storage used for checkpoints and outputs.  
+Use the included submission helpers to enqueue jobs into the Kelpie queue and train large language models efficiently on distributed compute.
+
+## Resources
+
+- [Kelpie API Docs](https://kelpie.saladexamples.com/docs)  
+- [Unsloth Repository](https://github.com/unslothai/unsloth)  
+- [Kelpie Worker Binary](https://github.com/SaladTechnologies/kelpie)  
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/unsloth-finetune)  
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Unsloth%20Fine-Tuning%20Recipe&body=Image:%20${props.container.image}`}>Report an Issue</Link>  
+
+## Folders structure used by the worker
+
+These folders are used on default. You can modify them in your Kelpie job if needed:
+- **`/opt/checkpoints`** — intermediate checkpoints saved during training  
+- **`/opt/outputs`** — final fine-tuned model is written here  
+
+> Your Kelpie job **must** include:  
+> - a `sync.before` rule to download checkpoints from your storage (if resuming),  
+> - a `sync.during` rule to periodically upload checkpoints,  
+> - a `sync.after` rule to upload the final fine-tuned model.  
+
+## Example Parameters supported by the worker
+
+Pass these `arguments` in the Kelpie request to control fine-tuning. Most arguments mirror those passed to [Unsloth's CLI](https://github.com/unslothai/unsloth/blob/main/unsloth-cli.py):
+
+### Model Options
+- `--model_name` *(str, default `unsloth/llama-3-8b`)* — Base model to load.
+- `--max_seq_length` *(int, default `2048`)* — Context length.
+- `--dtype` *(str|None, default `None`)* — Override dtype (auto when None).
+- `--load_in_4bit` *(flag)* — Enable 4-bit quantization for memory saving.
+- `--dataset` *(str, default `yahma/alpaca-cleaned`)* — HF dataset id or path.
+
+### LoRA Options
+- `--r` *(int, default `16`)* — LoRA rank.
+- `--lora_alpha` *(int, default `16`)*.
+- `--lora_dropout` *(float, default `0.0`)*.
+- `--bias` *(str, default `none`)*.
+- `--use_gradient_checkpointing` *(str, default `unsloth`)* — `"unsloth"` or `True` pattern.
+- `--random_state` *(int, default `3407`)*.
+- `--use_rslora` *(flag)* — Enable rank-stabilized LoRA.
+- `--loftq_config` *(str|None, default `None`)* — LoftQ config path/json.
+
+### Training Options
+- `--per_device_train_batch_size` *(int, default `2`)*.
+- `--gradient_accumulation_steps` *(int, default `4`)*.
+- `--warmup_steps` *(int, default `5`)*.
+- `--max_steps` *(int, default `400`)* — Total train steps.
+- `--learning_rate` *(float, default `2e-4`)*.
+- `--optim` *(str, default `adamw_8bit`)*.
+- `--weight_decay` *(float, default `0.01`)*.
+- `--lr_scheduler_type` *(str, default `linear`)*.
+- `--seed` *(int, default `3407`)*.
+
+### Checkpoint & Resume
+- `--save_strategy` *(str, default `steps`; choices: `no|steps|epoch`)*.
+- `--save_steps` *(int, default `500`)* — Save every N steps (if `steps`).
+- `--save_total_limit` *(int|None)* — Keep only last N checkpoints.
+- `--resume` *(flag)* — Auto-resume from **latest** checkpoint if present.
+- `--resume_from_checkpoint` *(str|None)* — Resume from a specific checkpoint dir.
+
+> The script auto-detects the latest `checkpoint-*` inside `--output_dir` when `--resume` is set. If none exist, it starts fresh.
+  
+
+> The worker will save checkpoints into `--output_dir/checkpoint-*` and final model artifacts into `--save_path`.
+
+---
+
+## Quick Start — Fine-Tuning Job
+
+Replace the placeholders and run:
+
+```bash
+export SALAD_API_KEY="<salad-api-key>"
+export SALAD_ORGANIZATION="<organization>"
+export SALAD_PROJECT="<project>"
+
+curl -s -X POST "https://kelpie.saladexamples.com/jobs" \
+  -H "Content-Type: application/json" \
+  -H "Salad-Api-Key: $SALAD_API_KEY" \
+  -H "Salad-Organization: $SALAD_ORGANIZATION" \
+  -H "Salad-Project: $SALAD_PROJECT" \
+  -d @- <<'JSON'
+{
+  "container_group_id": "<container_group_id>",
+  "command": "python",
+  "arguments": [
+    "/opt/unsloth-cli.py",
+    "--model_name", "unsloth/llama-3-8b",
+    "--dataset", "yahma/alpaca-cleaned",
+    "--max_seq_length", "2048",
+    "--load_in_4bit",
+    "--r", "16",
+    "--lora_alpha", "16",
+    "--lora_dropout", "0.05",
+    "--bias", "none",
+    "--use_gradient_checkpointing", "unsloth",
+    "--per_device_train_batch_size", "2",
+    "--gradient_accumulation_steps", "4",
+    "--warmup_steps", "5",
+    "--max_steps", "1200",
+    "--learning_rate", "2e-4",
+    "--logging_steps", "10",
+    "--optim", "adamw_8bit",
+    "--weight_decay", "0.01",
+    "--lr_scheduler_type", "linear",
+    "--seed", "3407",
+    "--report_to", "none",
+    "--output_dir", "/opt/checkpoints",
+    "--save_model",
+    "--save_path", "/opt/outputs",
+    "--save_method", "merged_16bit",
+    "--save_strategy", "steps",
+    "--save_steps", "100",
+    "--save_total_limit", "3",
+    "--resume"
+  ],
+  "sync": {
+    "before": [
+      { "bucket": "<bucket>", "prefix": "unsloth-checkpoints", "local_path": "/opt/checkpoints/", "direction": "download" }
+    ],
+    "during": [
+      { "bucket": "<bucket>", "prefix": "unsloth-checkpoints", "local_path": "/opt/checkpoints/", "direction": "upload" }
+    ],
+    "after": [
+      { "bucket": "<bucket>", "prefix": "unsloth-model", "local_path": "/opt/outputs/", "direction": "upload" }
+    ]
+  }
+}
+JSON
+```
+
+
+## Path alignment (critical for resume & uploads)
+
+Your Kelpie `sync` paths must match the arguments paths:
+
+- **Checkpoints**
+  - Arguments: `--output_dir /opt/checkpoints`
+  - Sync:
+    - `before.local_path`: `/opt/checkpoints/` (download past checkpoints so `--resume` can find them)
+    - `during.local_path`: `/opt/checkpoints/` (periodically upload new checkpoints)
+
+- **Final model**
+  - Arguments: `--save_path /opt/outputs`
+  - Sync:
+    - `after.local_path`: `/opt/outputs/` (upload final artifacts)
+
+
+## Monitoring the Job
+
+You can monitor the job using the Kelpie API. You can use the following command to get the status of the job:
+
+```bash
+curl -X GET \
+  --url https://kelpie.saladexamples.com/jobs/{job_id} \
+  --header 'Content-Type: application/json' \
+  --header 'Salad-Api-Key: <salad-api-key>' \
+  --header 'Salad-Organization: <organization-name>' \
+  --header 'Salad-Project: <project-name>'
+```
+
+Make sure to replace `{job_id}` with the job id of the kelpie job, and `<salad-api-key>` with your Salad API key.
+
+This will return a JSON object with the details of the job, including the status, which machine had the job most recently, and how many heartbeats have been received.
+
+## Autoscaling
+
+Kelpie has an optional autoscaling feature that automates adjusting replica count based on the number of queued jobs, including scale-to-zero when the queue is empty. This feature works through the Salad API, and requires adding the Kelpie user to your Salad Organization to grant the required API access. Currently that is me (shawn.rushefsky@salad.com).
+
+To enable autoscaling, you can submit a request to the Kelpie API to establish scaling rules for your container group.
+
+```bash
+curl -X POST \
+  --url https://kelpie.saladexamples.com/scaling-rules \
+  --header 'Content-Type: application/json' \
+  --header 'Salad-Api-Key: <salad-api-key>' \
+  --header 'Salad-Organization: <organization-name>' \
+  --header 'Salad-Project: <project-name>' \
+  --data '{
+    "min_replicas": 0,
+    "max_replicas": 10,
+    "container_group_id": "<container-group-id>"
+}'
+```
+
+Make sure to replace the placeholders with your Salad API key, organization name, project name, and the ID of the container group you created earlier.
+This will create a scaling rule that will scale the container group to a minimum of 0 replicas and a maximum of 10 replicas. The scaling rules will be applied to all jobs submitted to the container group.
+
+The Kelpie scaling algorithm works as follows:
+
+- Every 5 minutes, all scaling rules are evaluated.
+- The number of replicas in a container group is set to equal the number of queued or running jobs, up to the maximum number of replicas, and down to the minimum number of replicas.
+- If the desired number of replicas is 0, the container group will be stopped.
+- If the desired number of replicas is greater than 0 and the container group is not currently running, the container group will be started.

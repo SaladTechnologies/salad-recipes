@@ -1,0 +1,24 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {
+    },
+    "image": "saladtechnologies/unsloth-kelpie:1.0.0",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 8,
+      "memory": 8192,
+      "gpuClasses": [
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "storageAmount": 107374182400,
+      "shmSize": 2048
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3
+}

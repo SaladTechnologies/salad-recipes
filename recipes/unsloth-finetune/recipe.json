@@ -1,0 +1,116 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# Unsloth Fine-Tuning Recipe\n\nThis recipe runs [Unsloth](https://docs.unsloth.ai/get-started/fine-tuning-llms-guide) fine-tuning jobs on SaladCloud, orchestrated by [Kelpie](https://github.com/SaladTechnologies/kelpie), with S3-compatible storage used for checkpoints and outputs.  \nUse the included submission helpers to enqueue jobs into the Kelpie queue and train large language models efficiently on distributed compute.\n\n## Resources\n\n- [Kelpie API Docs](https://kelpie.saladexamples.com/docs)  \n- [Unsloth Repository](https://github.com/unslothai/unsloth)  \n- [Kelpie Worker Binary](https://github.com/SaladTechnologies/kelpie)  \n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/unsloth-finetune)  \n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Unsloth%20Fine-Tuning%20Recipe&body=Image:%20${props.container.image}`}>Report an Issue</Link>  \n\n## Folders structure used by the worker\n\nThese folders are used on default. You can modify them in your Kelpie job if needed:\n- **`/opt/checkpoints`** — intermediate checkpoints saved during training  \n- **`/opt/outputs`** — final fine-tuned model is written here  \n\n> Your Kelpie job **must** include:  \n> - a `sync.before` rule to download checkpoints from your storage (if resuming),  \n> - a `sync.during` rule to periodically upload checkpoints,  \n> - a `sync.after` rule to upload the final fine-tuned model.  \n\n## Example Parameters supported by the worker\n\nPass these `arguments` in the Kelpie request to control fine-tuning. Most arguments mirror those passed to [Unsloth's CLI](https://github.com/unslothai/unsloth/blob/main/unsloth-cli.py):\n\n### Model Options\n- `--model_name` *(str, default `unsloth/llama-3-8b`)* — Base model to load.\n- `--max_seq_length` *(int, default `2048`)* — Context length.\n- `--dtype` *(str|None, default `None`)* — Override dtype (auto when None).\n- `--load_in_4bit` *(flag)* — Enable 4-bit quantization for memory saving.\n- `--dataset` *(str, default `yahma/alpaca-cleaned`)* — HF dataset id or path.\n\n### LoRA Options\n- `--r` *(int, default `16`)* — LoRA rank.\n- `--lora_alpha` *(int, default `16`)*.\n- `--lora_dropout` *(float, default `0.0`)*.\n- `--bias` *(str, default `none`)*.\n- `--use_gradient_checkpointing` *(str, default `unsloth`)* — `\"unsloth\"` or `True` pattern.\n- `--random_state` *(int, default `3407`)*.\n- `--use_rslora` *(flag)* — Enable rank-stabilized LoRA.\n- `--loftq_config` *(str|None, default `None`)* — LoftQ config path/json.\n\n### Training Options\n- `--per_device_train_batch_size` *(int, default `2`)*.\n- `--gradient_accumulation_steps` *(int, default `4`)*.\n- `--warmup_steps` *(int, default `5`)*.\n- `--max_steps` *(int, default `400`)* — Total train steps.\n- `--learning_rate` *(float, default `2e-4`)*.\n- `--optim` *(str, default `adamw_8bit`)*.\n- `--weight_decay` *(float, default `0.01`)*.\n- `--lr_scheduler_type` *(str, default `linear`)*.\n- `--seed` *(int, default `3407`)*.\n\n### Checkpoint & Resume\n- `--save_strategy` *(str, default `steps`; choices: `no|steps|epoch`)*.\n- `--save_steps` *(int, default `500`)* — Save every N steps (if `steps`).\n- `--save_total_limit` *(int|None)* — Keep only last N checkpoints.\n- `--resume` *(flag)* — Auto-resume from **latest** checkpoint if present.\n- `--resume_from_checkpoint` *(str|None)* — Resume from a specific checkpoint dir.\n\n> The script auto-detects the latest `checkpoint-*` inside `--output_dir` when `--resume` is set. If none exist, it starts fresh.\n  \n\n> The worker will save checkpoints into `--output_dir/checkpoint-*` and final model artifacts into `--save_path`.\n\n---\n\n## Quick Start — Fine-Tuning Job\n\nReplace the placeholders and run:\n\n```bash\nexport SALAD_API_KEY=\"<salad-api-key>\"\nexport SALAD_ORGANIZATION=\"<organization>\"\nexport SALAD_PROJECT=\"<project>\"\n\ncurl -s -X POST \"https://kelpie.saladexamples.com/jobs\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Salad-Api-Key: $SALAD_API_KEY\" \\\n  -H \"Salad-Organization: $SALAD_ORGANIZATION\" \\\n  -H \"Salad-Project: $SALAD_PROJECT\" \\\n  -d @- <<'JSON'\n{\n  \"container_group_id\": \"<container_group_id>\",\n  \"command\": \"python\",\n  \"arguments\": [\n    \"/opt/unsloth-cli.py\",\n    \"--model_name\", \"unsloth/llama-3-8b\",\n    \"--dataset\", \"yahma/alpaca-cleaned\",\n    \"--max_seq_length\", \"2048\",\n    \"--load_in_4bit\",\n    \"--r\", \"16\",\n    \"--lora_alpha\", \"16\",\n    \"--lora_dropout\", \"0.05\",\n    \"--bias\", \"none\",\n    \"--use_gradient_checkpointing\", \"unsloth\",\n    \"--per_device_train_batch_size\", \"2\",\n    \"--gradient_accumulation_steps\", \"4\",\n    \"--warmup_steps\", \"5\",\n    \"--max_steps\", \"1200\",\n    \"--learning_rate\", \"2e-4\",\n    \"--logging_steps\", \"10\",\n    \"--optim\", \"adamw_8bit\",\n    \"--weight_decay\", \"0.01\",\n    \"--lr_scheduler_type\", \"linear\",\n    \"--seed\", \"3407\",\n    \"--report_to\", \"none\",\n    \"--output_dir\", \"/opt/checkpoints\",\n    \"--save_model\",\n    \"--save_path\", \"/opt/outputs\",\n    \"--save_method\", \"merged_16bit\",\n    \"--save_strategy\", \"steps\",\n    \"--save_steps\", \"100\",\n    \"--save_total_limit\", \"3\",\n    \"--resume\"\n  ],\n  \"sync\": {\n    \"before\": [\n      { \"bucket\": \"<bucket>\", \"prefix\": \"unsloth-checkpoints\", \"local_path\": \"/opt/checkpoints/\", \"direction\": \"download\" }\n    ],\n    \"during\": [\n      { \"bucket\": \"<bucket>\", \"prefix\": \"unsloth-checkpoints\", \"local_path\": \"/opt/checkpoints/\", \"direction\": \"upload\" }\n    ],\n    \"after\": [\n      { \"bucket\": \"<bucket>\", \"prefix\": \"unsloth-model\", \"local_path\": \"/opt/outputs/\", \"direction\": \"upload\" }\n    ]\n  }\n}\nJSON\n```\n\n\n## Path alignment (critical for resume & uploads)\n\nYour Kelpie `sync` paths must match the arguments paths:\n\n- **Checkpoints**\n  - Arguments: `--output_dir /opt/checkpoints`\n  - Sync:\n    - `before.local_path`: `/opt/checkpoints/` (download past checkpoints so `--resume` can find them)\n    - `during.local_path`: `/opt/checkpoints/` (periodically upload new checkpoints)\n\n- **Final model**\n  - Arguments: `--save_path /opt/outputs`\n  - Sync:\n    - `after.local_path`: `/opt/outputs/` (upload final artifacts)\n\n\n## Monitoring the Job\n\nYou can monitor the job using the Kelpie API. You can use the following command to get the status of the job:\n\n```bash\ncurl -X GET \\\n  --url https://kelpie.saladexamples.com/jobs/{job_id} \\\n  --header 'Content-Type: application/json' \\\n  --header 'Salad-Api-Key: <salad-api-key>' \\\n  --header 'Salad-Organization: <organization-name>' \\\n  --header 'Salad-Project: <project-name>'\n```\n\nMake sure to replace `{job_id}` with the job id of the kelpie job, and `<salad-api-key>` with your Salad API key.\n\nThis will return a JSON object with the details of the job, including the status, which machine had the job most recently, and how many heartbeats have been received.\n\n## Autoscaling\n\nKelpie has an optional autoscaling feature that automates adjusting replica count based on the number of queued jobs, including scale-to-zero when the queue is empty. This feature works through the Salad API, and requires adding the Kelpie user to your Salad Organization to grant the required API access. Currently that is me (shawn.rushefsky@salad.com).\n\nTo enable autoscaling, you can submit a request to the Kelpie API to establish scaling rules for your container group.\n\n```bash\ncurl -X POST \\\n  --url https://kelpie.saladexamples.com/scaling-rules \\\n  --header 'Content-Type: application/json' \\\n  --header 'Salad-Api-Key: <salad-api-key>' \\\n  --header 'Salad-Organization: <organization-name>' \\\n  --header 'Salad-Project: <project-name>' \\\n  --data '{\n    \"min_replicas\": 0,\n    \"max_replicas\": 10,\n    \"container_group_id\": \"<container-group-id>\"\n}'\n```\n\nMake sure to replace the placeholders with your Salad API key, organization name, project name, and the ID of the container group you created earlier.\nThis will create a scaling rule that will scale the container group to a minimum of 0 replicas and a maximum of 10 replicas. The scaling rules will be applied to all jobs submitted to the container group.\n\nThe Kelpie scaling algorithm works as follows:\n\n- Every 5 minutes, all scaling rules are evaluated.\n- The number of replicas in a container group is set to equal the number of queued or running jobs, up to the maximum number of replicas, and down to the minimum number of replicas.\n- If the desired number of replicas is 0, the container group will be stopped.\n- If the desired number of replicas is greater than 0 and the container group is not currently running, the container group will be started.\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "saladtechnologies/unsloth-kelpie:1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 8192,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "storageAmount": 107374182400,
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3
+  },
+  "form": {
+    "title": "Unsloth Fine-Tuning",
+    "description": "**Unsloth Fine-Tuning** is a highly optimized framework for efficiently fine-tuning LLM's.  \nThis recipe integrates [Unsloth](https://docs.unsloth.ai/get-started/fine-tuning-llms-guide) with [Kelpie](https://github.com/SaladTechnologies/kelpie) on SaladCloud, enabling distributed fine-tuning with checkpointing and resume support.\nUnsloth is an open-source framework that makes LLM fine-tuning up to **30× faster** while using **60% less memory**.  \nIt achieves this through custom kernel optimizations in Triton, Flash Attention, and manual autograd, while maintaining or even improving accuracy.  \nThis recipe uses the official [unsloth cli](https://github.com/unslothai/unsloth/blob/main/unsloth-cli.py)  as a base, with a few modifications to enable **checkpoint saving and resuming**. Jobs are submitted to the Kelpie queue and processed asynchronously. Checkpoints and outputs are automatically synced to your S3-compatible storage. The workflow ensures resilience against interruptions by downloading prior checkpoints before training, uploading intermediate checkpoints during training, and saving final models after training. It also supports queue-based autoscaling—including scaling replicas down to zero when the queue is empty.\nThis makes Unsloth ideal for efficient large-scale fine-tuning on Salad’s distributed GPUs.\n\n<Callout variation=\"note\">\n<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for checkpoints and outputs (e.g., <em>Cloudflare R2</em>).  \nTo deploy this recipe you will need to provide your storage Access Key ID, Secret Access Key, and the Endpoint URL.\n</Callout>",
+    "type": "object",
+    "required": ["container_group_name", "storage_id", "storage_key", "storage_region"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "storage_id": {
+        "title": "Storage Access Key ID",
+        "description": "Required* Access Key ID for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "type": "string"
+      },
+      "storage_key": {
+        "title": "Storage Secret Access Key",
+        "description": "Required* Secret Access Key for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "type": "string"
+      },
+      "storage_url": {
+        "title": "Storage Endpoint URL",
+        "description": "Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "type": "string"
+      },
+      "storage_region": {
+        "title": "AWS Region",
+        "description": "Required* Region where your S3 bucket is located.",
+        "type": "string",
+        "maxLength": 64,
+        "minLength": 1,
+        "default": "us-east-1"
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_id",
+        "path": "/output/container/environmentVariables/AWS_ACCESS_KEY_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_key",
+        "path": "/output/container/environmentVariables/AWS_SECRET_ACCESS_KEY"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_url",
+        "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_region",
+        "path": "/output/container/environmentVariables/AWS_REGION"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/storage_url",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/unsloth-finetune",
+  "short_description": "Deploy Unsloth worker for efficient fine-tuning of large language models orchestrated by Kelpie.",
+  "workload_types": ["LLM"]
+}
