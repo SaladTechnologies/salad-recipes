@@ -24,7 +24,7 @@
     "title": "Wan 2.2 A14B (Text-Video) using Kelpie (DataCenter)",
     "description": "**Wan 2.2 A14B** is a text-to-video generative model that produces cinematic clips from a single prompt.  \nDesigned for multi-GPU DataCenter nodes (e.g., **8× L40S**). The container launches **one Kelpie worker per GPU**, sharing model weights between GPUs on a single node; each worker handles one job, enabling up to **8 parallel T2V jobs** per node.\n\nThis recipe uses [Kelpie](https://github.com/SaladTechnologies/kelpie) and the [Kelpie API](https://kelpie.saladexamples.com/docs). Jobs are enqueued to the Kelpie queue and processed asynchronously; outputs are synced to **S3-compatible storage**. It supports queue-aware autoscaling—including scaling replicas down to zero when the queue is empty.\n\n<Callout variation=\"note\">\n<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for outputs (and optionally inputs).  \nProvide your Access Key ID, Secret Access Key, and Endpoint URL to deploy this recipe.\n</Callout>\n",
     "type": "object",
-    "required": ["container_group_name", "storage_id", "storage_key", "salad_project", "storage_region"],
+    "required": ["container_group_name", "storage_id", "storage_key", "storage_region"],
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
@@ -58,11 +58,6 @@
         "maxLength": 64,
         "minLength": 1,
         "default": "us-east-1"
-      },
-      "salad_project": {
-        "title": "Salad Project",
-        "description": "Required* Salad project name where the container group will be associated.",
-        "type": "string"
       }
     }
   },
@@ -102,11 +97,6 @@
         "op": "copy",
         "from": "/input/storage_region",
         "path": "/output/container/environmentVariables/AWS_REGION"
-      },
-      {
-        "op": "copy",
-        "from": "/input/salad_project",
-        "path": "/output/container/environmentVariables/SALAD_PROJECT"
       }
     ],
     [
