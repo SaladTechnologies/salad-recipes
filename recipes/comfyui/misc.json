@@ -6,7 +6,8 @@
         "Stable Diffusion XL",
         "Flux 1 Schnell",
         "Flux 1 Dev",
-        "Stable Diffusion 3.5 Medium"
+        "Stable Diffusion 3.5 Medium",
+        "Custom Manifest"
       ]
     },
     "networking_auth": {

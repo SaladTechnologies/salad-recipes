@@ -110,5 +110,32 @@
       "from": "/input/container_environment_hf_token",
       "path": "/output/container/environmentVariables/HF_TOKEN"
     }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/container_image_model",
+      "value": "custom"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/image",
+      "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-runtime"
+    },
+    {
+      "op": "add",
+      "path": "/output/readme",
+      "value": "$replace"
+    },
+    {
+      "op": "copy",
+      "from": "/input/manifest_json",
+      "path": "/output/container/environmentVariables/MANIFEST_JSON"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_hf_token",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
+    }
   ]
 ]
