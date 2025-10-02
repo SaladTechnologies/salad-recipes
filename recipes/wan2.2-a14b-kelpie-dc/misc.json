@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/wan-a14b-kelpie-dc",
+  "short_description": "Wan 2.2 A14B text-to-video generation on DataCenter GPUs with Kelpie",
+  "workload_types": ["VideoGeneration"]
+}

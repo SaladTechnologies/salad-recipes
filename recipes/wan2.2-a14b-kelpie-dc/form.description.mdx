@@ -1,0 +1,9 @@
+**Wan 2.2 A14B** is a text-to-video generative model that produces cinematic clips from a single prompt.  
+Designed for multi-GPU DataCenter nodes (e.g., **8× L40S**). The container launches **one Kelpie worker per GPU**, sharing model weights between GPUs on a single node; each worker handles one job, enabling up to **8 parallel T2V jobs** per node.
+
+This recipe uses [Kelpie](https://github.com/SaladTechnologies/kelpie) and the [Kelpie API](https://kelpie.saladexamples.com/docs). Jobs are enqueued to the Kelpie queue and processed asynchronously; outputs are synced to **S3-compatible storage**. It supports queue-aware autoscaling—including scaling replicas down to zero when the queue is empty.
+
+<Callout variation="note">
+<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for outputs (and optionally inputs).  
+Provide your Access Key ID, Secret Access Key, and Endpoint URL to deploy this recipe.
+</Callout>
