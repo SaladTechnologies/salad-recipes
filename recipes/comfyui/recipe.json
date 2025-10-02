@@ -55,7 +55,7 @@
   },
   "form": {
     "title": "ComfyUI API",
-    "description": "Run popular image generation models with [ComfyUI](https://github.com/comfyanonymous/ComfyUI/) and [ComfyUI API](https://github.com/SaladTechnologies/comfyui-api). Model weights are included in the container.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nThis recipe **DOES NOT** expose the ComfyUI web interface, it only provides the API interface via the [ComfyUI API](https://github.com/SaladTechnologies/comfyui-api).\n\nThe ComfyUI API server is designed to be stateless, meaning that it does not store any state between requests. This allows the server to be scaled horizontally behind a load balancer, and to handle more requests by adding more instances of the server. The server uses a warmup workflow to ensure that ComfyUI is ready to accept requests, and to pre-load any required models. The server also self-hosts swagger docs and an openapi spec at `/docs`, which can be used to interact with the API.\n\n## Request Format\n\nPrompts are submitted to the server via the `POST /prompt` endpoint, which accepts a JSON body containing the prompt graph, as well as any additional parameters such as the webhook URL, S3 bucket and prefix, and image conversion options. A request may look something like:\n\n\n<Callout variation=\"warning\">This is not a complete request body, as it does not include a node that saves an output.</Callout>\n\n```json\n{\n  \"prompt\": {\n    \"1\": {\n      \"inputs\": {\n        \"image\": \"https://salad-benchmark-assets.download/coco2017/train2017/000000000009.jpg\",\n        \"upload\": \"image\"\n      },\n      \"class_type\": \"LoadImage\"\n    }\n  },\n  \"webhook\": \"https://example.com/webhook\",\n  \"convert_output\": {\n    \"format\": \"jpeg\",\n    \"options\": {\n      \"quality\": 80,\n      \"progressive\": true\n    }\n  }\n}\n```\n\n- Only the `prompt` field is required. The other fields are optional, and can be omitted if not needed.\n- Your prompt must be a valid ComfyUI prompt graph, which is a JSON object where each key is a node ID, and the value is an object containing the node's inputs, class type, and optional metadata.\n- Your prompt must include a node that saves an output, such as a `SaveImage` node.\n\n## Image To Image Workflows\n\nThe ComfyUI API server supports image-to-image workflows, allowing you to submit an image and receive a modified version of that image in response. This is useful for tasks such as image inpainting, style transfer, and other image manipulation tasks.\n\nTo use image-to-image workflows, you can submit an image as a base64-encoded string, http(s) URL, or S3 URL. The server will automatically detect the input type and process the image accordingly. If you are using S3, you must customize the deployment to add your AWS credentials to the environment variables.\n\nHere's an example of doing this in a `LoadImage` node:\n\n```json\n{\n  \"inputs\": {\n    \"image\": \"https://salad-benchmark-assets.download/coco2017/train2017/000000000009.jpg\",\n    \"upload\": \"image\"\n  },\n  \"class_type\": \"LoadImage\",\n  \"_meta\": {\n    \"title\": \"Load Image\"\n  }\n}\n```",
+    "description": "Run popular image generation models with [ComfyUI](https://github.com/comfyanonymous/ComfyUI/) and [ComfyUI API](https://github.com/SaladTechnologies/comfyui-api). Model weights are downloaded at runtime.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>\n\nThis recipe **DOES NOT** expose the ComfyUI web interface, it only provides the API interface via the [ComfyUI API](https://github.com/SaladTechnologies/comfyui-api).\n\nThe ComfyUI API server is designed to be stateless, meaning that it does not store any state between requests. This allows the server to be scaled horizontally behind a load balancer, and to handle more requests by adding more instances of the server. The server uses a warmup workflow to ensure that ComfyUI is ready to accept requests, and to pre-load any required models. The server also self-hosts swagger docs and an openapi spec at `/docs`, which can be used to interact with the API.\n\n## Request Format\n\nPrompts are submitted to the server via the `POST /prompt` endpoint, which accepts a JSON body containing the prompt graph, as well as any additional parameters such as the webhook URL, S3 bucket and prefix, and image conversion options. A request may look something like:\n\n\n<Callout variation=\"warning\">This is not a complete request body, as it does not include a node that saves an output.</Callout>\n\n```json\n{\n  \"prompt\": {\n    \"1\": {\n      \"inputs\": {\n        \"image\": \"https://salad-benchmark-assets.download/coco2017/train2017/000000000009.jpg\",\n        \"upload\": \"image\"\n      },\n      \"class_type\": \"LoadImage\"\n    }\n  },\n  \"webhook\": \"https://example.com/webhook\",\n  \"convert_output\": {\n    \"format\": \"jpeg\",\n    \"options\": {\n      \"quality\": 80,\n      \"progressive\": true\n    }\n  }\n}\n```\n\n- Only the `prompt` field is required. The other fields are optional, and can be omitted if not needed.\n- Your prompt must be a valid ComfyUI prompt graph, which is a JSON object where each key is a node ID, and the value is an object containing the node's inputs, class type, and optional metadata.\n- Your prompt must include a node that saves an output, such as a `SaveImage` node.\n\n## Image To Image Workflows\n\nThe ComfyUI API server supports image-to-image workflows, allowing you to submit an image and receive a modified version of that image in response. This is useful for tasks such as image inpainting, style transfer, and other image manipulation tasks.\n\nTo use image-to-image workflows, you can submit an image as a base64-encoded string, http(s) URL, or S3 URL. The server will automatically detect the input type and process the image accordingly. If you are using S3, you must customize the deployment to add your AWS credentials to the environment variables.\n\nHere's an example of doing this in a `LoadImage` node:\n\n```json\n{\n  \"inputs\": {\n    \"image\": \"https://salad-benchmark-assets.download/coco2017/train2017/000000000009.jpg\",\n    \"upload\": \"image\"\n  },\n  \"class_type\": \"LoadImage\",\n  \"_meta\": {\n    \"title\": \"Load Image\"\n  }\n}\n```",
     "type": "object",
     "required": ["container_group_name", "container_image_model", "networking_auth"],
     "properties": {
@@ -78,6 +78,28 @@
         "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
         "type": "boolean",
         "default": true
+      }
+    },
+    "dependencies": {
+      "container_image_model": {
+        "oneOf": [
+          {
+            "required": ["container_environment_hf_token"],
+            "properties": {
+              "container_image_model": {
+                "enum": ["stablediffusion35medium"]
+              },
+              "container_environment_hf_token": {
+                "title": "HuggingFace Token",
+                "description": "Required* Must begin with \"hf_\" or \"api_org_\".",
+                "type": "string",
+                "maxLength": 42,
+                "minLength": 37,
+                "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$"
+              }
+            }
+          }
+        ]
       }
     }
   },
@@ -113,7 +135,7 @@
       {
         "op": "add",
         "path": "/output/container/image",
-        "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-dreamshaper8"
+        "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-dreamshaper8"
       },
       {
         "op": "add",
@@ -130,7 +152,7 @@
       {
         "op": "add",
         "path": "/output/container/image",
-        "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-sdxl-with-refiner"
+        "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-sdxl"
       },
       {
         "op": "add",
@@ -147,7 +169,7 @@
       {
         "op": "add",
         "path": "/output/container/image",
-        "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-flux1-schnell-fp8"
+        "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-flux1schnell"
       },
       {
         "op": "add",
@@ -164,7 +186,7 @@
       {
         "op": "add",
         "path": "/output/container/image",
-        "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-flux1-dev-fp8"
+        "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-flux1dev"
       },
       {
         "op": "add",
@@ -181,12 +203,17 @@
       {
         "op": "add",
         "path": "/output/container/image",
-        "value": "saladtechnologies/comfyui:comfy0.3.40-api1.9.0-torch2.7.1-cuda12.6-sd3.5-medium"
+        "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-sd35medium"
       },
       {
         "op": "add",
         "path": "/output/readme",
         "value": "# ComfyUI API - Stable Diffusion 3.5 Medium\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}/docs`}>Swagger Docs</Link> (Needs auth if enabled)\n- [ComfyUI API](https://github.com/SaladTechnologies/comfyui-api)\n- [ComfyUI](https://github.com/comfyanonymous/ComfyUI/)\n- [Stable Diffusion 3.5 Medium](https://huggingface.co/stabilityai/stable-diffusion-3.5-medium)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/comfyui)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=ComfyUI%20API%20-%20Stable%20Diffusion%203.5%20Medium&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## Request Format\n\nPrompts are submitted to the server via the `POST /prompt` endpoint, which accepts a JSON body containing the prompt graph, as well as any additional optional parameters such as the webhook URL and image conversion options. A request may look something like:\n\n<CodeBlock language=\"json\">{`{\n    \"prompt\": {\n        \"4\": {\n            \"inputs\": {\n                \"ckpt_name\": \"sd3.5_medium.safetensors\"\n            },\n            \"class_type\": \"CheckpointLoaderSimple\",\n            \"_meta\": {\n                \"title\": \"Load Checkpoint\"\n            }\n        },\n        \"6\": {\n            \"inputs\": {\n                \"text\": \"beautiful scenery nature glass bottle landscape, purple galaxy bottle,\",\n                \"clip\": [\n                    \"11\",\n                    0\n                ]\n            },\n            \"class_type\": \"CLIPTextEncode\",\n            \"_meta\": {\n                \"title\": \"CLIP Text Encode (Prompt)\"\n            }\n        },\n        \"8\": {\n            \"inputs\": {\n                \"samples\": [\n                    \"294\",\n                    0\n                ],\n                \"vae\": [\n                    \"4\",\n                    2\n                ]\n            },\n            \"class_type\": \"VAEDecode\",\n            \"_meta\": {\n                \"title\": \"VAE Decode\"\n            }\n        },\n        \"11\": {\n            \"inputs\": {\n                \"clip_name1\": \"clip_g.safetensors\",\n                \"clip_name2\": \"clip_l.safetensors\",\n                \"clip_name3\": \"t5xxl_fp8_e4m3fn.safetensors\"\n            },\n            \"class_type\": \"TripleCLIPLoader\",\n            \"_meta\": {\n                \"title\": \"TripleCLIPLoader\"\n            }\n        },\n        \"13\": {\n            \"inputs\": {\n                \"shift\": 3,\n                \"model\": [\n                    \"4\",\n                    0\n                ]\n            },\n            \"class_type\": \"ModelSamplingSD3\",\n            \"_meta\": {\n                \"title\": \"ModelSamplingSD3\"\n            }\n        },\n        \"67\": {\n            \"inputs\": {\n                \"conditioning\": [\n                    \"71\",\n                    0\n                ]\n            },\n            \"class_type\": \"ConditioningZeroOut\",\n            \"_meta\": {\n                \"title\": \"ConditioningZeroOut\"\n            }\n        },\n        \"68\": {\n            \"inputs\": {\n                \"start\": 0.1,\n                \"end\": 1,\n                \"conditioning\": [\n                    \"67\",\n                    0\n                ]\n            },\n            \"class_type\": \"ConditioningSetTimestepRange\",\n            \"_meta\": {\n                \"title\": \"ConditioningSetTimestepRange\"\n            }\n        },\n        \"69\": {\n            \"inputs\": {\n                \"conditioning_1\": [\n                    \"68\",\n                    0\n                ],\n                \"conditioning_2\": [\n                    \"70\",\n                    0\n                ]\n            },\n            \"class_type\": \"ConditioningCombine\",\n            \"_meta\": {\n                \"title\": \"Conditioning (Combine)\"\n            }\n        },\n        \"70\": {\n            \"inputs\": {\n                \"start\": 0,\n                \"end\": 0.1,\n                \"conditioning\": [\n                    \"71\",\n                    0\n                ]\n            },\n            \"class_type\": \"ConditioningSetTimestepRange\",\n            \"_meta\": {\n                \"title\": \"ConditioningSetTimestepRange\"\n            }\n        },\n        \"71\": {\n            \"inputs\": {\n                \"text\": \"\",\n                \"clip\": [\n                    \"11\",\n                    0\n                ]\n            },\n            \"class_type\": \"CLIPTextEncode\",\n            \"_meta\": {\n                \"title\": \"CLIP Text Encode (Prompt)\"\n            }\n        },\n        \"135\": {\n            \"inputs\": {\n                \"width\": 1024,\n                \"height\": 1024,\n                \"batch_size\": 1\n            },\n            \"class_type\": \"EmptySD3LatentImage\",\n            \"_meta\": {\n                \"title\": \"EmptySD3LatentImage\"\n            }\n        },\n        \"294\": {\n            \"inputs\": {\n                \"seed\": 998428620595727,\n                \"steps\": 20,\n                \"cfg\": 4.5,\n                \"sampler_name\": \"dpmpp_2m\",\n                \"scheduler\": \"sgm_uniform\",\n                \"denoise\": 1,\n                \"model\": [\n                    \"13\",\n                    0\n                ],\n                \"positive\": [\n                    \"6\",\n                    0\n                ],\n                \"negative\": [\n                    \"69\",\n                    0\n                ],\n                \"latent_image\": [\n                    \"135\",\n                    0\n                ]\n            },\n            \"class_type\": \"KSampler\",\n            \"_meta\": {\n                \"title\": \"KSampler\"\n            }\n        },\n        \"301\": {\n            \"inputs\": {\n                \"filename_prefix\": \"ComfyUI\",\n                \"images\": [\n                    \"8\",\n                    0\n                ]\n            },\n            \"class_type\": \"SaveImage\",\n            \"_meta\": {\n                \"title\": \"Save Image\"\n            }\n        }\n    },\n    \"webhook\": \"https://example.com/webhook\",\n    \"convert_output\": {\n        \"format\": \"jpeg\",\n        \"options\": {\n            \"quality\": 80,\n            \"progressive\": true\n        }\n    }\n}`}</CodeBlock>\n\n\n- Only the `prompt` field is required. The other fields are optional, and can be omitted if not needed.\n- Your `prompt` must be a valid API-formatted ComfyUI prompt graph, which is a JSON object where each key is a node ID, and the value is an object containing the node's inputs, class type, and optional metadata.\n- Your prompt must include a node that saves an output, such as a `SaveImage` node.\n\n### Curl Example\n\n<Callout variation=\"note\">Requires `curl` and `jq` to be installed.</Callout>\n\nSave your request body to a file called `prompt.json` and run the following command:\n\n<Callout variation=\"note\">If you do not have auth enabled, you can omit the `Salad-Api-Key` header.</Callout>\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/prompt \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -H \"Salad-Api-Key: ${props.apiKey}\" \\\\\n  -d @prompt.json | jq -r .images[0] | base64 --decode > output.jpg\n`}</CodeBlock>\n\nThe generated image will be saved as `output.jpg` after decoding the base64 response.\n\n## Image To Image Workflows\n\nThe ComfyUI API server supports image-to-image workflows, allowing you to submit an image and receive a modified version of that image in response. This is useful for tasks such as image inpainting, style transfer, and other image manipulation tasks.\n\nTo use image-to-image workflows, you can submit an image as a base64-encoded string, http(s) URL, or S3 URL. The server will automatically detect the input type and process the image accordingly. If you are using S3, you must customize the deployment to add your AWS credentials to the environment variables.\n\nHere's an example of doing this in a `LoadImage` node:\n\n<CodeBlock language=\"json\">{`{\n  \"inputs\": {\n    \"image\": \"https://salad-benchmark-assets.download/coco2017/train2017/000000000009.jpg\",\n    \"upload\": \"image\"\n  },\n  \"class_type\": \"LoadImage\",\n  \"_meta\": {\n    \"title\": \"Load Image\"\n  }\n}`}</CodeBlock>\n"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_environment_hf_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
       }
     ]
   ],

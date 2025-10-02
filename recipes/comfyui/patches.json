@@ -30,7 +30,7 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-dreamshaper8"
+      "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-dreamshaper8"
     },
     {
       "op": "add",
@@ -47,7 +47,7 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-sdxl-with-refiner"
+      "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-sdxl"
     },
     {
       "op": "add",
@@ -64,7 +64,7 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-flux1-schnell-fp8"
+      "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-flux1schnell"
     },
     {
       "op": "add",
@@ -81,7 +81,7 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-flux1-dev-fp8"
+      "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-flux1dev"
     },
     {
       "op": "add",
@@ -98,12 +98,17 @@
     {
       "op": "add",
       "path": "/output/container/image",
-      "value": "saladtechnologies/comfyui:comfy0.3.61-api1.9.2-torch2.8.0-cuda12.8-sd3.5-medium"
+      "value": "ghcr.io/saladtechnologies/comfyui-api:comfy0.3.62-api1.10.0-torch2.8.0-cuda12.8-sd35medium"
     },
     {
       "op": "add",
       "path": "/output/readme",
       "value": "$replace"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_hf_token",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
     }
   ]
 ]

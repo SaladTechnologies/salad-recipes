@@ -1,22 +1,12 @@
 # We're going to use this verified comfyui image as a base
-ARG comfy_version=0.3.61
+ARG comfy_version=0.3.62
 ARG torch_version=2.8.0
 ARG cuda_version=12.8
-FROM ghcr.io/saladtechnologies/comfyui-api:comfy${comfy_version}-torch${torch_version}-cuda${cuda_version}-runtime
+ARG api_version=1.10.0
+FROM ghcr.io/saladtechnologies/comfyui-api:comfy${comfy_version}-api${api_version}-torch${torch_version}-cuda${cuda_version}-runtime
 
-ENV CHECKPOINT_DIR=${MODEL_DIR}/checkpoints
-ENV CLIP_DIR=${MODEL_DIR}/clip
-# https://huggingface.co/stabilityai/stable-diffusion-3.5-medium
-COPY models/sd3.5_medium.safetensors ${CHECKPOINT_DIR}/
-
-# https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/clip_g.safetensors
-COPY models/clip_g.safetensors ${CLIP_DIR}/
-
-# https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/clip_l.safetensors
-COPY models/clip_l.safetensors ${CLIP_DIR}/
-
-# https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn_scaled.safetensors
-COPY models/t5xxl_fp8_e4m3fn_scaled.safetensors ${CLIP_DIR}/
+COPY manifests/sd3.5-medium.yml /app/manifest.yml
+ENV MANIFEST=/app/manifest.yml
 
 # The comfyui wrapper api supports a warmup mode, where it will run a provided workflow before starting the server.
 COPY warmups/sd3.5-medium.json warmup.json
@@ -25,13 +15,3 @@ ENV WARMUP_PROMPT_FILE=warmup.json
 # We can add custom endpoints to the comfyui wrapper by populating a workflows directory.
 ENV WORKFLOW_DIR=/workflows
 COPY workflows/sd35medium ${WORKFLOW_DIR}
-
-ENV STARTUP_CHECK_MAX_TRIES=30
-
-# Download the comfyui-api binary, and make it executable
-ARG api_version=1.9.2
-ADD https://github.com/SaladTechnologies/comfyui-api/releases/download/${api_version}/comfyui-api .
-RUN chmod +x comfyui-api
-
-# Set CMD to launch the comfyui-api binary. The comfyui-api binary will launch ComfyUI as a child process.
-CMD ["./comfyui-api"]

@@ -1,15 +1,11 @@
-# We're going to use this verified comfyui image as a base
-ARG comfy_version=0.3.61
+ARG comfy_version=0.3.62
 ARG torch_version=2.8.0
 ARG cuda_version=12.8
-FROM ghcr.io/saladtechnologies/comfyui-api:comfy${comfy_version}-torch${torch_version}-cuda${cuda_version}-runtime
+ARG api_version=1.10.0
+FROM ghcr.io/saladtechnologies/comfyui-api:comfy${comfy_version}-api${api_version}-torch${torch_version}-cuda${cuda_version}-runtime
 
-ENV CHECKPOINT_DIR=${MODEL_DIR}/checkpoints
-# https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0
-COPY models/sd_xl_base_1.0.safetensors ${CHECKPOINT_DIR}/
-
-# https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0
-COPY models/sd_xl_refiner_1.0.safetensors ${CHECKPOINT_DIR}/
+COPY manifests/sdxl-with-refiner.yml /app/manifest.yml
+ENV MANIFEST=/app/manifest.yml
 
 # The comfyui wrapper api supports a warmup mode, where it will run a provided workflow before starting the server.
 COPY warmups/sdxl-with-refiner.json warmup.json
@@ -18,13 +14,3 @@ ENV WARMUP_PROMPT_FILE=warmup.json
 # We can add custom endpoints to the comfyui wrapper by populating a workflows directory.
 ENV WORKFLOW_DIR=/workflows
 COPY workflows/sdxl ${WORKFLOW_DIR}
-
-ENV STARTUP_CHECK_MAX_TRIES=30
-
-# Download the comfyui-api binary, and make it executable
-ARG api_version=1.9.2
-ADD https://github.com/SaladTechnologies/comfyui-api/releases/download/${api_version}/comfyui-api .
-RUN chmod +x comfyui-api
-
-# Set CMD to launch the comfyui-api binary. The comfyui-api binary will launch ComfyUI as a child process.
-CMD ["./comfyui-api"]
