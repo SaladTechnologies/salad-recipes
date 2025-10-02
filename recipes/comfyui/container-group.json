@@ -14,19 +14,6 @@
       "storageAmount": 1073741824
     }
   },
-  "livenessProbe": {
-    "failureThreshold": 20,
-    "http": {
-      "headers": [],
-      "path": "/health",
-      "port": 3000,
-      "scheme": "http"
-    },
-    "initialDelaySeconds": 5,
-    "periodSeconds": 6,
-    "successThreshold": 1,
-    "timeoutSeconds": 2
-  },
   "name": "",
   "networking": {
     "auth": true,
