@@ -2,11 +2,7 @@
   "title": "ComfyUI API",
   "description": "$replace",
   "type": "object",
-  "required": [
-    "container_group_name",
-    "container_image_model",
-    "networking_auth"
-  ],
+  "required": ["container_group_name", "container_image_model", "networking_auth"],
   "properties": {
     "container_group_name": {
       "type": "string",
@@ -19,13 +15,7 @@
     "container_image_model": {
       "title": "Model",
       "type": "string",
-      "enum": [
-        "dreamshaper8",
-        "stablediffusionxl",
-        "flux1schnell",
-        "flux1dev",
-        "stablediffusion35medium"
-      ],
+      "enum": ["dreamshaper8", "stablediffusionxl", "flux1schnell", "flux1dev", "stablediffusion35medium", "custom"],
       "default": "flux1dev"
     },
     "networking_auth": {
@@ -33,6 +23,53 @@
       "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
       "type": "boolean",
       "default": true
+    }
+  },
+  "dependencies": {
+    "container_image_model": {
+      "oneOf": [
+        {
+          "required": ["container_environment_hf_token"],
+          "properties": {
+            "container_image_model": {
+              "enum": ["stablediffusion35medium"]
+            },
+            "container_environment_hf_token": {
+              "title": "HuggingFace Token",
+              "description": "Required* Must begin with \"hf_\" or \"api_org_\".",
+              "type": "string",
+              "maxLength": 42,
+              "minLength": 37,
+              "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$"
+            }
+          }
+        },
+        {
+          "required": ["manifest_json"],
+          "properties": {
+            "container_image_model": {
+              "enum": ["custom"]
+            },
+            "manifest_json": {
+              "title": "Manifest JSON",
+              "description": "A valid manifest json string for downloading custom models and extensions",
+              "type": "string",
+              "default": "{\"apt\":[],\"pip\":[],\"custom_nodes\":[],\"models\":{\"before_start\":[],\"after_start\":[]}}",
+              "maxLength": 4096,
+              "minLength": 1
+            },
+            "container_environment_hf_token": {
+              "title": "HuggingFace Token",
+              "description": "Required for gated models. Must begin with \"hf_\" or \"api_org_\".",
+              "type": "string",
+              "maxLength": 42,
+              "minLength": 37,
+              "pattern": "^(?:hf_|api_org_)[a-zA-Z0-9]{34}$"
+            }
+          }
+        }
+        
+      ]
     }
   }
 }

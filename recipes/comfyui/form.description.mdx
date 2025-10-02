@@ -1,4 +1,4 @@
-Run popular image generation models with [ComfyUI](https://github.com/comfyanonymous/ComfyUI/) and [ComfyUI API](https://github.com/SaladTechnologies/comfyui-api). Model weights are included in the container.
+Run popular image generation models with [ComfyUI](https://github.com/comfyanonymous/ComfyUI/) and [ComfyUI API](https://github.com/SaladTechnologies/comfyui-api). Model weights are downloaded at runtime.
 
 <Callout variation="warning">Ensure your use is permissible under whatever license applies to the model you are using.</Callout>
 
@@ -59,3 +59,36 @@ Here's an example of doing this in a `LoadImage` node:
   }
 }
 ```
+
+## Manifest
+
+When using the "custom" version of this recipe, you can provide a JSON manifest to download additional dependencies at startup.
+The other variants of this recipe come with a manifest file baked in.
+
+The manifest should follow this structure, and be formatted for a single line in the form field:
+
+```json
+{
+  "apt": [
+    "git"
+  ],
+  "pip": [
+    "numpy"
+  ],
+  "custom_nodes": [
+    "comfyui-videohelpersuite",
+    "https://github.com/kijai/ComfyUI-KJNodes.git"
+  ],
+  "models": {
+    "before_start": [
+      {
+        "url": "https://example.com/model.ckpt",
+        "local_path": "models/checkpoints/model.ckpt"
+      }
+    ],
+    "after_start": []
+  }
+}
+```
+
+For gated models, also provide your HuggingFace token in the form field.

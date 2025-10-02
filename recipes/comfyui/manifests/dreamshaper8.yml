@@ -1,0 +1,4 @@
+models:
+  before_start:
+    - url: https://civitai.com/api/download/models/128713?type=Model&format=SafeTensor&size=pruned&fp=fp16
+      local_path: models/checkpoints/dreamshaper_8.safetensors

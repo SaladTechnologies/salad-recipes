@@ -1,0 +1,4 @@
+models:
+  before_start:
+    - url: https://huggingface.co/Comfy-Org/flux1-schnell/resolve/main/flux1-schnell-fp8.safetensors?download=true
+      local_path: models/checkpoints/flux1-schnell-fp8.safetensors
