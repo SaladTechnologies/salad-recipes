@@ -6,7 +6,6 @@
     "container_group_name",
     "storage_id",
     "storage_key",
-    "salad_project",
     "storage_region"
   ],
   "properties": {
@@ -40,11 +39,6 @@
       "maxLength": 64,
       "minLength": 1,
       "default": "us-east-1"
-    },
-    "salad_project": {
-      "title": "Salad Project",
-      "description": "Required* Salad project name where the container group will be associated.",
-      "type": "string"
     }
   }
 }

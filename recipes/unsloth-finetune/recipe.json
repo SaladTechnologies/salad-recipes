@@ -24,7 +24,7 @@
     "title": "Unsloth Fine-Tuning",
     "description": "**Unsloth Fine-Tuning** is a highly optimized framework for efficiently fine-tuning LLM's.  \nThis recipe integrates [Unsloth](https://docs.unsloth.ai/get-started/fine-tuning-llms-guide) with [Kelpie](https://github.com/SaladTechnologies/kelpie) on SaladCloud, enabling distributed fine-tuning with checkpointing and resume support.\nUnsloth is an open-source framework that makes LLM fine-tuning up to **30× faster** while using **60% less memory**.  \nIt achieves this through custom kernel optimizations in Triton, Flash Attention, and manual autograd, while maintaining or even improving accuracy.  \nThis recipe uses the official [unsloth cli](https://github.com/unslothai/unsloth/blob/main/unsloth-cli.py)  as a base, with a few modifications to enable **checkpoint saving and resuming**. Jobs are submitted to the Kelpie queue and processed asynchronously. Checkpoints and outputs are automatically synced to your S3-compatible storage. The workflow ensures resilience against interruptions by downloading prior checkpoints before training, uploading intermediate checkpoints during training, and saving final models after training. It also supports queue-based autoscaling—including scaling replicas down to zero when the queue is empty.\nThis makes Unsloth ideal for efficient large-scale fine-tuning on Salad’s distributed GPUs.\n\n<Callout variation=\"note\">\n<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for checkpoints and outputs (e.g., <em>Cloudflare R2</em>).  \nTo deploy this recipe you will need to provide your storage Access Key ID, Secret Access Key, and the Endpoint URL.\n</Callout>",
     "type": "object",
-    "required": ["container_group_name", "storage_id", "storage_key", "salad_project", "storage_region"],
+    "required": ["container_group_name", "storage_id", "storage_key", "storage_region"],
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
@@ -56,11 +56,6 @@
         "maxLength": 64,
         "minLength": 1,
         "default": "us-east-1"
-      },
-      "salad_project": {
-        "title": "Salad Project",
-        "description": "Required* Salad project name where the container group will be associated.",
-        "type": "string"
       }
     }
   },
@@ -100,11 +95,6 @@
         "op": "copy",
         "from": "/input/storage_region",
         "path": "/output/container/environmentVariables/AWS_REGION"
-      },
-      {
-        "op": "copy",
-        "from": "/input/salad_project",
-        "path": "/output/container/environmentVariables/SALAD_PROJECT"
       }
     ],
     [
