@@ -6,8 +6,7 @@
     "container_group_name",
     "aws_access_key_id",
     "aws_secret_access_key",
-    "aws_region",
-    "salad_project"
+    "aws_region"
   ],
   "properties": {
     "container_group_name": {
@@ -46,13 +45,6 @@
       "type": "string",
       "maxLength": 256,
       "minLength": 0
-    },
-    "salad_project": {
-      "title": "Salad Project",
-      "description": "Required* The Salad project to use for this worker.",
-      "type": "string",
-      "maxLength": 64,
-      "minLength": 1
     }
   }
 }
