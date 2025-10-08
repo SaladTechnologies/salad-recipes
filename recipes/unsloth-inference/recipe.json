@@ -1,0 +1,197 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# Unsloth Inference Recipe\n\nServe an Unsloth-optimized large language model with a minimal FastAPI application. This container loads the\nconfigured model using official unsloth libraries, exposes `/health` for probes, and handles text generation\nthrough `/v1/generate` with JSON payloads.\n\n- **Fast model loading** powered by Unsloth adapters\n- **Configurable via environment variables** without rebuilding the image\n- **Simple HTTP API** suitable for demos, prototyping, or wiring into upstream services\n\n## Resources\n\n- [Unsloth Repository](https://github.com/unslothai/unsloth)\n- [Unsloth Inference](https://docs.unsloth.ai/basics/running-and-saving-models/inference)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/unsloth-inference)  \n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Unsloth%20Inference%20Recipe&body=Image:%20${props.container.image}`}>Report an Issue</Link>  \n\n\n## API endpoints\n\n- `GET /health` — readiness probe used by SaladCloud\n- `POST /v1/generate` — accepts JSON payloads with `prompt` and optional `max_new_tokens`\n\n## Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/generate \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\"prompt\": \"Write a haiku about distributed GPUs\",\"max_new_tokens\": 128}'\n`}</CodeBlock>\n\nThe response includes the generated text and number of tokens produced:\n\n```json\n{\n\t\"status\": \"completed\",\n\t\"text\": \"Scaling lights hum\\nClusters bloom in silent code\\nClouds taste carrot rain\",\n\t\"generated_tokens\": 33\n}\n```\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "saladtechnologies/unsloth-inference:1.0.0",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 8,
+        "memory": 8192,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "shmSize": 2048
+      }
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "readinessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 1,
+      "successThreshold": 1,
+      "timeoutSeconds": 1
+    },
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "Unsloth Inference",
+    "description": "Serve Unsloth-optimized large language models behind a managed FastAPI gateway. \nThis recipe deploys a lightweight Uvicorn service that loads the selected Unsloth model on GPU and exposes `/health` and `/v1/generate` endpoints.\n\nUse the fields below to set the container group name, toggle SaladCloud gateway authentication, and override the default model configuration (model id, dtype, max sequence length, and token cap).\n\nYou can update these values later from the container group page if you need to switch models or adjust limits.\n",
+    "type": "object",
+    "required": ["container_group_name", "model_id"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2–63 lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
+        "type": "boolean",
+        "default": true
+      },
+      "model_id": {
+        "title": "Model ID",
+        "description": "Hugging Face model repository or local path to load with Unsloth. Must be compatible with 4-bit loading when enabled.",
+        "type": "string",
+        "default": "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit"
+      },
+      "dtype": {
+        "title": "Model DType",
+        "description": "Tensor dtype passed to Unsloth.",
+        "type": "string",
+        "enum": ["bfloat16", "float16", "fp16"],
+        "default": "bfloat16"
+      },
+      "load_in_4bit": {
+        "title": "Load in 4-bit",
+        "description": "Whether to load the model with 4-bit quantization (saves VRAM).",
+        "type": "string",
+        "enum": ["true", "false"],
+        "default": "true"
+      },
+      "max_seq_len": {
+        "title": "Max Sequence Length",
+        "description": "Context length (tokens) to use when loading the model.",
+        "type": "string",
+        "pattern": "^[0-9]+$",
+        "default": "8192"
+      },
+      "max_new_cap": {
+        "title": "Max New Tokens Cap",
+        "description": "Upper bound on new tokens any request may generate.",
+        "type": "string",
+        "pattern": "^[0-9]+$",
+        "default": "4096"
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_id",
+        "path": "/output/container/environmentVariables/MODEL_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/dtype",
+        "path": "/output/container/environmentVariables/DTYPE"
+      },
+      {
+        "op": "copy",
+        "from": "/input/load_in_4bit",
+        "path": "/output/container/environmentVariables/LOAD_IN_4BIT"
+      },
+      {
+        "op": "copy",
+        "from": "/input/max_seq_len",
+        "path": "/output/container/environmentVariables/MAX_SEQ_LEN"
+      },
+      {
+        "op": "copy",
+        "from": "/input/max_new_cap",
+        "path": "/output/container/environmentVariables/MAX_NEW_CAP"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/dtype",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/DTYPE"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/load_in_4bit",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/LOAD_IN_4BIT"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/max_seq_len",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/MAX_SEQ_LEN"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/max_new_cap",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/MAX_NEW_CAP"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/unsloth-inference",
+  "short_description": "Serve Unsloth-optimized large language models over a FastAPI gateway.",
+  "workload_types": ["LLM"]
+}
