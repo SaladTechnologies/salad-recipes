@@ -6,30 +6,31 @@ This recipe provides optimized [TheStage AI FLUX.1-schnell](https://huggingface.
 
 - [TheStage AI FLUX.1-schnell Model](https://huggingface.co/TheStageAI/Elastic-FLUX.1-schnell)
 - [TheStage AI Platform](https://app.thestage.ai/)
-- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/thestage/)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/thestage-flux/)
 - <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=TheStage%20Recipe%20Issue&body=Issue%20with%20TheStage%20FLUX.1-schnell%20recipe%0A%0AImage:%20${props.container.image}%0A%0APlease%20describe%20the%20issue:`}>Report an Issue on GitHub</Link>
 
-## How to Generate Images
+## How to Generate Images (cURL)
 
-<Callout variation="note">The command below can only be run on machine with Docker installed. Omit the `--authorization` option if you have not set an `AUTH_TOKEN` environment variable during deployment.</Callout>
+Save the generated image to a file:
 
-Generated images will be stored in the `./output/flux-1-schnell-s-bs1-paged` directory.
-
-<CodeBlock language="bash">{`docker run \\
-    -e THESTAGE_AUTH_TOKEN=${props.container.environmentVariables.THESTAGE_AUTH_TOKEN} \\
-    -v $(pwd)/output:/output \\
-    public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \\
-    bash -c 'elastic-models client diffusion \\
-        --pos-prompt "photo of a cat" \\
-        --inference-url https://${props.networking.dns} \\
-        --metadata-url https://${props.networking.dns}/api/metadata \\
-        --authorization "${props.container.environmentVariables.AUTH_TOKEN}"'
-`}</CodeBlock>
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/v1/images/generations \\
+  -H "Authorization: Bearer ${props.container.environmentVariables.AUTH_TOKEN}" \\
+  -H "Content-Type: application/json" \\
+  -H "X-Model-Name: flux-1-schnell-s-bs1" \\
+  -d '{
+        "prompt": "sunset",
+        "seed": 12,
+        "aspect_ratio": "1:1",
+        "guidance_scale": 0,
+        "num_inference_steps": 4
+      }' \\
+  --output sunset.webp -D -`}</CodeBlock>
 
 ## API Endpoints
 
 Your deployed container provides the following endpoints:
-- **Inference**: <Link url={`https://${props.networking.dns}`}>{`https://${props.networking.dns}`}</Link>
+
+- **Inference**: <Link url={`https://${props.networking.dns}/v1/images/generations`}>{`https://${props.networking.dns}/v1/images/generations`}</Link>
 - **Metadata**: <Link url={`https://${props.networking.dns}/api/metadata`}>{`https://${props.networking.dns}/api/metadata`}</Link>
 - **Health Checks**:
     - <Link url={`https://${props.networking.dns}/startup`}>{`https://${props.networking.dns}/startup`}</Link>

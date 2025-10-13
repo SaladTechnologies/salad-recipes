@@ -4,7 +4,7 @@
   "container": {
     "command": [],
     "environmentVariables": {},
-    "image": "public.ecr.aws/i3f7g5s7/thestage/elastic-models:0.0.14.blackwell",
+    "image": "public.ecr.aws/i3f7g5s7/thestage/elastic-models:0.1.2-salad-diffusers-blackwell-24.09a",
     "imageCaching": true,
     "resources": {
       "cpu": 4,
