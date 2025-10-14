@@ -1,0 +1,59 @@
+{
+  "title": "Unsloth Inference",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "model_id"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2–63 lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "networking_auth": {
+      "title": "Require Container Gateway Authentication",
+      "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
+      "type": "boolean",
+      "default": true
+    },
+    "model_id": {
+      "title": "Model ID",
+      "description": "Hugging Face model repository or local path to load with Unsloth. Must be compatible with 4-bit loading when enabled.",
+      "type": "string",
+      "default": "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit"
+    },
+    "dtype": {
+      "title": "Model DType",
+      "description": "Tensor dtype passed to Unsloth.",
+      "type": "string",
+      "enum": ["bfloat16", "float16", "fp16"],
+      "default": "bfloat16"
+    },
+    "load_in_4bit": {
+      "title": "Load in 4-bit",
+      "description": "Whether to load the model with 4-bit quantization (saves VRAM).",
+      "type": "string",
+      "enum": ["true", "false"],
+      "default": "true"
+    },
+    "max_seq_len": {
+      "title": "Max Sequence Length",
+      "description": "Context length (tokens) to use when loading the model.",
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "default": "8192"
+    },
+    "max_new_cap": {
+      "title": "Max New Tokens Cap",
+      "description": "Upper bound on new tokens any request may generate.",
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "default": "4096"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/networking_auth",
+      "path": "/output/networking/auth"
+    },
+    {
+      "op": "copy",
+      "from": "/input/model_id",
+      "path": "/output/container/environmentVariables/MODEL_ID"
+    },
+    {
+      "op": "copy",
+      "from": "/input/dtype",
+      "path": "/output/container/environmentVariables/DTYPE"
+    },
+    {
+      "op": "copy",
+      "from": "/input/load_in_4bit",
+      "path": "/output/container/environmentVariables/LOAD_IN_4BIT"
+    },
+    {
+      "op": "copy",
+      "from": "/input/max_seq_len",
+      "path": "/output/container/environmentVariables/MAX_SEQ_LEN"
+    },
+    {
+      "op": "copy",
+      "from": "/input/max_new_cap",
+      "path": "/output/container/environmentVariables/MAX_NEW_CAP"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/dtype",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/DTYPE"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/load_in_4bit",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/LOAD_IN_4BIT"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/max_seq_len",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/MAX_SEQ_LEN"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/max_new_cap",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/MAX_NEW_CAP"
+    }
+  ]
+]

@@ -1,0 +1,43 @@
+# Unsloth Inference Recipe
+
+Serve an Unsloth-optimized large language model with a minimal FastAPI application. This container loads the
+configured model using official unsloth libraries, exposes `/health` for probes, and handles text generation
+through `/v1/generate` with JSON payloads.
+
+- **Fast model loading** powered by Unsloth adapters
+- **Configurable via environment variables** without rebuilding the image
+- **Simple HTTP API** suitable for demos, prototyping, or wiring into upstream services
+
+## Resources
+
+- [Unsloth Repository](https://github.com/unslothai/unsloth)
+- [Unsloth Inference](https://docs.unsloth.ai/basics/running-and-saving-models/inference)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/unsloth-inference)  
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Unsloth%20Inference%20Recipe&body=Image:%20${props.container.image}`}>Report an Issue</Link>  
+
+
+## API endpoints
+
+- `GET /health` — readiness probe used by SaladCloud
+- `POST /v1/generate` — accepts JSON payloads with `prompt` and optional `max_new_tokens`
+
+## Curl Example
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/generate \\
+    -X POST \\
+    -H 'Content-Type: application/json' \\
+    -H 'Salad-Api-Key: ${props.apiKey}' \\
+    -d '{"prompt": "Write a haiku about distributed GPUs","max_new_tokens": 128}'
+`}</CodeBlock>
+
+The response includes the generated text and number of tokens produced:
+
+```json
+{
+	"status": "completed",
+	"text": "Scaling lights hum\nClusters bloom in silent code\nClouds taste carrot rain",
+	"generated_tokens": 33
+}
+```

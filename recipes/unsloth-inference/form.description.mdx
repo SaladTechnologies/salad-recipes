@@ -1,0 +1,6 @@
+Serve Unsloth-optimized large language models behind a managed FastAPI gateway. 
+This recipe deploys a lightweight Uvicorn service that loads the selected Unsloth model on GPU and exposes `/health` and `/v1/generate` endpoints.
+
+Use the fields below to set the container group name, toggle SaladCloud gateway authentication, and override the default model configuration (model id, dtype, max sequence length, and token cap).
+
+You can update these values later from the container group page if you need to switch models or adjust limits.

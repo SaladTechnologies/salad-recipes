@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/unsloth-inference",
+  "short_description": "Serve Unsloth-optimized large language models over a FastAPI gateway.",
+  "workload_types": ["LLM"]
+}
