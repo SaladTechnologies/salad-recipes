@@ -47,22 +47,23 @@ From a VDS/VPS from a reliable Data Center in the same region as your container 
 
 ##### Run benchmarks:
 
-`SALAD_ACCESS_DOMAIN_NAME` will have a value like `https://honeyberry-radicchio-d3abea3.salad.cloud`.
-`THESTAGE_AUTH_TOKEN` can be provided by request.
+`SALAD_ACCESS_DOMAIN_NAME` will have a value like `honeyberry-radicchio-d3abea3.salad.cloud`.
+`AUTH_TOKEN` is the custom token you set during deployment to protect the inference endpoint.
 
 ```shell
-docker run -it \
-  -e SALAD_ACCESS_DOMAIN_NAME=SALAD_ACCESS_DOMAIN_NAME \
-  -e THESTAGE_AUTH_TOKEN=THESTAGE_AUTH_TOKEN \
-  -v $(pwd)/data:/tmp/data \
-  public.ecr.aws/i3f7g5s7/thestage/elastic-models-client:0.0.14 \
-    elastic-models \
+docker run -it --rm \
+  -v "$(pwd)/data:/tmp/data" \
+  public.ecr.aws/i3f7g5s7/thestage/elastic-models-cli:0.0.18 \
+    elastic-models-client \
       benchmark diffusion \
-        --concurrency 1,2,3,4,5,6,7,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38 \
+        --host "${SALAD_ACCESS_DOMAIN_NAME}" \
+        --protocol "https" \
+        --metadata-port 443 \
+        --inference-url "https://${SALAD_ACCESS_DOMAIN_NAME}" \
+        --authorization "${AUTH_TOKEN}" \
+        --concurrency "1,2,3,4,5,6,7,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38" \
         --num-requests 1024 \
         --log-jsonl \
-        --inference-url${SALAD_ACCESS_DOMAIN_NAME} \
-        --metadata-url ${SALAD_ACCESS_DOMAIN_NAME}/api/metadata \
         --log-level DEBUG \
         --output-dir /tmp/data
 ```

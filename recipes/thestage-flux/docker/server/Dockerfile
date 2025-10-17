@@ -11,27 +11,30 @@ RUN wget -O - https://openresty.org/package/pubkey.gpg | gpg --dearmor -o /usr/s
 WORKDIR /opt/project
 ADD requirements.txt .
 
+RUN pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cu128 \
+      torch==2.7.0+cu128 torchvision==0.22.0+cu128 torchaudio==2.7.0+cu128
+
+RUN pip install --no-cache-dir \
+      --index-url=https://thestage.jfrog.io/artifactory/api/pypi/pypi-thestage-ai-production/simple \
+      --extra-index-url=https://pypi.org/simple \
+      --no-deps \
+      thestage-elastic-models[blackwell]==0.1.2 \
+      thestage-elastic-models-cli==0.0.18
+
 RUN pip install \
       --no-cache-dir \
-      --extra-index-url https://download.pytorch.org/whl/nightly/cu128 \
+      --index-url=https://thestage.jfrog.io/artifactory/api/pypi/pypi-thestage-ai-production/simple \
+      --extra-index-url=https://pypi.org/simple \
       --requirement \
         requirements.txt
 
-RUN pip install \
-      --no-dependencies \
-      --no-cache-dir \
-      --extra-index-url=https://thestage.jfrog.io/artifactory/api/pypi/pypi-thestage-ai-production/simple \
-        qlip-serve==0.1.15 \
-        elastic_models[blackwell]==0.0.14
-
-ENV PYTHONUNBUFFERED=1
-
+ADD lua /etc/openresty/lua/
 ADD default.conf /usr/local/openresty/nginx/conf/nginx.conf
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 
 ENV MODEL_TYPE=diffusion \
     MODEL_REPO=black-forest-labs/FLUX.1-schnell \
     MODEL_SIZE=S \
-    MODEL_BATCH_SIZE=1
+    MODEL_BATCH=1
 
 ENTRYPOINT ["supervisord"]
