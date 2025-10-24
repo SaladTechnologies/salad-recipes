@@ -1,0 +1,7 @@
+Serve [Nari Labs Dia](https://github.com/nari-labs/dia), an open 1.6B parameter text-to-dialogue model that produces high-quality multi-speaker speech.
+
+- Supports optional audio prompts for voice cloning. Provide the transcript along with the prompt audio for best results.
+- The default image already contains the Dia 1.6B weights, avoiding lengthy cold-start downloads.
+- Default settings target RTX 4090 class GPUs. Increase `Max New Tokens` and sampling controls with care to balance quality and latency.
+- The service responds with base64 encoded WAV audio plus timing metadata by default; set `response_format` to `wav` in a request body to stream the file directly.
+- To keep a speaker consistent across requests, include `audio_prompt_b64` (base64 WAV) or `audio_prompt_url` along with the matching `audio_prompt_text`.

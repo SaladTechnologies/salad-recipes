@@ -1,0 +1,275 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# Nari Dia API\n\n- [Model Repository](https://github.com/nari-labs/dia)\n- [Hugging Face Weights](https://huggingface.co/nari-labs/Dia-1.6B-0626)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Nari%20Labs%20Dia&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n<Callout variation=\"success\">\nThe default Dia 1.6B checkpoint is pre-downloaded into the image, so cold starts do not need to fetch weights from Hugging Face.\n</Callout>\n\n## REST API\n\nSend a `POST` request to `/generate` with a JSON payload. Only `text` is required. Optional parameters let you adjust sampling and conditioning behaviour.\n\n```json\n{\n  \"text\": \"[S1] Hi Dia! [S2] Hello there!\",\n  \"max_new_tokens\": 2048,\n  \"cfg_scale\": 3.0,\n  \"temperature\": 1.4,\n  \"top_p\": 0.9,\n  \"speed_factor\": 1.0\n}\n```\n\nThe response contains base64 encoded WAV audio plus metadata. Decode `audio_base64` to obtain the waveform.\n\nSet `\"response_format\": \"wav\"` in the JSON body to receive the audio file directly as a streamed attachment (headers include seed, duration, and generation timing).\n\n### Tuning Inference Parameters\n\nEnvironment variables defined in the recipe (e.g. `DIA_MAX_NEW_TOKENS`, `DIA_TEMPERATURE`, `DIA_TOP_P`) simply provide defaults. Every parameter can be overridden per request in the JSON payload, so you can deploy with the defaults and adjust behaviour dynamically at call time.\n\n<Callout variation=\"warning\">\nCloudflare terminates requests after ~100 seconds. On 24 GB GPUs we measured ≈30 s for 1500 tokens (≈17 s audio) and ≈90 s for 2100 tokens (≈24 s audio). Keep `max_new_tokens` ≤2100 for synchronous calls.\n</Callout>\n\n### Voice Cloning / Reference Audio\n\nProvide a short reference clip along with its transcript to keep voices consistent:\n\n```json\n{\n  \"text\": \"[S1] Welcome back! [S2] Great to see you again.\",\n  \"audio_prompt_text\": \"[S1] This is our reference voice. [S2] It should sound the same next time.\",\n  \"audio_prompt_b64\": \"<base64 WAV data>\",\n  \"response_format\": \"wav\"\n}\n```\n\n## Example cURL\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if container authentication is disabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/generate \\\\\n  -X POST \\\\\n  -H 'Content-Type: application/json' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -d '{\"text\": \"[S1] Dia is now running on Salad Cloud! [S2] Awesome!\", \"temperature\": 1.3, \"top_p\": 0.9}' \\\\\n  | jq -r '.audio_base64' \\\\\n  | base64 --decode > output.wav`}</CodeBlock>\n",
+    "container": {
+      "environmentVariables": {},
+      "image": "saladtechnologies/salad-narilabs-dia:1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 8192,
+        "gpuClasses": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"],
+        "shmSize": 64
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "readinessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 10,
+      "successThreshold": 1,
+      "timeoutSeconds": 1
+    },
+    "livenessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 100,
+      "periodSeconds": 10,
+      "successThreshold": 1,
+      "timeoutSeconds": 30
+    },
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "Nari Dia API",
+    "description": "Serve [Nari Labs Dia](https://github.com/nari-labs/dia), an open 1.6B parameter text-to-dialogue model that produces high-quality multi-speaker speech.\n\n- Supports optional audio prompts for voice cloning. Provide the transcript along with the prompt audio for best results.\n- The default image already contains the Dia 1.6B weights, avoiding lengthy cold-start downloads.\n- Default settings target RTX 4090 class GPUs. Increase `Max New Tokens` and sampling controls with care to balance quality and latency.\n- The service responds with base64 encoded WAV audio plus timing metadata by default; set `response_format` to `wav` in a request body to stream the file directly.\n- To keep a speaker consistent across requests, include `audio_prompt_b64` (base64 WAV) or `audio_prompt_url` along with the matching `audio_prompt_text`.\n",
+    "type": "object",
+    "required": ["container_group_name", "networking_auth"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key. Disable for public access.",
+        "type": "boolean",
+        "default": true
+      },
+      "compute_dtype": {
+        "title": "Compute Precision",
+        "description": "Torch dtype used during generation. float16 works well on modern NVIDIA GPUs.",
+        "type": "string",
+        "default": "float16",
+        "enum": ["float16", "bfloat16", "float32"]
+      },
+      "max_new_tokens": {
+        "title": "Max New Tokens",
+        "description": "Maximum number of audio tokens per request. Larger values increase latency and memory usage.",
+        "type": "number",
+        "default": 1500,
+        "minimum": 1,
+        "maximum": 4096,
+        "multipleOf": 1
+      },
+      "cfg_scale": {
+        "title": "CFG Scale",
+        "description": "Higher values adhere more strongly to the prompt but may reduce diversity.",
+        "type": "number",
+        "default": 3,
+        "minimum": 0,
+        "maximum": 10
+      },
+      "temperature": {
+        "title": "Temperature",
+        "description": "Sampling temperature. Higher values increase randomness.",
+        "type": "number",
+        "default": 1.4,
+        "minimum": 0,
+        "maximum": 5
+      },
+      "top_p": {
+        "title": "Top-p",
+        "description": "Nucleus sampling threshold.",
+        "type": "number",
+        "default": 0.9,
+        "minimum": 0,
+        "maximum": 1
+      },
+      "cfg_filter_top_k": {
+        "title": "CFG Filter Top-k",
+        "description": "Number of logits to consider in classifier-free guidance filtering.",
+        "type": "number",
+        "default": 45,
+        "minimum": 1,
+        "maximum": 256,
+        "multipleOf": 1
+      },
+      "speed_factor": {
+        "title": "Speed Factor",
+        "description": "Playback speed adjustment applied after generation. 1.0 keeps the original speed.",
+        "type": "number",
+        "default": 1,
+        "minimum": 0.1,
+        "maximum": 5
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/compute_dtype",
+        "path": "/output/container/environmentVariables/DIA_COMPUTE_DTYPE"
+      },
+      {
+        "op": "copy",
+        "from": "/input/max_new_tokens",
+        "path": "/output/container/environmentVariables/DIA_MAX_NEW_TOKENS"
+      },
+      {
+        "op": "copy",
+        "from": "/input/cfg_scale",
+        "path": "/output/container/environmentVariables/DIA_CFG_SCALE"
+      },
+      {
+        "op": "copy",
+        "from": "/input/temperature",
+        "path": "/output/container/environmentVariables/DIA_TEMPERATURE"
+      },
+      {
+        "op": "copy",
+        "from": "/input/top_p",
+        "path": "/output/container/environmentVariables/DIA_TOP_P"
+      },
+      {
+        "op": "copy",
+        "from": "/input/cfg_filter_top_k",
+        "path": "/output/container/environmentVariables/DIA_CFG_FILTER_TOP_K"
+      },
+      {
+        "op": "copy",
+        "from": "/input/speed_factor",
+        "path": "/output/container/environmentVariables/DIA_SPEED_FACTOR"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/compute_dtype",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/DIA_COMPUTE_DTYPE"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/max_new_tokens",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/DIA_MAX_NEW_TOKENS"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/cfg_scale",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/DIA_CFG_SCALE"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/temperature",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/DIA_TEMPERATURE"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/top_p",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/DIA_TOP_P"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/cfg_filter_top_k",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/DIA_CFG_FILTER_TOP_K"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/speed_factor",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/DIA_SPEED_FACTOR"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://github.com/nari-labs/dia",
+  "short_description": "Generate multi-speaker speech with the Nari Labs Dia model.",
+  "workload_types": ["audioGeneration"]
+}

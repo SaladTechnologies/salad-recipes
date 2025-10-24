@@ -1,0 +1,86 @@
+{
+  "title": "Nari Dia API",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "networking_auth"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "networking_auth": {
+      "title": "Require Container Gateway Authentication",
+      "description": "When enabled, requests must include a SaladCloud API Key. Disable for public access.",
+      "type": "boolean",
+      "default": true
+    },
+    "compute_dtype": {
+      "title": "Compute Precision",
+      "description": "Torch dtype used during generation. float16 works well on modern NVIDIA GPUs.",
+      "type": "string",
+      "default": "float16",
+      "enum": [
+        "float16",
+        "bfloat16",
+        "float32"
+      ]
+    },
+    "max_new_tokens": {
+      "title": "Max New Tokens",
+      "description": "Maximum number of audio tokens per request. Larger values increase latency and memory usage.",
+      "type": "number",
+      "default": 1500,
+      "minimum": 1,
+      "maximum": 4096,
+      "multipleOf": 1
+    },
+    "cfg_scale": {
+      "title": "CFG Scale",
+      "description": "Higher values adhere more strongly to the prompt but may reduce diversity.",
+      "type": "number",
+      "default": 3.0,
+      "minimum": 0.0,
+      "maximum": 10.0
+    },
+    "temperature": {
+      "title": "Temperature",
+      "description": "Sampling temperature. Higher values increase randomness.",
+      "type": "number",
+      "default": 1.4,
+      "minimum": 0.0,
+      "maximum": 5.0
+    },
+    "top_p": {
+      "title": "Top-p",
+      "description": "Nucleus sampling threshold.",
+      "type": "number",
+      "default": 0.9,
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "cfg_filter_top_k": {
+      "title": "CFG Filter Top-k",
+      "description": "Number of logits to consider in classifier-free guidance filtering.",
+      "type": "number",
+      "default": 45,
+      "minimum": 1,
+      "maximum": 256,
+      "multipleOf": 1
+    },
+    "speed_factor": {
+      "title": "Speed Factor",
+      "description": "Playback speed adjustment applied after generation. 1.0 keeps the original speed.",
+      "type": "number",
+      "default": 1.0,
+      "minimum": 0.1,
+      "maximum": 5.0
+    }
+  }
+}

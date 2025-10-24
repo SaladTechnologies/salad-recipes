@@ -1,0 +1,61 @@
+# Nari Dia API
+
+- [Model Repository](https://github.com/nari-labs/dia)
+- [Hugging Face Weights](https://huggingface.co/nari-labs/Dia-1.6B-0626)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Nari%20Labs%20Dia&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>
+
+<Callout variation="success">
+The default Dia 1.6B checkpoint is pre-downloaded into the image, so cold starts do not need to fetch weights from Hugging Face.
+</Callout>
+
+## REST API
+
+Send a `POST` request to `/generate` with a JSON payload. Only `text` is required. Optional parameters let you adjust sampling and conditioning behaviour.
+
+```json
+{
+  "text": "[S1] Hi Dia! [S2] Hello there!",
+  "max_new_tokens": 2048,
+  "cfg_scale": 3.0,
+  "temperature": 1.4,
+  "top_p": 0.9,
+  "speed_factor": 1.0
+}
+```
+
+The response contains base64 encoded WAV audio plus metadata. Decode `audio_base64` to obtain the waveform.
+
+Set `"response_format": "wav"` in the JSON body to receive the audio file directly as a streamed attachment (headers include seed, duration, and generation timing).
+
+### Tuning Inference Parameters
+
+Environment variables defined in the recipe (e.g. `DIA_MAX_NEW_TOKENS`, `DIA_TEMPERATURE`, `DIA_TOP_P`) simply provide defaults. Every parameter can be overridden per request in the JSON payload, so you can deploy with the defaults and adjust behaviour dynamically at call time.
+
+<Callout variation="warning">
+Cloudflare terminates requests after ~100 seconds. On 24 GB GPUs we measured ≈30 s for 1500 tokens (≈17 s audio) and ≈90 s for 2100 tokens (≈24 s audio). Keep `max_new_tokens` ≤2100 for synchronous calls.
+</Callout>
+
+### Voice Cloning / Reference Audio
+
+Provide a short reference clip along with its transcript to keep voices consistent:
+
+```json
+{
+  "text": "[S1] Welcome back! [S2] Great to see you again.",
+  "audio_prompt_text": "[S1] This is our reference voice. [S2] It should sound the same next time.",
+  "audio_prompt_b64": "<base64 WAV data>",
+  "response_format": "wav"
+}
+```
+
+## Example cURL
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if container authentication is disabled.</Callout>
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/generate \\
+  -X POST \\
+  -H 'Content-Type: application/json' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -d '{"text": "[S1] Dia is now running on Salad Cloud! [S2] Awesome!", "temperature": 1.3, "top_p": 0.9}' \\
+  | jq -r '.audio_base64' \\
+  | base64 --decode > output.wav`}</CodeBlock>
