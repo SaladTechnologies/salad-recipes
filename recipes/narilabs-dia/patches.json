@@ -1,0 +1,136 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/networking_auth",
+      "path": "/output/networking/auth"
+    },
+    {
+      "op": "copy",
+      "from": "/input/compute_dtype",
+      "path": "/output/container/environmentVariables/DIA_COMPUTE_DTYPE"
+    },
+    {
+      "op": "copy",
+      "from": "/input/max_new_tokens",
+      "path": "/output/container/environmentVariables/DIA_MAX_NEW_TOKENS"
+    },
+    {
+      "op": "copy",
+      "from": "/input/cfg_scale",
+      "path": "/output/container/environmentVariables/DIA_CFG_SCALE"
+    },
+    {
+      "op": "copy",
+      "from": "/input/temperature",
+      "path": "/output/container/environmentVariables/DIA_TEMPERATURE"
+    },
+    {
+      "op": "copy",
+      "from": "/input/top_p",
+      "path": "/output/container/environmentVariables/DIA_TOP_P"
+    },
+    {
+      "op": "copy",
+      "from": "/input/cfg_filter_top_k",
+      "path": "/output/container/environmentVariables/DIA_CFG_FILTER_TOP_K"
+    },
+    {
+      "op": "copy",
+      "from": "/input/speed_factor",
+      "path": "/output/container/environmentVariables/DIA_SPEED_FACTOR"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/compute_dtype",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/DIA_COMPUTE_DTYPE"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/max_new_tokens",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/DIA_MAX_NEW_TOKENS"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/cfg_scale",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/DIA_CFG_SCALE"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/temperature",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/DIA_TEMPERATURE"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/top_p",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/DIA_TOP_P"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/cfg_filter_top_k",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/DIA_CFG_FILTER_TOP_K"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/speed_factor",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/DIA_SPEED_FACTOR"
+    }
+  ]
+]

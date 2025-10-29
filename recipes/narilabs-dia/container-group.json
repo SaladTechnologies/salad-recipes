@@ -1,0 +1,56 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "environmentVariables": {},
+    "image": "saladtechnologies/salad-narilabs-dia:1.0.0",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 8,
+      "memory": 8192,
+      "gpuClasses": [
+        "a5db5c50-cbcb-4596-ae80-6a0c8090d80f"
+      ],
+      "shmSize": 64
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3,
+  "readinessProbe": {
+    "failureThreshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 0,
+    "periodSeconds": 10,
+    "successThreshold": 1,
+    "timeoutSeconds": 1
+  },
+  "livenessProbe": {
+    "failureThreshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 100,
+    "periodSeconds": 10,
+    "successThreshold": 1,
+    "timeoutSeconds": 30
+  },
+  "networking": {
+    "auth": false,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 8000,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  }
+}
