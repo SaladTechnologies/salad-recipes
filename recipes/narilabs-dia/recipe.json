@@ -269,7 +269,7 @@
     ]
   ],
   "ui": {},
-  "documentation_url": "https://github.com/nari-labs/dia",
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/naridia-api",
   "short_description": "Generate multi-speaker speech with the Nari Labs Dia model.",
   "workload_types": ["audioGeneration"]
 }

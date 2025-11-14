@@ -7,10 +7,11 @@
       "imageCaching": true,
       "priority": "high",
       "resources": {
-        "cpu": 4,
+        "cpu": 8,
         "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
-        "memory": 30720,
-        "storageAmount": 268435456000
+        "memory": 38912,
+        "storageAmount": 268435456000,
+        "shmSize": 2048
       }
     },
     "livenessProbe": {
