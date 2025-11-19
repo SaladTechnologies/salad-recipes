@@ -1,0 +1,12 @@
+Deploy a ready-to-prove environment with the open-source [RISC Zero](https://github.com/risc0/risc0) zkVM toolchain pre-installed and pre-built with NVIDIA CUDA support.
+
+This recipe uses [Kelpie](https://github.com/SaladTechnologies/kelpie) and the [Kelpie API](https://kelpie.saladexamples.com/docs) to download your proof project from S3-compatible storage, run your proving command, and upload receipts/logs back to the bucket.
+
+- Works with any S3-compatible service. Credentials are injected as environment variables so your Kelpie jobs can sync artifacts in and out.
+- Check [helper scripts](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/risc0) that show how to queue jobs, run the hello-world demo on GPU, and capture `/opt/results/hello_world.log`.
+- You own the workflow: edit the sync rules and `cargo` command in the submission script to point at your prover project and desired outputs.
+
+<Callout variation="note">
+<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for inputs and outputs.  
+To deploy this recipe you will need to provide your storage Access Key ID, Secret Access Key, and the Endpoint URL.
+</Callout>

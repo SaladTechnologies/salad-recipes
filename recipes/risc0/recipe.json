@@ -1,0 +1,121 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# RISC Zero Proving (Kelpie)\n\n\n## Resources\n- [RISC Zero GitHub Repository](https://github.com/risc0/risc0)\n- [Kelpie Job Queue Guide](https://docs.salad.com/container-engine/how-to-guides/job-processing/kelpie)\n- [Cloudflare R2 with S3 API](https://developers.cloudflare.com/r2/api/s3/api/)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/risc0)\n- [`submit_kelpie_job.py`](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/risc0) – sample job submission script\n- [`check_kelpie_job.py`](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/risc0) – poll job status\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=RISC%20Zero%20Proving%20Recipe&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## Workflow\n1. **Configure storage** – Provide an S3-compatible bucket (Cloudflare R2, AWS S3, etc.) and enter its credentials in the form when deploying this recipe. Kelpie uses these environment variables inside the container to sync your project files and job outputs.\n2. **Upload your project** – Push your prover source, inputs, and job scripts to the bucket. Organize them under prefixes such as `projects/<project-name>/` and use Kelpie sync rules to download into the container (e.g., `/opt/projects/`).\n3. **Submit a job** – You can use `submit_kelpie_job.py` as a starting point. Update `build_sync` so the `before` block downloads your project, run your proof command (for example, `cargo run -F cuda --release |& tee /opt/results/hello_world.log`), and upload `/opt/results/` in the `after` block. Run:\n4. **Check progress** – Poll Kelpie for the job status. You can start with using the following script:\n   ```bash\n   JOB_ID=<kelpie-job-id> \\\n   python recipes/risc0/check_kelpie_job.py\n   ```\n5. **Download results** – Kelpie automatically uploads everything from `/opt/results/` to your bucket (prefix `hello-world/<job-id>/` in the sample script). Extend or replace that path for your own workflows.\n\n## Notes\n- The container boots into the Kelpie worker (`ENTRYPOINT [\"kelpie\"]`). No service ports are exposed.\n- GPU-accelerated proving is available by default. Tune your project’s `cargo` command (e.g., add `RUSTFLAGS=\"-C target-cpu=native\"` and `-F cuda`) before submitting jobs.\n- You can submit multiple jobs concurrently; Kelpie queues them and reuses the allocated GPU(s).\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "saladtechnologies/risc0-recipe:1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 16,
+        "memory": 8192,
+        "gpuClasses": [
+          "a5db5c50-cbcb-4596-ae80-6a0c8090d80f",
+          "ed563892-aacd-40f5-80b7-90c9be6c759b",
+          "9998fe42-04a5-4807-b3a5-849943f16c38"
+        ],
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3
+  },
+  "form": {
+    "title": "RISC Zero ZKP",
+    "description": "Deploy a ready-to-prove environment with the open-source [RISC Zero](https://github.com/risc0/risc0) zkVM toolchain pre-installed and pre-built with NVIDIA CUDA support.\n\nThis recipe uses [Kelpie](https://github.com/SaladTechnologies/kelpie) and the [Kelpie API](https://kelpie.saladexamples.com/docs) to download your proof project from S3-compatible storage, run your proving command, and upload receipts/logs back to the bucket.\n\n- Works with any S3-compatible service. Credentials are injected as environment variables so your Kelpie jobs can sync artifacts in and out.\n- Check [helper scripts](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/risc0) that show how to queue jobs, run the hello-world demo on GPU, and capture `/opt/results/hello_world.log`.\n- You own the workflow: edit the sync rules and `cargo` command in the submission script to point at your prover project and desired outputs.\n\n<Callout variation=\"note\">\n<strong>Prerequisite:</strong> You must have an <strong>S3-compatible storage</strong> bucket for inputs and outputs.  \nTo deploy this recipe you will need to provide your storage Access Key ID, Secret Access Key, and the Endpoint URL.\n</Callout>\n",
+    "type": "object",
+    "required": ["container_group_name", "storage_id", "storage_key", "storage_region"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2–63 characters long using lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "storage_id": {
+        "title": "Storage Access Key ID",
+        "description": "Required* Access Key ID for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "type": "string"
+      },
+      "storage_key": {
+        "title": "Storage Secret Access Key",
+        "description": "Required* Secret Access Key for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "type": "string"
+      },
+      "storage_url": {
+        "title": "Storage Endpoint URL",
+        "description": "Endpoint URL for S3-compatible storage (e.g., AWS S3, Cloudflare R2).",
+        "type": "string",
+        "maxLength": 256,
+        "minLength": 0
+      },
+      "storage_region": {
+        "title": "AWS Region",
+        "description": "Required* Region where your S3 bucket is located.",
+        "type": "string",
+        "maxLength": 64,
+        "minLength": 1,
+        "default": "us-east-1"
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_id",
+        "path": "/output/container/environmentVariables/AWS_ACCESS_KEY_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_key",
+        "path": "/output/container/environmentVariables/AWS_SECRET_ACCESS_KEY"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_url",
+        "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+      },
+      {
+        "op": "copy",
+        "from": "/input/storage_region",
+        "path": "/output/container/environmentVariables/AWS_REGION"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/storage_url",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/risc0",
+  "short_description": "GPU-ready Kelpie worker with the RISC Zero toolchain for custom proof jobs.",
+  "workload_types": ["ZKP"]
+}

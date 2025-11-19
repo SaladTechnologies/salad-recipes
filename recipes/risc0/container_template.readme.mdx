@@ -1,0 +1,27 @@
+# RISC Zero Proving (Kelpie)
+
+
+## Resources
+- [RISC Zero GitHub Repository](https://github.com/risc0/risc0)
+- [Kelpie Job Queue Guide](https://docs.salad.com/container-engine/how-to-guides/job-processing/kelpie)
+- [Cloudflare R2 with S3 API](https://developers.cloudflare.com/r2/api/s3/api/)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/risc0)
+- [`submit_kelpie_job.py`](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/risc0) – sample job submission script
+- [`check_kelpie_job.py`](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/risc0) – poll job status
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=RISC%20Zero%20Proving%20Recipe&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>
+
+## Workflow
+1. **Configure storage** – Provide an S3-compatible bucket (Cloudflare R2, AWS S3, etc.) and enter its credentials in the form when deploying this recipe. Kelpie uses these environment variables inside the container to sync your project files and job outputs.
+2. **Upload your project** – Push your prover source, inputs, and job scripts to the bucket. Organize them under prefixes such as `projects/<project-name>/` and use Kelpie sync rules to download into the container (e.g., `/opt/projects/`).
+3. **Submit a job** – You can use `submit_kelpie_job.py` as a starting point. Update `build_sync` so the `before` block downloads your project, run your proof command (for example, `cargo run -F cuda --release |& tee /opt/results/hello_world.log`), and upload `/opt/results/` in the `after` block. Run:
+4. **Check progress** – Poll Kelpie for the job status. You can start with using the following script:
+   ```bash
+   JOB_ID=<kelpie-job-id> \
+   python recipes/risc0/check_kelpie_job.py
+   ```
+5. **Download results** – Kelpie automatically uploads everything from `/opt/results/` to your bucket (prefix `hello-world/<job-id>/` in the sample script). Extend or replace that path for your own workflows.
+
+## Notes
+- The container boots into the Kelpie worker (`ENTRYPOINT ["kelpie"]`). No service ports are exposed.
+- GPU-accelerated proving is available by default. Tune your project’s `cargo` command (e.g., add `RUSTFLAGS="-C target-cpu=native"` and `-F cuda`) before submitting jobs.
+- You can submit multiple jobs concurrently; Kelpie queues them and reuses the allocated GPU(s).

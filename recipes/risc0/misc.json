@@ -1,0 +1,8 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/risc0",
+  "short_description": "GPU-ready Kelpie worker with the RISC Zero toolchain for custom proof jobs.",
+  "workload_types": [
+    "ZKP"
+  ]
+}
