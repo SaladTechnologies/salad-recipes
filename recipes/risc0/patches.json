@@ -1,0 +1,51 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/storage_id",
+      "path": "/output/container/environmentVariables/AWS_ACCESS_KEY_ID"
+    },
+    {
+      "op": "copy",
+      "from": "/input/storage_key",
+      "path": "/output/container/environmentVariables/AWS_SECRET_ACCESS_KEY"
+    },
+    {
+      "op": "copy",
+      "from": "/input/storage_url",
+      "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+    },
+    {
+      "op": "copy",
+      "from": "/input/storage_region",
+      "path": "/output/container/environmentVariables/AWS_REGION"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/storage_url",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/AWS_ENDPOINT_URL"
+    }
+  ]
+]
+
