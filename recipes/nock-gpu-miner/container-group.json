@@ -1,0 +1,23 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {},
+    "image": "swpsco/miner-launcher:latest",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 8,
+      "memory": 8192,
+      "gpuClasses": [
+        "a5db5c50-cbcb-4596-ae80-6a0c8090d80f",
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "shmSize": 64
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3
+}

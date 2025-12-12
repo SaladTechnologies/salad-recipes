@@ -1,0 +1,8 @@
+{
+  "ui": {},
+  "documentation_url": "https://nockpool.com/setup",
+  "short_description": "Mine NOCK on NockPool with a GPU-optimized container.",
+  "workload_types": [
+    "blockchain"
+  ]
+}
