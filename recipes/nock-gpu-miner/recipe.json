@@ -1,0 +1,72 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# NockPool GPU Miner\n\nThis miner links directly to your [NockPool account](https://nockpool.com/) via the `ACCOUNT_TOKEN` you supply in the recipe form.\n\n## Setup checklist\n\n- Sign up/sign in at [nockpool.com](https://nockpool.com/) and connect your wallet so a payout address is set.\n- Generate your account token on the [NockPool Setup page](https://nockpool.com/setup) and keep it private. Rotate it if you believe it is compromised.\n- Paste the token into this recipe; it is injected into the container as `ACCOUNT_TOKEN`.\n- Have another miner? Review the [SaladCloud custom miner guide](https://docs.salad.com/container-engine/how-to-guides/miners/run-miners-on-saladcloud) to deploy any other miners.\n\n## Payout notes\n\n- Note that NockPool charges a fee on all payouts.\n- Set your payout address, mine to earn NOCK, and request payout once you have at least **50.00 NOCK**; keep **20.00 NOCK** available for network fees.\n- Payouts are processed once daily, using payout requests submitted by **12AM GMT**.\n\n## Resources\n\n- [NockPool Setup](https://nockpool.com/setup)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/nock-gpu-miner)\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "swpsco/miner-launcher:latest",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 8192,
+        "gpuClasses": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f", "ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "shmSize": 64
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3
+  },
+  "form": {
+    "title": "Nock GPU Miner",
+    "description": "Mine NOCK using NockPool GPU miner. You'll provide a NockPool account token that links your miner to your wallet.\n\n1. Sign up or sign in at [nockpool.com](https://nockpool.com/) and follow the [setup guide](https://nockpool.com/setup).\n2. Connect your wallet in NockPool so your payout address is set.\n3. Generate and copy your account token (starts with `nockacct_`) from the NockPool Setup page, then paste it into this form.\n4. Keep the token private; it will be injected into your container as `ACCOUNT_TOKEN`.\n\n### Payout reminders\n\n- Note that NockPool charges a fee on all payouts.\n- Set your payout address, mine to earn NOCK, complete KYC, and request payout once you have at least 50.00 NOCK (minimum 20.00 NOCK left for network fees).\n- Payouts are processed once daily based on requests submitted by 12AM GMT.\n\nNeed to run a custom miner on Salad? See [the SaladCloud miner guide](https://docs.salad.com/container-engine/how-to-guides/miners/run-miners-on-saladcloud).\n  \n",
+    "type": "object",
+    "required": ["container_group_name", "account_token"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "account_token": {
+        "title": "NockPool Account Token",
+        "description": "Required* Found on the NockPool Setup page after you sign in, connect your wallet, and generate an account token (starts with 'nockacct_').",
+        "type": "string",
+        "minLength": 8
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/account_token",
+        "path": "/output/container/environmentVariables/ACCOUNT_TOKEN"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://nockpool.com/setup",
+  "short_description": "Mine NOCK on NockPool with a GPU-optimized container.",
+  "workload_types": ["blockchain"]
+}

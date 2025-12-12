@@ -1,0 +1,21 @@
+# NockPool GPU Miner
+
+This miner links directly to your [NockPool account](https://nockpool.com/) via the `ACCOUNT_TOKEN` you supply in the recipe form.
+
+## Setup checklist
+
+- Sign up/sign in at [nockpool.com](https://nockpool.com/) and connect your wallet so a payout address is set.
+- Generate your account token on the [NockPool Setup page](https://nockpool.com/setup) and keep it private. Rotate it if you believe it is compromised.
+- Paste the token into this recipe; it is injected into the container as `ACCOUNT_TOKEN`.
+- Have another miner? Review the [SaladCloud custom miner guide](https://docs.salad.com/container-engine/how-to-guides/miners/run-miners-on-saladcloud) to deploy any other miners.
+
+## Payout notes
+
+- Note that NockPool charges a fee on all payouts.
+- Set your payout address, mine to earn NOCK, and request payout once you have at least **50.00 NOCK**; keep **20.00 NOCK** available for network fees.
+- Payouts are processed once daily, using payout requests submitted by **12AM GMT**.
+
+## Resources
+
+- [NockPool Setup](https://nockpool.com/setup)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/nock-gpu-miner)
