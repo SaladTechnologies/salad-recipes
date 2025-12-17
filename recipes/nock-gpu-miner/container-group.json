@@ -15,7 +15,7 @@
       ],
       "shmSize": 64
     },
-    "priority": "high"
+    "priority": "batch"
   },
   "autostartPolicy": true,
   "restartPolicy": "always",
