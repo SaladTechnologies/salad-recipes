@@ -1,0 +1,40 @@
+{
+  "title": "MCProxy Browser Server",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "auth_token"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "auth_token": {
+      "title": "Auth Token",
+      "description": "Required* Shared secret for authentication between the MCP server and browser server. Must match the MCPROXY_AUTH_TOKEN configured in your MCP client.",
+      "type": "string",
+      "minLength": 1
+    },
+    "max_contexts": {
+      "title": "Max Browser Contexts",
+      "description": "Maximum number of concurrent browser contexts per container.",
+      "type": "number",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 50
+    },
+    "context_ttl_ms": {
+      "title": "Context TTL (ms)",
+      "description": "Browser context timeout in milliseconds. Sessions will expire after this duration of inactivity.",
+      "type": "number",
+      "default": 1800000,
+      "minimum": 60000
+    }
+  }
+}

@@ -1,0 +1,32 @@
+# MCProxy Browser Server
+
+- [Documentation](https://github.com/SaladTechnologies/mcproxy)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/mcproxy)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=MCProxy%20Browser%20Server&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>
+
+## Connecting Your MCP Client
+
+Configure your MCP client to connect to this browser server using the following settings:
+
+<CodeBlock language="json">{`{
+  "mcpServers": {
+    "mcproxy": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i", "--network=host",
+        "-e", "MCPROXY_AUTH_TOKEN=${props.container.environmentVariables.AUTH_TOKEN}",
+        "-e", "MCPROXY_DEFAULT_ENDPOINT=wss://${props.networking.dns}",
+        "ghcr.io/saladtechnologies/mcproxy/mcp-server:latest"
+      ]
+    }
+  }
+}`}</CodeBlock>
+
+## Features
+
+- **Multi-browser support**: Chromium, Firefox, or WebKit
+- **Mobile emulation**: 100+ device profiles
+- **Stealth mode**: WebGL spoofing and realistic fingerprints
+- **Humanized interactions**: Human-like clicks and typing
+- **Cloudflare auto-wait**: Automatic challenge detection
+- **Cookie persistence**: Session management support

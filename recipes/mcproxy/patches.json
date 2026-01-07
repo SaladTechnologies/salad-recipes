@@ -1,0 +1,34 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/auth_token",
+      "path": "/output/container/environmentVariables/AUTH_TOKEN"
+    },
+    {
+      "op": "copy",
+      "from": "/input/max_contexts",
+      "path": "/output/container/environmentVariables/MAX_CONTEXTS"
+    },
+    {
+      "op": "copy",
+      "from": "/input/context_ttl_ms",
+      "path": "/output/container/environmentVariables/CONTEXT_TTL_MS"
+    }
+  ]
+]

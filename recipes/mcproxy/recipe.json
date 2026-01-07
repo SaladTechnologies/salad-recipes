@@ -1,0 +1,122 @@
+{
+  "container_template": {
+    "autostartPolicy": true,
+    "container": {
+      "environmentVariables": {
+        "MAX_CONTEXTS": "10",
+        "CONTEXT_TTL_MS": "1800000"
+      },
+      "image": "ghcr.io/saladtechnologies/mcproxy/browser-server:latest",
+      "imageCaching": true,
+      "priority": "high",
+      "resources": {
+        "cpu": 1,
+        "memory": 4096,
+        "gpuClasses": [],
+        "storageAmount": 5368709120,
+        "shmSize": 1024
+      }
+    },
+    "name": "",
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 3000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    },
+    "replicas": 3,
+    "restartPolicy": "always",
+    "readme": "# MCProxy Browser Server\n\n- [Documentation](https://github.com/SaladTechnologies/mcproxy)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/mcproxy)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=MCProxy%20Browser%20Server&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## Connecting Your MCP Client\n\nConfigure your MCP client to connect to this browser server using the following settings:\n\n<CodeBlock language=\"json\">{`{\n  \"mcpServers\": {\n    \"mcproxy\": {\n      \"command\": \"docker\",\n      \"args\": [\n        \"run\", \"--rm\", \"-i\", \"--network=host\",\n        \"-e\", \"MCPROXY_AUTH_TOKEN=${props.container.environmentVariables.AUTH_TOKEN}\",\n        \"-e\", \"MCPROXY_DEFAULT_ENDPOINT=wss://${props.networking.dns}\",\n        \"ghcr.io/saladtechnologies/mcproxy/mcp-server:latest\"\n      ]\n    }\n  }\n}`}</CodeBlock>\n\n## Features\n\n- **Multi-browser support**: Chromium, Firefox, or WebKit\n- **Mobile emulation**: 100+ device profiles\n- **Stealth mode**: WebGL spoofing and realistic fingerprints\n- **Humanized interactions**: Human-like clicks and typing\n- **Cloudflare auto-wait**: Automatic challenge detection\n- **Cookie persistence**: Session management support\n",
+    "readinessProbe": {
+      "failureThreshold": 1,
+      "http": {
+        "headers": [],
+        "path": "/ready",
+        "port": 8080,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 5,
+      "successThreshold": 1,
+      "timeoutSeconds": 5
+    }
+  },
+  "form": {
+    "title": "MCProxy Browser Server",
+    "description": "Deploy remote headless browser sessions via MCP (Model Context Protocol) for AI agents on SaladCloud.\n\nMCProxy enables AI agents to control browsers running on geographically distributed containers. Use cases include regional price checking, geo-targeted content verification, and distributed web automation.\n\n**Supported Browsers:**\n- Chromium (default)\n- Firefox\n- WebKit (Safari)\n\n**Mobile Device Emulation:**\nEmulate 100+ mobile devices with accurate viewport, user agent, and touch support:\n- iPhone (15, 14, 13, SE, etc.)\n- iPad (Pro, Air, Mini)\n- Pixel (7, 6, 5, etc.)\n- Galaxy (S23, S22, Tab, etc.)\n\n**Key Features:**\n- **Stealth Mode**: WebGL spoofing, navigator overrides, and realistic browser fingerprints\n- **Humanized Interactions**: Human-like clicks, typing, and scrolling to avoid bot detection\n- **Cloudflare Auto-Wait**: Automatically wait for challenges to complete\n- **Cookie Persistence**: Save and restore cookies for session management\n- **Location-Aware**: Sessions report geographic location (city, country, timezone)\n- **33 MCP Tools**: Full browser automation including coordinate-based clicking for vision agents\n\n[Learn more on GitHub](https://github.com/SaladTechnologies/mcproxy)\n",
+    "type": "object",
+    "required": ["container_group_name", "auth_token"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "auth_token": {
+        "title": "Auth Token",
+        "description": "Required* Shared secret for authentication between the MCP server and browser server. Must match the MCPROXY_AUTH_TOKEN configured in your MCP client.",
+        "type": "string",
+        "minLength": 1
+      },
+      "max_contexts": {
+        "title": "Max Browser Contexts",
+        "description": "Maximum number of concurrent browser contexts per container.",
+        "type": "number",
+        "default": 10,
+        "minimum": 1,
+        "maximum": 50
+      },
+      "context_ttl_ms": {
+        "title": "Context TTL (ms)",
+        "description": "Browser context timeout in milliseconds. Sessions will expire after this duration of inactivity.",
+        "type": "number",
+        "default": 1800000,
+        "minimum": 60000
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/auth_token",
+        "path": "/output/container/environmentVariables/AUTH_TOKEN"
+      },
+      {
+        "op": "copy",
+        "from": "/input/max_contexts",
+        "path": "/output/container/environmentVariables/MAX_CONTEXTS"
+      },
+      {
+        "op": "copy",
+        "from": "/input/context_ttl_ms",
+        "path": "/output/container/environmentVariables/CONTEXT_TTL_MS"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://github.com/SaladTechnologies/mcproxy",
+  "short_description": "Remote browser automation via MCP for AI agents.",
+  "workload_types": ["Browser Automation", "Web Scraping"]
+}
