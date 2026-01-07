@@ -118,5 +118,5 @@
   "ui": {},
   "documentation_url": "https://github.com/SaladTechnologies/mcproxy",
   "short_description": "Remote browser automation via MCP for AI agents.",
-  "workload_types": ["Browser Automation", "Web Scraping"]
+  "workload_types": ["webScraping"]
 }
