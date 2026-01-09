@@ -1,6 +1,6 @@
 {
   "title": "Wan 2.2 TI2V-5B using Kelpie (DataCenter)",
-  "description": "Deploy a Kelpie-powered Wan 2.2 TI2V-5B worker on DataCenter GPUs (default: L40S) to generate high-quality videos (text-to-video and image-to-video) and sync artifacts to S3-compatible storage.",
+  "description": "Deploy a Kelpie-powered Wan 2.2 TI2V-5B worker on DataCenter GPUs (default: A100) to generate high-quality videos (text-to-video and image-to-video) and sync artifacts to S3-compatible storage.",
   "type": "object",
   "required": [
     "container_group_name",

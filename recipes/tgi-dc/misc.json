@@ -1,7 +1,7 @@
 {
   "ui": {},
   "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/tgi-dc",
-  "short_description": "Serve large LLMs and VLMs using Hugging Face TGI on 8×L40S GPUs with multi-GPU sharding support",
+  "short_description": "Serve large LLMs and VLMs using Hugging Face TGI on 8×A100 GPUs with multi-GPU sharding support",
   "workload_types": [
     "LLM"
   ]

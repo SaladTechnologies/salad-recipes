@@ -1,6 +1,6 @@
 {
   "title": "Wan 2.2 A14B (Text-Video) using Kelpie (DataCenter)",
-  "description": "Deploy a Kelpie-powered Wan 2.2 A14B worker on DataCenter GPUs (default: L40S/H100) to generate high-quality videos.",
+  "description": "Deploy a Kelpie-powered Wan 2.2 A14B worker on DataCenter GPUs (default: A100/H100) to generate high-quality videos.",
   "type": "object",
   "required": [
     "container_group_name",
