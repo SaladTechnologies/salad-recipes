@@ -1,0 +1,35 @@
+Deploy Meta's Segment Anything Model 3 (SAM3) for zero-shot image segmentation with a REST API interface.
+
+SAM3 is Meta's latest foundation model for image segmentation, capable of segmenting any object in an image using:
+
+- **Point prompts**: Click on objects to segment them
+- **Box prompts**: Draw bounding boxes around objects
+- **Text prompts**: Describe objects in natural language (open-vocabulary)
+
+## Prerequisites
+
+**HuggingFace Access Required**: SAM3 model weights require approval from Meta. Before deploying:
+
+1. Visit the [SAM3 model page on HuggingFace](https://huggingface.co/facebook/sam3)
+2. Request access to the model weights
+3. Once approved, create a HuggingFace access token
+4. Enter your token in the form below
+
+## API Endpoints
+
+This recipe provides a FastAPI-based REST API with the following endpoints:
+
+- `POST /segment_file` - Upload an image file for segmentation
+- `POST /segment_url` - Segment an image from a URL
+- `GET /health` - Health check endpoint
+- `GET /docs` - Swagger API documentation
+
+## Output Formats
+
+- **JSON** (default): Returns RLE-encoded masks with bounding boxes and confidence scores
+- **Annotated**: Returns the image with colored mask overlays
+
+## Resources
+
+- [Meta SAM3 Blog Post](https://ai.meta.com/blog/segment-anything-model-3/)
+- [Ultralytics SAM3 Documentation](https://docs.ultralytics.com/models/sam-3/)

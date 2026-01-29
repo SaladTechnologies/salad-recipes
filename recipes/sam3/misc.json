@@ -1,0 +1,8 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/sam3",
+  "short_description": "Run SAM3 Image Segmentation with point, box, and text prompts.",
+  "workload_types": [
+    "computerVision"
+  ]
+}
