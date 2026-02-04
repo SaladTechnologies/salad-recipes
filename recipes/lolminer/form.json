@@ -1,0 +1,51 @@
+{
+  "title": "lolMiner GPU Miner",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "algo",
+    "pool_url",
+    "wallet"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "algo": {
+      "title": "Algorithm",
+      "description": "Required* Mining algorithm to use (e.g., AUTOLYKOS2, ETCHASH, KAWPOW). See lolMiner docs for full list.",
+      "type": "string",
+      "default": "AUTOLYKOS2"
+    },
+    "pool_url": {
+      "title": "Pool URL",
+      "description": "Required* Mining pool URL with protocol. Format: stratum+tcp://pool.example.com:port or stratum+ssl://pool.example.com:port",
+      "type": "string",
+      "minLength": 1
+    },
+    "wallet": {
+      "title": "Wallet Address",
+      "description": "Required* Your wallet address for the coin you're mining",
+      "type": "string",
+      "minLength": 1
+    },
+    "worker_name": {
+      "title": "Worker Name",
+      "description": "Optional worker name. If not provided, uses the Salad machine ID.",
+      "type": "string",
+      "default": ""
+    },
+    "extra_args": {
+      "title": "Extra Arguments",
+      "description": "Optional additional command-line arguments for lolMiner",
+      "type": "string",
+      "default": ""
+    }
+  }
+}

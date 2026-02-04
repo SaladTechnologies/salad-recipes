@@ -1,0 +1,137 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# lolMiner GPU Miner\n\nA high-performance multi-algorithm GPU miner supporting Ergo (AUTOLYKOS2), Ethereum Classic (ETCHASH), Ravencoin (KAWPOW), and more.\n\n**Default GPU:** RTX 3090 (24GB VRAM)\n\n## Checking Hashrate\n\nThe miner outputs hashrate and share statistics to the container logs. Check the SaladCloud portal for real-time output.\n\n## Common Issues\n\n### Low Hashrate\n- Ensure you're using GPUs with sufficient VRAM for the algorithm\n- AUTOLYKOS2 (Ergo): 4GB+ VRAM recommended\n- ETCHASH (ETC): 4GB+ VRAM required\n- KAWPOW (RVN): 4GB+ VRAM required\n\n### Connection Errors\n- Verify the pool URL format includes protocol: `stratum+tcp://` or `stratum+ssl://`\n- Check if the pool is online\n- Try an alternative pool server\n\n### Invalid Shares\n- Ensure your wallet address is valid for the coin being mined\n- Check that the algorithm matches the coin/pool\n\n## Resources\n\n- [lolMiner GitHub](https://github.com/Lolliedieb/lolMiner-releases)\n- [lolMiner Wiki](https://github.com/Lolliedieb/lolMiner-releases/wiki)\n- [SaladCloud Docs](https://docs.salad.com/)\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "saladtechnologies/salad-lolminer:1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 4,
+        "memory": 8192,
+        "gpuClasses": ["a5db5c50-cbcb-4596-ae80-6a0c8090d80f"]
+      },
+      "priority": "batch"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3
+  },
+  "form": {
+    "title": "lolMiner GPU Miner",
+    "description": "Deploy [lolMiner](https://github.com/Lolliedieb/lolMiner-releases), a high-performance multi-algorithm GPU miner on SaladCloud.\n\nlolMiner supports multiple cryptocurrencies and algorithms, making it versatile for mining various coins.\n\n## Supported Algorithms & Coins\n\nThe full list is available on the [lolMiner GitHub](https://github.com/Lolliedieb/lolMiner-releases)\n\n| Algorithm | Coin | Dev Fee |\n|-----------|------|---------|\n| AUTOLYKOS2 | Ergo (ERG) | 1.5% |\n| ETCHASH | Ethereum Classic (ETC) | 0.7% |\n| KARLSENHASH | Kaspa (KAS) | 0.75% |\n| ZelHash | Flux (FLUX) | 1.0% |\n| BEAM-III | Beam (BEAM) | 1.0% |\n| FIROPOW | Firo (FIRO) | 1.0% |\n\n## Configuration\n\n- **Container Group Name** (required) - Unique identifier for your deployment\n- **Algorithm** (required) - Mining algorithm (defaults to AUTOLYKOS2 for Ergo)\n- **Pool URL** (required) - Pool address with protocol (e.g., `stratum+tcp://ergo.2miners.com:8888`)\n- **Wallet Address** (required) - Your wallet address for the coin being mined\n- **Worker Name** (optional) - Custom worker name (defaults to unique ID)\n- **Extra Arguments** (optional) - Additional lolMiner command-line arguments\n\n## Example Pool URLs\n\n| Coin | Pool | URL |\n|------|------|-----|\n| Ergo | 2miners | `stratum+tcp://ergo.2miners.com:8888` |\n| Ergo | Herominers | `stratum+tcp://ergo.herominers.com:10250` |\n| ETC | 2miners | `stratum+tcp://etc.2miners.com:1010` |\n| Ravencoin | 2miners | `stratum+tcp://rvn.2miners.com:6060` |\n| Kaspa | acc-pool | `stratum+tcp://kas.acc-pool.pw:16061` |\n| Flux | 2miners | `stratum+tcp://flux.2miners.com:9090` |\n\n## Mining Payouts\n\nMining rewards are paid directly to your wallet by the mining pool:\n\n1. Your miner submits shares to the pool as proof of work\n2. When the pool finds a block, rewards are distributed based on shares contributed\n3. Each pool has a minimum payout threshold (e.g., 0.5 ERG on 2miners)\n4. Once your balance reaches the threshold, the pool automatically sends coins to your wallet\n\nCheck your mining progress and balance on the pool's dashboard by searching for your wallet address.\n\n## Resources\n\n- [lolMiner GitHub](https://github.com/Lolliedieb/lolMiner-releases)\n- [lolMiner Documentation](https://github.com/Lolliedieb/lolMiner-releases/wiki)\n",
+    "type": "object",
+    "required": ["container_group_name", "algo", "pool_url", "wallet"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "algo": {
+        "title": "Algorithm",
+        "description": "Required* Mining algorithm to use (e.g., AUTOLYKOS2, ETCHASH, KAWPOW). See lolMiner docs for full list.",
+        "type": "string",
+        "default": "AUTOLYKOS2"
+      },
+      "pool_url": {
+        "title": "Pool URL",
+        "description": "Required* Mining pool URL with protocol. Format: stratum+tcp://pool.example.com:port or stratum+ssl://pool.example.com:port",
+        "type": "string",
+        "minLength": 1
+      },
+      "wallet": {
+        "title": "Wallet Address",
+        "description": "Required* Your wallet address for the coin you're mining",
+        "type": "string",
+        "minLength": 1
+      },
+      "worker_name": {
+        "title": "Worker Name",
+        "description": "Optional worker name. If not provided, uses the Salad machine ID.",
+        "type": "string",
+        "default": ""
+      },
+      "extra_args": {
+        "title": "Extra Arguments",
+        "description": "Optional additional command-line arguments for lolMiner",
+        "type": "string",
+        "default": ""
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/algo",
+        "path": "/output/container/environmentVariables/ALGO"
+      },
+      {
+        "op": "copy",
+        "from": "/input/pool_url",
+        "path": "/output/container/environmentVariables/POOL_URL"
+      },
+      {
+        "op": "copy",
+        "from": "/input/wallet",
+        "path": "/output/container/environmentVariables/WALLET"
+      },
+      {
+        "op": "copy",
+        "from": "/input/worker_name",
+        "path": "/output/container/environmentVariables/WORKER_NAME"
+      },
+      {
+        "op": "copy",
+        "from": "/input/extra_args",
+        "path": "/output/container/environmentVariables/EXTRA_ARGS"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/worker_name",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/WORKER_NAME"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/extra_args",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/EXTRA_ARGS"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://github.com/Lolliedieb/lolMiner-releases",
+  "short_description": "Multi-algorithm GPU miner supporting Ergo, ETC, Ravencoin, Kaspa, Flux, and more.",
+  "workload_types": ["blockchain"]
+}

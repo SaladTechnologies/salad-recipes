@@ -1,0 +1,32 @@
+# lolMiner GPU Miner
+
+A high-performance multi-algorithm GPU miner supporting Ergo (AUTOLYKOS2), Ethereum Classic (ETCHASH), Ravencoin (KAWPOW), and more.
+
+**Default GPU:** RTX 3090 (24GB VRAM)
+
+## Checking Hashrate
+
+The miner outputs hashrate and share statistics to the container logs. Check the SaladCloud portal for real-time output.
+
+## Common Issues
+
+### Low Hashrate
+- Ensure you're using GPUs with sufficient VRAM for the algorithm
+- AUTOLYKOS2 (Ergo): 4GB+ VRAM recommended
+- ETCHASH (ETC): 4GB+ VRAM required
+- KAWPOW (RVN): 4GB+ VRAM required
+
+### Connection Errors
+- Verify the pool URL format includes protocol: `stratum+tcp://` or `stratum+ssl://`
+- Check if the pool is online
+- Try an alternative pool server
+
+### Invalid Shares
+- Ensure your wallet address is valid for the coin being mined
+- Check that the algorithm matches the coin/pool
+
+## Resources
+
+- [lolMiner GitHub](https://github.com/Lolliedieb/lolMiner-releases)
+- [lolMiner Wiki](https://github.com/Lolliedieb/lolMiner-releases/wiki)
+- [SaladCloud Docs](https://docs.salad.com/)

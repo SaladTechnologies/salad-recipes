@@ -1,0 +1,52 @@
+Deploy [lolMiner](https://github.com/Lolliedieb/lolMiner-releases), a high-performance multi-algorithm GPU miner on SaladCloud.
+
+lolMiner supports multiple cryptocurrencies and algorithms, making it versatile for mining various coins.
+
+## Supported Algorithms & Coins
+
+The full list is available on the [lolMiner GitHub](https://github.com/Lolliedieb/lolMiner-releases)
+
+| Algorithm | Coin | Dev Fee |
+|-----------|------|---------|
+| AUTOLYKOS2 | Ergo (ERG) | 1.5% |
+| ETCHASH | Ethereum Classic (ETC) | 0.7% |
+| KARLSENHASH | Kaspa (KAS) | 0.75% |
+| ZelHash | Flux (FLUX) | 1.0% |
+| BEAM-III | Beam (BEAM) | 1.0% |
+| FIROPOW | Firo (FIRO) | 1.0% |
+
+## Configuration
+
+- **Container Group Name** (required) - Unique identifier for your deployment
+- **Algorithm** (required) - Mining algorithm (defaults to AUTOLYKOS2 for Ergo)
+- **Pool URL** (required) - Pool address with protocol (e.g., `stratum+tcp://ergo.2miners.com:8888`)
+- **Wallet Address** (required) - Your wallet address for the coin being mined
+- **Worker Name** (optional) - Custom worker name (defaults to unique ID)
+- **Extra Arguments** (optional) - Additional lolMiner command-line arguments
+
+## Example Pool URLs
+
+| Coin | Pool | URL |
+|------|------|-----|
+| Ergo | 2miners | `stratum+tcp://ergo.2miners.com:8888` |
+| Ergo | Herominers | `stratum+tcp://ergo.herominers.com:10250` |
+| ETC | 2miners | `stratum+tcp://etc.2miners.com:1010` |
+| Ravencoin | 2miners | `stratum+tcp://rvn.2miners.com:6060` |
+| Kaspa | acc-pool | `stratum+tcp://kas.acc-pool.pw:16061` |
+| Flux | 2miners | `stratum+tcp://flux.2miners.com:9090` |
+
+## Mining Payouts
+
+Mining rewards are paid directly to your wallet by the mining pool:
+
+1. Your miner submits shares to the pool as proof of work
+2. When the pool finds a block, rewards are distributed based on shares contributed
+3. Each pool has a minimum payout threshold (e.g., 0.5 ERG on 2miners)
+4. Once your balance reaches the threshold, the pool automatically sends coins to your wallet
+
+Check your mining progress and balance on the pool's dashboard by searching for your wallet address.
+
+## Resources
+
+- [lolMiner GitHub](https://github.com/Lolliedieb/lolMiner-releases)
+- [lolMiner Documentation](https://github.com/Lolliedieb/lolMiner-releases/wiki)
