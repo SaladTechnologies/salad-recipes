@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://github.com/Lolliedieb/lolMiner-releases",
+  "short_description": "Multi-algorithm GPU miner supporting Ergo, ETC, Ravencoin, Kaspa, Flux, and more.",
+  "workload_types": ["blockchain"]
+}

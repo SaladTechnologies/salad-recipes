@@ -1,0 +1,66 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/algo",
+      "path": "/output/container/environmentVariables/ALGO"
+    },
+    {
+      "op": "copy",
+      "from": "/input/pool_url",
+      "path": "/output/container/environmentVariables/POOL_URL"
+    },
+    {
+      "op": "copy",
+      "from": "/input/wallet",
+      "path": "/output/container/environmentVariables/WALLET"
+    },
+    {
+      "op": "copy",
+      "from": "/input/worker_name",
+      "path": "/output/container/environmentVariables/WORKER_NAME"
+    },
+    {
+      "op": "copy",
+      "from": "/input/extra_args",
+      "path": "/output/container/environmentVariables/EXTRA_ARGS"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/worker_name",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/WORKER_NAME"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/extra_args",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/EXTRA_ARGS"
+    }
+  ]
+]
