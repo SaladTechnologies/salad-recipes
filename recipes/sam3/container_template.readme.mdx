@@ -1,0 +1,95 @@
+# SAM3 Segmentation API
+
+**Segment Anything Model 3 (SAM3)** is Meta's model for image segmentation. With 848 million parameters, SAM3 introduces **Promptable Concept Segmentation (PCS)** - a breakthrough capability that allows you to segment objects using natural language descriptions, not just coordinates.
+
+**Key capabilities:**
+- **Zero-shot segmentation**: Segment any object without training
+- **Open-vocabulary**: Use text prompts like "dog", "person in red shirt", or "coffee mug"
+- **Multi-prompt support**: Combine point coordinates, bounding boxes, and text descriptions
+- **High accuracy**: State-of-the-art segmentation quality across diverse image types
+
+- <Link url={`https://${props.networking.dns}/docs`}>Swagger API Docs</Link>
+- [Ultralytics SAM3 Docs](https://docs.ultralytics.com/models/sam-3/)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/sam3)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=SAM3&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>
+
+## Prompt Types
+
+- **Point prompts**: Specify `points` as [[x, y], ...] and `labels` as [1, 0, ...] where 1=foreground, 0=background
+- **Box prompts**: Specify `boxes` as [[x1, y1, x2, y2], ...] for bounding box coordinates
+- **Text prompts**: Specify `text` as a natural language description (e.g., "dog", "person in red shirt")
+
+## Output Types
+
+- `annotated=false` (default): Returns JSON with RLE-encoded masks and metadata
+- `annotated=true`: Returns a PNG image with colored mask overlays drawn on the original image. Each detected segment gets a unique random color with semi-transparent fill and contour outlines.
+
+<Callout variation="note">Omit the <code>Salad-Api-Key</code> header if you do not have auth enabled.</Callout>
+
+---
+
+## Curl Examples
+
+### Point Prompt - Segment object at coordinates
+
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/segment_file \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -F "file=@image.jpg" \\
+  -F 'points=[[100, 200]]' \\
+  -F 'labels=[1]'`}</CodeBlock>
+
+### Box Prompt - Segment object within bounding box
+
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/segment_file?annotated=true \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -F "file=@image.jpg" \\
+  -F 'boxes=[[50, 50, 300, 400]]' \\
+  --output result.png`}</CodeBlock>
+
+### Text Prompt - Open-vocabulary segmentation
+
+<CodeBlock language="bash">{`curl -X POST https://${props.networking.dns}/segment_url \\
+  -H 'Content-Type: application/json' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -d '{"url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg", "text": "dog"}'`}</CodeBlock>
+
+### URL with annotated output
+
+<CodeBlock language="bash">{`curl -X POST 'https://${props.networking.dns}/segment_url?annotated=true' \\
+  -H 'Content-Type: application/json' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -d '{"url": "https://example.com/image.jpg", "points": [[150, 250]], "labels": [1]}' \\
+  --output segmented.png`}</CodeBlock>
+
+---
+
+## Response Format (JSON)
+
+When `annotated=false`, the API returns an array of detected masks:
+
+<CodeBlock language="json">{`[
+  {
+    "mask_rle": {
+      "counts": [123, 45, 67, ...],
+      "size": [480, 640]
+    },
+    "area": 15234,
+    "bbox": [50.0, 100.0, 200.0, 350.0],
+    "confidence": 0.95
+  }
+]`}</CodeBlock>
+
+- **mask_rle**: Run-length encoded binary mask
+- **area**: Number of pixels in the mask
+- **bbox**: Bounding box [x1, y1, x2, y2]
+- **confidence**: Model confidence score
+
+## Response Format (Annotated Image)
+
+When `annotated=true`, the API returns a PNG image (`image/png` content type) with:
+- The original image as the background
+- Semi-transparent colored overlays for each detected segment
+- Contour outlines drawn around each mask boundary
+- Each segment receives a unique random color for easy visual distinction
+
+Use `--output filename.png` with curl to save the image to a file.

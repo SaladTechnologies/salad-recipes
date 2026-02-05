@@ -1,0 +1,144 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# SAM3 Segmentation API\n\n**Segment Anything Model 3 (SAM3)** is Meta's model for image segmentation. With 848 million parameters, SAM3 introduces **Promptable Concept Segmentation (PCS)** - a breakthrough capability that allows you to segment objects using natural language descriptions, not just coordinates.\n\n**Key capabilities:**\n- **Zero-shot segmentation**: Segment any object without training\n- **Open-vocabulary**: Use text prompts like \"dog\", \"person in red shirt\", or \"coffee mug\"\n- **Multi-prompt support**: Combine point coordinates, bounding boxes, and text descriptions\n- **High accuracy**: State-of-the-art segmentation quality across diverse image types\n\n- <Link url={`https://${props.networking.dns}/docs`}>Swagger API Docs</Link>\n- [Ultralytics SAM3 Docs](https://docs.ultralytics.com/models/sam-3/)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/sam3)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=SAM3&body=%3C%21---%20Please%20describe%20the%20issue%20you%20are%20having%20with%20this%20recipe%2C%20and%20include%20as%20much%20detail%20as%20possible%2C%20including%20any%20relevant%20logs.%20--%3E%0AImage%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## Prompt Types\n\n- **Point prompts**: Specify `points` as [[x, y], ...] and `labels` as [1, 0, ...] where 1=foreground, 0=background\n- **Box prompts**: Specify `boxes` as [[x1, y1, x2, y2], ...] for bounding box coordinates\n- **Text prompts**: Specify `text` as a natural language description (e.g., \"dog\", \"person in red shirt\")\n\n## Output Types\n\n- `annotated=false` (default): Returns JSON with RLE-encoded masks and metadata\n- `annotated=true`: Returns a PNG image with colored mask overlays drawn on the original image. Each detected segment gets a unique random color with semi-transparent fill and contour outlines.\n\n<Callout variation=\"note\">Omit the <code>Salad-Api-Key</code> header if you do not have auth enabled.</Callout>\n\n---\n\n## Curl Examples\n\n### Point Prompt - Segment object at coordinates\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/segment_file \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -F \"file=@image.jpg\" \\\\\n  -F 'points=[[100, 200]]' \\\\\n  -F 'labels=[1]'`}</CodeBlock>\n\n### Box Prompt - Segment object within bounding box\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/segment_file?annotated=true \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -F \"file=@image.jpg\" \\\\\n  -F 'boxes=[[50, 50, 300, 400]]' \\\\\n  --output result.png`}</CodeBlock>\n\n### Text Prompt - Open-vocabulary segmentation\n\n<CodeBlock language=\"bash\">{`curl -X POST https://${props.networking.dns}/segment_url \\\\\n  -H 'Content-Type: application/json' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -d '{\"url\": \"https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg\", \"text\": \"dog\"}'`}</CodeBlock>\n\n### URL with annotated output\n\n<CodeBlock language=\"bash\">{`curl -X POST 'https://${props.networking.dns}/segment_url?annotated=true' \\\\\n  -H 'Content-Type: application/json' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -d '{\"url\": \"https://example.com/image.jpg\", \"points\": [[150, 250]], \"labels\": [1]}' \\\\\n  --output segmented.png`}</CodeBlock>\n\n---\n\n## Response Format (JSON)\n\nWhen `annotated=false`, the API returns an array of detected masks:\n\n<CodeBlock language=\"json\">{`[\n  {\n    \"mask_rle\": {\n      \"counts\": [123, 45, 67, ...],\n      \"size\": [480, 640]\n    },\n    \"area\": 15234,\n    \"bbox\": [50.0, 100.0, 200.0, 350.0],\n    \"confidence\": 0.95\n  }\n]`}</CodeBlock>\n\n- **mask_rle**: Run-length encoded binary mask\n- **area**: Number of pixels in the mask\n- **bbox**: Bounding box [x1, y1, x2, y2]\n- **confidence**: Model confidence score\n\n## Response Format (Annotated Image)\n\nWhen `annotated=true`, the API returns a PNG image (`image/png` content type) with:\n- The original image as the background\n- Semi-transparent colored overlays for each detected segment\n- Contour outlines drawn around each mask boundary\n- Each segment receives a unique random color for easy visual distinction\n\nUse `--output filename.png` with curl to save the image to a file.\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {},
+      "image": "saladtechnologies/sam3-recipe:1.0.0",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 16384,
+        "gpuClasses": ["2b73eef8-be49-4667-8fc0-5c0cb127cfe0"],
+        "storageAmount": 53687091200,
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "readinessProbe": {
+      "failureThreshold": 1,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 80,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 1,
+      "successThreshold": 1,
+      "timeoutSeconds": 1
+    },
+    "startupProbe": {
+      "failureThreshold": 5,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 80,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 30,
+      "periodSeconds": 5,
+      "successThreshold": 1,
+      "timeoutSeconds": 10
+    },
+    "livenessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 80,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 30,
+      "periodSeconds": 10,
+      "successThreshold": 1,
+      "timeoutSeconds": 30
+    },
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 80,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "SAM3 - Segment Anything Model 3",
+    "description": "Deploy Meta's Segment Anything Model 3 (SAM3) for zero-shot image segmentation with a REST API interface.\n\nSAM3 is Meta's latest foundation model for image segmentation, capable of segmenting any object in an image using:\n\n- **Point prompts**: Click on objects to segment them\n- **Box prompts**: Draw bounding boxes around objects\n- **Text prompts**: Describe objects in natural language (open-vocabulary)\n\n## Prerequisites\n\n**HuggingFace Access Required**: SAM3 model weights require approval from Meta. Before deploying:\n\n1. Visit the [SAM3 model page on HuggingFace](https://huggingface.co/facebook/sam3)\n2. Request access to the model weights\n3. Once approved, create a HuggingFace access token\n4. Enter your token in the form below\n\n## API Endpoints\n\nThis recipe provides a FastAPI-based REST API with the following endpoints:\n\n- `POST /segment_file` - Upload an image file for segmentation\n- `POST /segment_url` - Segment an image from a URL\n- `GET /health` - Health check endpoint\n- `GET /docs` - Swagger API documentation\n\n## Output Formats\n\n- **JSON** (default): Returns RLE-encoded masks with bounding boxes and confidence scores\n- **Annotated**: Returns the image with colored mask overlays\n\n## Resources\n\n- [Meta SAM3 Blog Post](https://ai.meta.com/blog/segment-anything-model-3/)\n- [Ultralytics SAM3 Documentation](https://docs.ultralytics.com/models/sam-3/)\n",
+    "type": "object",
+    "required": ["container_group_name", "huggingface_token", "model_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key. When disabled, any anonymous request will be allowed.",
+        "type": "boolean",
+        "default": true
+      },
+      "huggingface_token": {
+        "title": "HuggingFace Token",
+        "description": "Required for downloading SAM3 model weights. You must first request access at https://huggingface.co/facebook/sam3",
+        "type": "string",
+        "minLength": 1
+      },
+      "model_name": {
+        "title": "Model Name",
+        "description": "SAM3 model checkpoint file to use",
+        "type": "string",
+        "default": "sam3.pt",
+        "minLength": 1
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_name",
+        "path": "/output/container/environmentVariables/MODEL"
+      },
+      {
+        "op": "copy",
+        "from": "/input/huggingface_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/sam3",
+  "short_description": "Run SAM3 Image Segmentation with point, box, and text prompts.",
+  "workload_types": ["computerVision"]
+}

@@ -1,0 +1,72 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {
+    },
+    "image": "saladtechnologies/sam3-recipe:1.0.0",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 8,
+      "memory": 16384,
+      "gpuClasses": [
+        "2b73eef8-be49-4667-8fc0-5c0cb127cfe0"
+      ],
+      "storageAmount": 53687091200,
+      "shmSize": 2048
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3,
+  "readinessProbe": {
+    "failureThreshold": 1,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 80,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 0,
+    "periodSeconds": 1,
+    "successThreshold": 1,
+    "timeoutSeconds": 1
+  },
+  "startupProbe": {
+    "failureThreshold": 5,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 80,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 30,
+    "periodSeconds": 5,
+    "successThreshold": 1,
+    "timeoutSeconds": 10
+  },
+  "livenessProbe": {
+    "failureThreshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 80,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 30,
+    "periodSeconds": 10,
+    "successThreshold": 1,
+    "timeoutSeconds": 30
+  },
+  "networking": {
+    "auth": true,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 80,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  }
+}
