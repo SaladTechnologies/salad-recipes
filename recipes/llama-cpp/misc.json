@@ -1,0 +1,18 @@
+{
+  "ui": {
+    "model_source": {
+      "ui:enumNames": [
+        "Hugging Face Repo (GGUF)",
+        "Direct Model URL"
+      ]
+    },
+    "networking_auth": {
+      "ui:placeholder": "Authentication"
+    }
+  },
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/llama-cpp",
+  "short_description": "Serve GGUF models with llama.cpp on SaladCloud GPUs.",
+  "workload_types": [
+    "LLM"
+  ]
+}

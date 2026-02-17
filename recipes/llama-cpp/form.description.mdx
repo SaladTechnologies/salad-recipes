@@ -1,0 +1,41 @@
+Run [llama.cpp](https://github.com/ggml-org/llama.cpp) with the official `server-cuda` image on SaladCloud GPUs.
+
+This recipe deploys an OpenAI-compatible API server (`/v1/chat/completions`, `/v1/embeddings`, etc.) and configures it through environment variables.
+
+<Callout variation="warning">Ensure your use is permissible under whatever license applies to the model you deploy.</Callout>
+
+## Model Source
+
+Pick one model source for deployment:
+
+- **Hugging Face Repo (GGUF)**: set `LLAMA_ARG_HF_REPO` (and optionally `LLAMA_ARG_HF_FILE`).
+- **Direct Model URL**: set `LLAMA_ARG_MODEL_URL`.
+
+### Example Models
+
+Hugging Face repo examples (`LLAMA_ARG_HF_REPO`):
+
+- `ggml-org/gemma-3-1b-it-GGUF`
+- `bartowski/Qwen2.5-7B-Instruct-GGUF`
+- `unsloth/Qwen3-Coder-Next-GGUF:UD-Q4_K_XL`
+
+Direct URL examples (`LLAMA_ARG_MODEL_URL`):
+
+- `https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF/resolve/main/gemma-3-1b-it-Q4_K_M.gguf`
+- `https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf`
+
+## GPU and Runtime Controls
+
+This form sets common settings like:
+
+- `LLAMA_ARG_N_GPU_LAYERS`
+- `LLAMA_ARG_CTX_SIZE`
+- `LLAMA_ARG_N_PARALLEL`
+- `LLAMA_ARG_ALIAS`
+
+For full control, use **Advanced Configuration** and add any supported `LLAMA_ARG_*` variable from the llama.cpp server docs:
+
+- [Server Args + Env Vars](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#usage)
+- [Official Git Repo](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)
+
+Use `HF_TOKEN` only if your chosen Hugging Face model is private or gated.

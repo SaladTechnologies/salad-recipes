@@ -1,0 +1,54 @@
+# llama.cpp
+
+Serve GGUF models with the official llama.cpp server on SaladCloud GPUs. This container exposes OpenAI-compatible
+endpoints for inference and includes the built-in llama.cpp web UI at your deployment URL.
+
+## Changing Models
+
+To switch models, update the environment variables on the container group page:
+
+- **Hugging Face**: set `LLAMA_ARG_HF_REPO` to a GGUF repo (e.g., `bartowski/Llama-3.1-8B-Instruct-GGUF`). Use `LLAMA_ARG_HF_FILE` to pick a specific quantization file from the repo.
+- **Direct URL**: set `LLAMA_ARG_MODEL_URL` to a direct link to a `.gguf` file.
+- **Private/gated models**: set `HF_TOKEN` to your Hugging Face access token.
+
+## Performance Tips
+
+- **GPU Layers** (`LLAMA_ARG_N_GPU_LAYERS`): use `auto` to offload all layers to GPU. Set a specific number if the model doesn't fit in VRAM.
+- **Context Size** (`LLAMA_ARG_CTX_SIZE`): larger values use more VRAM. Lower this if you hit out-of-memory errors.
+- **Parallel Slots** (`LLAMA_ARG_N_PARALLEL`): number of concurrent requests. More slots = more VRAM usage. Start with 1 and increase if needed.
+- **Quantization**: smaller quantizations (Q4_K_M, Q4_K_S) use less VRAM and run faster, with some quality trade-off.
+
+## Resources
+
+- <Link url={`https://${props.networking.dns}`}>Open llama.cpp UI</Link>
+- [llama.cpp Server Documentation](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)
+- [CLI Flag to Environment Variable Mapping](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#usage)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/llama-cpp)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=llama.cpp%20recipe&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>
+
+## API endpoints
+
+- `GET /health` - readiness probe and basic health check
+- `GET /v1/models` - list available model aliases
+- `POST /v1/chat/completions` - OpenAI-compatible chat completions
+- `POST /v1/completions` - OpenAI-compatible completions
+- `POST /v1/embeddings` - embedding endpoint (model-dependent)
+
+## Curl Example
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/chat/completions \\
+    -X POST \\
+    -H 'Content-Type: application/json' \\
+    -H 'Salad-Api-Key: ${props.apiKey}' \\
+    -d '{
+      "model": "${props.container.environmentVariables.LLAMA_ARG_ALIAS || "llama-cpp"}",
+      "messages": [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Explain how quantization helps GGUF models."}
+      ],
+      "max_tokens": 128,
+      "temperature":0
+    }'
+`}</CodeBlock>

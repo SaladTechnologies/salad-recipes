@@ -1,0 +1,262 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# llama.cpp\n\nServe GGUF models with the official llama.cpp server on SaladCloud GPUs. This container exposes OpenAI-compatible\nendpoints for inference and includes the built-in llama.cpp web UI at your deployment URL.\n\n## Changing Models\n\nTo switch models, update the environment variables on the container group page:\n\n- **Hugging Face**: set `LLAMA_ARG_HF_REPO` to a GGUF repo (e.g., `bartowski/Llama-3.1-8B-Instruct-GGUF`). Use `LLAMA_ARG_HF_FILE` to pick a specific quantization file from the repo.\n- **Direct URL**: set `LLAMA_ARG_MODEL_URL` to a direct link to a `.gguf` file.\n- **Private/gated models**: set `HF_TOKEN` to your Hugging Face access token.\n\n## Performance Tips\n\n- **GPU Layers** (`LLAMA_ARG_N_GPU_LAYERS`): use `auto` to offload all layers to GPU. Set a specific number if the model doesn't fit in VRAM.\n- **Context Size** (`LLAMA_ARG_CTX_SIZE`): larger values use more VRAM. Lower this if you hit out-of-memory errors.\n- **Parallel Slots** (`LLAMA_ARG_N_PARALLEL`): number of concurrent requests. More slots = more VRAM usage. Start with 1 and increase if needed.\n- **Quantization**: smaller quantizations (Q4_K_M, Q4_K_S) use less VRAM and run faster, with some quality trade-off.\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}`}>Open llama.cpp UI</Link>\n- [llama.cpp Server Documentation](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n- [CLI Flag to Environment Variable Mapping](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#usage)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/llama-cpp)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=llama.cpp%20recipe&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## API endpoints\n\n- `GET /health` - readiness probe and basic health check\n- `GET /v1/models` - list available model aliases\n- `POST /v1/chat/completions` - OpenAI-compatible chat completions\n- `POST /v1/completions` - OpenAI-compatible completions\n- `POST /v1/embeddings` - embedding endpoint (model-dependent)\n\n## Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\n      \"model\": \"${props.container.environmentVariables.LLAMA_ARG_ALIAS || \"llama-cpp\"}\",\n      \"messages\": [\n        {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n        {\"role\": \"user\", \"content\": \"Explain how quantization helps GGUF models.\"}\n      ],\n      \"max_tokens\": 128,\n      \"temperature\":0\n    }'\n`}</CodeBlock>\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {
+        "LLAMA_ARG_HOST": "::",
+        "LLAMA_ARG_PORT": "8080",
+        "LLAMA_ARG_N_GPU_LAYERS": "auto",
+        "LLAMA_ARG_CTX_SIZE": "4096",
+        "LLAMA_ARG_N_PARALLEL": "1",
+        "LLAMA_ARG_ALIAS": "llama-cpp"
+      },
+      "image": "ghcr.io/ggml-org/llama.cpp:server-cuda",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 30720,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "storageAmount": 53687091200,
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "readinessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8080,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 2
+    },
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8080,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "llama.cpp",
+    "description": "Run [llama.cpp](https://github.com/ggml-org/llama.cpp) with the official `server-cuda` image on SaladCloud GPUs.\n\nThis recipe deploys an OpenAI-compatible API server (`/v1/chat/completions`, `/v1/embeddings`, etc.) and configures it through environment variables.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you deploy.</Callout>\n\n## Model Source\n\nPick one model source for deployment:\n\n- **Hugging Face Repo (GGUF)**: set `LLAMA_ARG_HF_REPO` (and optionally `LLAMA_ARG_HF_FILE`).\n- **Direct Model URL**: set `LLAMA_ARG_MODEL_URL`.\n\n### Example Models\n\nHugging Face repo examples (`LLAMA_ARG_HF_REPO`):\n\n- `ggml-org/gemma-3-1b-it-GGUF`\n- `bartowski/Qwen2.5-7B-Instruct-GGUF`\n- `unsloth/Qwen3-Coder-Next-GGUF:UD-Q4_K_XL`\n\nDirect URL examples (`LLAMA_ARG_MODEL_URL`):\n\n- `https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF/resolve/main/gemma-3-1b-it-Q4_K_M.gguf`\n- `https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf`\n\n## GPU and Runtime Controls\n\nThis form sets common settings like:\n\n- `LLAMA_ARG_N_GPU_LAYERS`\n- `LLAMA_ARG_CTX_SIZE`\n- `LLAMA_ARG_N_PARALLEL`\n- `LLAMA_ARG_ALIAS`\n\nFor full control, use **Advanced Configuration** and add any supported `LLAMA_ARG_*` variable from the llama.cpp server docs:\n\n- [Server Args + Env Vars](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#usage)\n- [Official Git Repo](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n\nUse `HF_TOKEN` only if your chosen Hugging Face model is private or gated.\n",
+    "type": "object",
+    "required": ["container_group_name", "model_source", "networking_auth"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "model_source": {
+        "title": "Model Source",
+        "type": "string",
+        "description": "Required* Choose where llama.cpp should load the GGUF model from.",
+        "enum": ["hugging_face_repo", "model_url"],
+        "default": "hugging_face_repo"
+      },
+      "hf_token": {
+        "title": "Hugging Face Token",
+        "description": "Optional. Required only for private or gated Hugging Face models.",
+        "type": "string",
+        "default": ""
+      },
+      "n_gpu_layers": {
+        "title": "GPU Layers",
+        "description": "Number of layers to offload to GPU (`LLAMA_ARG_N_GPU_LAYERS`). Use `auto`, `all`, or an integer.",
+        "type": "string",
+        "default": "auto"
+      },
+      "ctx_size": {
+        "title": "Context Size",
+        "description": "Context window size (`LLAMA_ARG_CTX_SIZE`).",
+        "type": "string",
+        "default": "4096"
+      },
+      "n_parallel": {
+        "title": "Parallel Slots",
+        "description": "Number of server slots (`LLAMA_ARG_N_PARALLEL`).",
+        "type": "string",
+        "default": "1"
+      },
+      "alias": {
+        "title": "Model Alias",
+        "description": "Model name exposed by the API (`LLAMA_ARG_ALIAS`).",
+        "type": "string",
+        "default": "llama-cpp"
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key. When disabled, public (unauthenticated) access is allowed.",
+        "type": "boolean",
+        "default": true
+      }
+    },
+    "dependencies": {
+      "model_source": {
+        "oneOf": [
+          {
+            "required": ["model_hf_repo"],
+            "properties": {
+              "model_source": {
+                "enum": ["hugging_face_repo"]
+              },
+              "model_hf_repo": {
+                "title": "Hugging Face GGUF Repo",
+                "description": "Required* Hugging Face repo in `<org>/<repo>[:quant]` format for `LLAMA_ARG_HF_REPO`.",
+                "type": "string",
+                "default": "ggml-org/gemma-3-1b-it-GGUF"
+              },
+              "model_hf_file": {
+                "title": "Hugging Face File (Optional)",
+                "description": "Optional `LLAMA_ARG_HF_FILE` override if you want a specific file inside the repo.",
+                "type": "string",
+                "default": ""
+              }
+            }
+          },
+          {
+            "required": ["model_url"],
+            "properties": {
+              "model_source": {
+                "enum": ["model_url"]
+              },
+              "model_url": {
+                "title": "Model URL",
+                "description": "Required* Direct URL to a `.gguf` file for `LLAMA_ARG_MODEL_URL`.",
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/hf_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      },
+      {
+        "op": "copy",
+        "from": "/input/n_gpu_layers",
+        "path": "/output/container/environmentVariables/LLAMA_ARG_N_GPU_LAYERS"
+      },
+      {
+        "op": "copy",
+        "from": "/input/ctx_size",
+        "path": "/output/container/environmentVariables/LLAMA_ARG_CTX_SIZE"
+      },
+      {
+        "op": "copy",
+        "from": "/input/n_parallel",
+        "path": "/output/container/environmentVariables/LLAMA_ARG_N_PARALLEL"
+      },
+      {
+        "op": "copy",
+        "from": "/input/alias",
+        "path": "/output/container/environmentVariables/LLAMA_ARG_ALIAS"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/model_source",
+        "value": "hugging_face_repo"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_hf_repo",
+        "path": "/output/container/environmentVariables/LLAMA_ARG_HF_REPO"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_hf_file",
+        "path": "/output/container/environmentVariables/LLAMA_ARG_HF_FILE"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/model_source",
+        "value": "model_url"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_url",
+        "path": "/output/container/environmentVariables/LLAMA_ARG_MODEL_URL"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/hf_token",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/model_hf_file",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/LLAMA_ARG_HF_FILE"
+      }
+    ]
+  ],
+  "ui": {
+    "model_source": {
+      "ui:enumNames": ["Hugging Face Repo (GGUF)", "Direct Model URL"]
+    },
+    "networking_auth": {
+      "ui:placeholder": "Authentication"
+    }
+  },
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/llama-cpp",
+  "short_description": "Serve GGUF models with llama.cpp on SaladCloud GPUs.",
+  "workload_types": ["LLM"]
+}

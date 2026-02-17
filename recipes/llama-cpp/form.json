@@ -1,0 +1,114 @@
+{
+  "title": "llama.cpp",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "model_source",
+    "networking_auth"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "model_source": {
+      "title": "Model Source",
+      "type": "string",
+      "description": "Required* Choose where llama.cpp should load the GGUF model from.",
+      "enum": [
+        "hugging_face_repo",
+        "model_url"
+      ],
+      "default": "hugging_face_repo"
+    },
+    "hf_token": {
+      "title": "Hugging Face Token",
+      "description": "Optional. Required only for private or gated Hugging Face models.",
+      "type": "string",
+      "default": ""
+    },
+    "n_gpu_layers": {
+      "title": "GPU Layers",
+      "description": "Number of layers to offload to GPU (`LLAMA_ARG_N_GPU_LAYERS`). Use `auto`, `all`, or an integer.",
+      "type": "string",
+      "default": "auto"
+    },
+    "ctx_size": {
+      "title": "Context Size",
+      "description": "Context window size (`LLAMA_ARG_CTX_SIZE`).",
+      "type": "string",
+      "default": "4096"
+    },
+    "n_parallel": {
+      "title": "Parallel Slots",
+      "description": "Number of server slots (`LLAMA_ARG_N_PARALLEL`).",
+      "type": "string",
+      "default": "1"
+    },
+    "alias": {
+      "title": "Model Alias",
+      "description": "Model name exposed by the API (`LLAMA_ARG_ALIAS`).",
+      "type": "string",
+      "default": "llama-cpp"
+    },
+    "networking_auth": {
+      "title": "Require Container Gateway Authentication",
+      "description": "When enabled, requests must include a SaladCloud API Key. When disabled, public (unauthenticated) access is allowed.",
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "dependencies": {
+    "model_source": {
+      "oneOf": [
+        {
+          "required": [
+            "model_hf_repo"
+          ],
+          "properties": {
+            "model_source": {
+              "enum": [
+                "hugging_face_repo"
+              ]
+            },
+            "model_hf_repo": {
+              "title": "Hugging Face GGUF Repo",
+              "description": "Required* Hugging Face repo in `<org>/<repo>[:quant]` format for `LLAMA_ARG_HF_REPO`.",
+              "type": "string",
+              "default": "ggml-org/gemma-3-1b-it-GGUF"
+            },
+            "model_hf_file": {
+              "title": "Hugging Face File (Optional)",
+              "description": "Optional `LLAMA_ARG_HF_FILE` override if you want a specific file inside the repo.",
+              "type": "string",
+              "default": ""
+            }
+          }
+        },
+        {
+          "required": [
+            "model_url"
+          ],
+          "properties": {
+            "model_source": {
+              "enum": [
+                "model_url"
+              ]
+            },
+            "model_url": {
+              "title": "Model URL",
+              "description": "Required* Direct URL to a `.gguf` file for `LLAMA_ARG_MODEL_URL`.",
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}
