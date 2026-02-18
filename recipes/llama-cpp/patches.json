@@ -44,6 +44,21 @@
       "op": "copy",
       "from": "/input/alias",
       "path": "/output/container/environmentVariables/LLAMA_ARG_ALIAS"
+    },
+    {
+      "op": "copy",
+      "from": "/input/sampling_temp",
+      "path": "/output/container/environmentVariables/LLAMA_SERVER_TEMP"
+    },
+    {
+      "op": "copy",
+      "from": "/input/sampling_top_p",
+      "path": "/output/container/environmentVariables/LLAMA_SERVER_TOP_P"
+    },
+    {
+      "op": "copy",
+      "from": "/input/sampling_min_p",
+      "path": "/output/container/environmentVariables/LLAMA_SERVER_MIN_P"
     }
   ],
   [

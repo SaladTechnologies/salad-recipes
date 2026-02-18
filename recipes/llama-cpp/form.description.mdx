@@ -32,6 +32,11 @@ This form sets common settings like:
 - `LLAMA_ARG_CTX_SIZE`
 - `LLAMA_ARG_N_PARALLEL`
 - `LLAMA_ARG_ALIAS`
+- startup `--temp`, `--top-p`, `--min-p` defaults
+
+<Callout variation="info">
+`--temp`, `--top-p`, and `--min-p` are wired as startup command args in this recipe because they are not currently mapped to `LLAMA_ARG_*` environment variables. These are default values and can still be overridden per request with `temperature`, `top_p`, and `min_p` in inference payloads.
+</Callout>
 
 For full control, use **Advanced Configuration** and add any supported `LLAMA_ARG_*` variable from the llama.cpp server docs:
 

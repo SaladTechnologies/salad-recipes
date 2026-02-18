@@ -56,6 +56,24 @@
       "type": "string",
       "default": "llama-cpp"
     },
+    "sampling_temp": {
+      "title": "Startup Temperature",
+      "description": "Default `--temp` value passed as a startup command arg.",
+      "type": "string",
+      "default": "0.8"
+    },
+    "sampling_top_p": {
+      "title": "Startup Top-p",
+      "description": "Default `--top-p` value passed as a startup command arg.",
+      "type": "string",
+      "default": "0.95"
+    },
+    "sampling_min_p": {
+      "title": "Startup Min-p",
+      "description": "Default `--min-p` value passed as a startup command arg.",
+      "type": "string",
+      "default": "0.05"
+    },
     "networking_auth": {
       "title": "Require Container Gateway Authentication",
       "description": "When enabled, requests must include a SaladCloud API Key. When disabled, public (unauthenticated) access is allowed.",
