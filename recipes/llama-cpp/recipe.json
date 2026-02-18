@@ -1,16 +1,23 @@
 {
   "container_template": {
     "name": "",
-    "readme": "# llama.cpp\n\nServe GGUF models with the official llama.cpp server on SaladCloud GPUs. This container exposes OpenAI-compatible\nendpoints for inference and includes the built-in llama.cpp web UI at your deployment URL.\n\n## Changing Models\n\nTo switch models, update the environment variables on the container group page:\n\n- **Hugging Face**: set `LLAMA_ARG_HF_REPO` to a GGUF repo (e.g., `bartowski/Llama-3.1-8B-Instruct-GGUF`). Use `LLAMA_ARG_HF_FILE` to pick a specific quantization file from the repo.\n- **Direct URL**: set `LLAMA_ARG_MODEL_URL` to a direct link to a `.gguf` file.\n- **Private/gated models**: set `HF_TOKEN` to your Hugging Face access token.\n\n## Performance Tips\n\n- **GPU Layers** (`LLAMA_ARG_N_GPU_LAYERS`): use `auto` to offload all layers to GPU. Set a specific number if the model doesn't fit in VRAM.\n- **Context Size** (`LLAMA_ARG_CTX_SIZE`): larger values use more VRAM. Lower this if you hit out-of-memory errors.\n- **Parallel Slots** (`LLAMA_ARG_N_PARALLEL`): number of concurrent requests. More slots = more VRAM usage. Start with 1 and increase if needed.\n- **Quantization**: smaller quantizations (Q4_K_M, Q4_K_S) use less VRAM and run faster, with some quality trade-off.\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}`}>Open llama.cpp UI</Link>\n- [llama.cpp Server Documentation](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n- [CLI Flag to Environment Variable Mapping](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#usage)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/llama-cpp)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=llama.cpp%20recipe&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## API endpoints\n\n- `GET /health` - readiness probe and basic health check\n- `GET /v1/models` - list available model aliases\n- `POST /v1/chat/completions` - OpenAI-compatible chat completions\n- `POST /v1/completions` - OpenAI-compatible completions\n- `POST /v1/embeddings` - embedding endpoint (model-dependent)\n\n## Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\n      \"model\": \"${props.container.environmentVariables.LLAMA_ARG_ALIAS || \"llama-cpp\"}\",\n      \"messages\": [\n        {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n        {\"role\": \"user\", \"content\": \"Explain how quantization helps GGUF models.\"}\n      ],\n      \"max_tokens\": 128,\n      \"temperature\":0\n    }'\n`}</CodeBlock>\n",
+    "readme": "# llama.cpp\n\nServe GGUF models with the official llama.cpp server on SaladCloud GPUs. This container exposes OpenAI-compatible\nendpoints for inference and includes the built-in llama.cpp web UI at your deployment URL.\n\n## Changing Models\n\nTo switch models, update the environment variables on the container group page:\n\n- **Hugging Face**: set `LLAMA_ARG_HF_REPO` to a GGUF repo (e.g., `bartowski/Llama-3.1-8B-Instruct-GGUF`). Use `LLAMA_ARG_HF_FILE` to pick a specific quantization file from the repo.\n- **Direct URL**: set `LLAMA_ARG_MODEL_URL` to a direct link to a `.gguf` file.\n- **Private/gated models**: set `HF_TOKEN` to your Hugging Face access token.\n\n## Performance Tips\n\n- **GPU Layers** (`LLAMA_ARG_N_GPU_LAYERS`): use `auto` to offload all layers to GPU. Set a specific number if the model doesn't fit in VRAM.\n- **Context Size** (`LLAMA_ARG_CTX_SIZE`): larger values use more VRAM. Lower this if you hit out-of-memory errors.\n- **Parallel Slots** (`LLAMA_ARG_N_PARALLEL`): number of concurrent requests. More slots = more VRAM usage. Start with 1 and increase if needed.\n- **Startup sampling defaults** (`--temp`, `--top-p`, `--min-p`): configured by the recipe via `LLAMA_SERVER_TEMP`, `LLAMA_SERVER_TOP_P`, and `LLAMA_SERVER_MIN_P`.\n  These are default startup values and can be overridden per request with `temperature`, `top_p`, and `min_p` in your inference payload.\n- **Quantization**: smaller quantizations (Q4_K_M, Q4_K_S) use less VRAM and run faster, with some quality trade-off.\n\n## Resources\n\n- <Link url={`https://${props.networking.dns}`}>Open llama.cpp UI</Link>\n- [llama.cpp Server Documentation](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n- [CLI Flag to Environment Variable Mapping](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#usage)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/llama-cpp)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=llama.cpp%20recipe&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n\n## API endpoints\n\n- `GET /health` - readiness probe and basic health check\n- `GET /v1/models` - list available model aliases\n- `POST /v1/chat/completions` - OpenAI-compatible chat completions\n- `POST /v1/completions` - OpenAI-compatible completions\n- `POST /v1/embeddings` - embedding endpoint (model-dependent)\n\n## Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if you do not have auth enabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n    -d '{\n      \"model\": \"${props.container.environmentVariables.LLAMA_ARG_ALIAS || \"llama-cpp\"}\",\n      \"messages\": [\n        {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n        {\"role\": \"user\", \"content\": \"Explain how quantization helps GGUF models.\"}\n      ],\n      \"max_tokens\": 128,\n      \"temperature\":0\n    }'\n`}</CodeBlock>\n",
     "container": {
-      "command": [],
+      "command": [
+        "sh",
+        "-c",
+        "exec /app/llama-server --temp \"${LLAMA_SERVER_TEMP}\" --top-p \"${LLAMA_SERVER_TOP_P}\" --min-p \"${LLAMA_SERVER_MIN_P}\""
+      ],
       "environmentVariables": {
         "LLAMA_ARG_HOST": "::",
         "LLAMA_ARG_PORT": "8080",
         "LLAMA_ARG_N_GPU_LAYERS": "auto",
         "LLAMA_ARG_CTX_SIZE": "4096",
         "LLAMA_ARG_N_PARALLEL": "1",
-        "LLAMA_ARG_ALIAS": "llama-cpp"
+        "LLAMA_ARG_ALIAS": "llama-cpp",
+        "LLAMA_SERVER_TEMP": "0.8",
+        "LLAMA_SERVER_TOP_P": "0.95",
+        "LLAMA_SERVER_MIN_P": "0.05"
       },
       "image": "ghcr.io/ggml-org/llama.cpp:server-cuda",
       "imageCaching": true,
@@ -51,7 +58,7 @@
   },
   "form": {
     "title": "llama.cpp",
-    "description": "Run [llama.cpp](https://github.com/ggml-org/llama.cpp) with the official `server-cuda` image on SaladCloud GPUs.\n\nThis recipe deploys an OpenAI-compatible API server (`/v1/chat/completions`, `/v1/embeddings`, etc.) and configures it through environment variables.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you deploy.</Callout>\n\n## Model Source\n\nPick one model source for deployment:\n\n- **Hugging Face Repo (GGUF)**: set `LLAMA_ARG_HF_REPO` (and optionally `LLAMA_ARG_HF_FILE`).\n- **Direct Model URL**: set `LLAMA_ARG_MODEL_URL`.\n\n### Example Models\n\nHugging Face repo examples (`LLAMA_ARG_HF_REPO`):\n\n- `ggml-org/gemma-3-1b-it-GGUF`\n- `bartowski/Qwen2.5-7B-Instruct-GGUF`\n- `unsloth/Qwen3-Coder-Next-GGUF:UD-Q4_K_XL`\n\nDirect URL examples (`LLAMA_ARG_MODEL_URL`):\n\n- `https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF/resolve/main/gemma-3-1b-it-Q4_K_M.gguf`\n- `https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf`\n\n## GPU and Runtime Controls\n\nThis form sets common settings like:\n\n- `LLAMA_ARG_N_GPU_LAYERS`\n- `LLAMA_ARG_CTX_SIZE`\n- `LLAMA_ARG_N_PARALLEL`\n- `LLAMA_ARG_ALIAS`\n\nFor full control, use **Advanced Configuration** and add any supported `LLAMA_ARG_*` variable from the llama.cpp server docs:\n\n- [Server Args + Env Vars](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#usage)\n- [Official Git Repo](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n\nUse `HF_TOKEN` only if your chosen Hugging Face model is private or gated.\n",
+    "description": "Run [llama.cpp](https://github.com/ggml-org/llama.cpp) with the official `server-cuda` image on SaladCloud GPUs.\n\nThis recipe deploys an OpenAI-compatible API server (`/v1/chat/completions`, `/v1/embeddings`, etc.) and configures it through environment variables.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you deploy.</Callout>\n\n## Model Source\n\nPick one model source for deployment:\n\n- **Hugging Face Repo (GGUF)**: set `LLAMA_ARG_HF_REPO` (and optionally `LLAMA_ARG_HF_FILE`).\n- **Direct Model URL**: set `LLAMA_ARG_MODEL_URL`.\n\n### Example Models\n\nHugging Face repo examples (`LLAMA_ARG_HF_REPO`):\n\n- `ggml-org/gemma-3-1b-it-GGUF`\n- `bartowski/Qwen2.5-7B-Instruct-GGUF`\n- `unsloth/Qwen3-Coder-Next-GGUF:UD-Q4_K_XL`\n\nDirect URL examples (`LLAMA_ARG_MODEL_URL`):\n\n- `https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF/resolve/main/gemma-3-1b-it-Q4_K_M.gguf`\n- `https://huggingface.co/bartowski/Qwen2.5-7B-Instruct-GGUF/resolve/main/Qwen2.5-7B-Instruct-Q4_K_M.gguf`\n\n## GPU and Runtime Controls\n\nThis form sets common settings like:\n\n- `LLAMA_ARG_N_GPU_LAYERS`\n- `LLAMA_ARG_CTX_SIZE`\n- `LLAMA_ARG_N_PARALLEL`\n- `LLAMA_ARG_ALIAS`\n- startup `--temp`, `--top-p`, `--min-p` defaults\n\n<Callout variation=\"info\">\n`--temp`, `--top-p`, and `--min-p` are wired as startup command args in this recipe because they are not currently mapped to `LLAMA_ARG_*` environment variables. These are default values and can still be overridden per request with `temperature`, `top_p`, and `min_p` in inference payloads.\n</Callout>\n\nFor full control, use **Advanced Configuration** and add any supported `LLAMA_ARG_*` variable from the llama.cpp server docs:\n\n- [Server Args + Env Vars](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#usage)\n- [Official Git Repo](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n\nUse `HF_TOKEN` only if your chosen Hugging Face model is private or gated.\n",
     "type": "object",
     "required": ["container_group_name", "model_source", "networking_auth"],
     "properties": {
@@ -99,6 +106,24 @@
         "description": "Model name exposed by the API (`LLAMA_ARG_ALIAS`).",
         "type": "string",
         "default": "llama-cpp"
+      },
+      "sampling_temp": {
+        "title": "Startup Temperature",
+        "description": "Default `--temp` value passed as a startup command arg.",
+        "type": "string",
+        "default": "0.8"
+      },
+      "sampling_top_p": {
+        "title": "Startup Top-p",
+        "description": "Default `--top-p` value passed as a startup command arg.",
+        "type": "string",
+        "default": "0.95"
+      },
+      "sampling_min_p": {
+        "title": "Startup Min-p",
+        "description": "Default `--min-p` value passed as a startup command arg.",
+        "type": "string",
+        "default": "0.05"
       },
       "networking_auth": {
         "title": "Require Container Gateway Authentication",
@@ -194,6 +219,21 @@
         "op": "copy",
         "from": "/input/alias",
         "path": "/output/container/environmentVariables/LLAMA_ARG_ALIAS"
+      },
+      {
+        "op": "copy",
+        "from": "/input/sampling_temp",
+        "path": "/output/container/environmentVariables/LLAMA_SERVER_TEMP"
+      },
+      {
+        "op": "copy",
+        "from": "/input/sampling_top_p",
+        "path": "/output/container/environmentVariables/LLAMA_SERVER_TOP_P"
+      },
+      {
+        "op": "copy",
+        "from": "/input/sampling_min_p",
+        "path": "/output/container/environmentVariables/LLAMA_SERVER_MIN_P"
       }
     ],
     [

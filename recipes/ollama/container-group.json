@@ -2,7 +2,7 @@
   "autostartPolicy": true,
   "container": {
     "environmentVariables": {},
-    "image": "saladtechnologies/ollama:0.9.1",
+    "image": "saladtechnologies/ollama:0.16.2",
     "imageCaching": true,
     "priority": "high",
     "resources": {

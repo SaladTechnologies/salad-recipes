@@ -16,6 +16,8 @@ To switch models, update the environment variables on the container group page:
 - **GPU Layers** (`LLAMA_ARG_N_GPU_LAYERS`): use `auto` to offload all layers to GPU. Set a specific number if the model doesn't fit in VRAM.
 - **Context Size** (`LLAMA_ARG_CTX_SIZE`): larger values use more VRAM. Lower this if you hit out-of-memory errors.
 - **Parallel Slots** (`LLAMA_ARG_N_PARALLEL`): number of concurrent requests. More slots = more VRAM usage. Start with 1 and increase if needed.
+- **Startup sampling defaults** (`--temp`, `--top-p`, `--min-p`): configured by the recipe via `LLAMA_SERVER_TEMP`, `LLAMA_SERVER_TOP_P`, and `LLAMA_SERVER_MIN_P`.
+  These are default startup values and can be overridden per request with `temperature`, `top_p`, and `min_p` in your inference payload.
 - **Quantization**: smaller quantizations (Q4_K_M, Q4_K_S) use less VRAM and run faster, with some quality trade-off.
 
 ## Resources
