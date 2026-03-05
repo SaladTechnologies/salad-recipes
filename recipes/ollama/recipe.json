@@ -65,7 +65,7 @@
   },
   "form": {
     "title": "Ollama",
-    "description": "Run popular LLMs with [Ollama](https://ollama.com/), a free and open-source tool for running large language models easily on consumer GPUs.\nOllama supports many popular models.\n\n[See the full list here.](https://ollama.com/search)\n",
+    "description": "Run popular LLMs with [Ollama](https://ollama.com/), a free and open-source tool for running large language models easily on consumer GPUs.\nWorks with a wide range of tools such as OpenClaw, OpenCode, Claude Code, Codex, and more. \nOllama supports many popular models.\n\nA few examples include:\n\n[Qwen 3.5 family](https://ollama.com/library/qwen3.5)\n- `qwen3.5:9b`\n- `qwen3.5:4b`\n- `qwen3.5:2b`\n- `qwen3.5:0.8b`\n- `qwen3-coder-next:latest`\n\n[GLM models](https://ollama.com/library/glm-4.7-flash)\n- `glm-4.7-flash:latest`\n- `glm-4.7-flash:q4_K_M`\n\n[OpenAI’s open-weight models](https://ollama.com/library/gpt-oss)\n- `gpt-oss:20b`\n- `gpt-oss:120b`\n\n[Meta's Llama 3 family](https://ollama.com/library/llama3.2)\n- `llama3.2:1b`\n- `llama3.2:3b`\n\nAnd many more from various sources, including Hugging Face and Ollama community contributions. You can also deploy your own custom models with Ollama.\n[See the full list here.](https://ollama.com/search)\n",
     "type": "object",
     "required": ["container_group_name", "model_name"],
     "properties": {
