@@ -1,0 +1,41 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/enable_thinking",
+      "value": false
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/LLAMA_CHAT_TEMPLATE_KWARGS",
+      "value": "{\"enable_thinking\":false}"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/LLAMA_SERVER_TEMP",
+      "value": "0.7"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/LLAMA_SERVER_TOP_P",
+      "value": "0.80"
+    }
+  ]
+]

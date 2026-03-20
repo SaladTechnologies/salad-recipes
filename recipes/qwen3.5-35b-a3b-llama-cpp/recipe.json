@@ -1,0 +1,158 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# Qwen3.5-35B-A3B (Unsloth GGUF) with llama.cpp\n\nThis deployment runs `Qwen3.5-35B-A3B` with the official `llama.cpp` CUDA server and downloads the public GGUF weights automatically on startup.\n\n<Callout variation=\"note\">This recipe is public by default. If you want private access later, enable Container Gateway Authentication in the container group settings and include `Salad-Api-Key` in your requests.</Callout>\n\n## Access\n\n- <Link url={`https://${props.networking.dns}`}>Open the built-in llama.cpp UI</Link>\n- `GET https://${props.networking.dns}/health`\n- `GET https://${props.networking.dns}/v1/models`\n\n## Defaults\n\n- Model source: `unsloth/Qwen3.5-35B-A3B-GGUF:UD-Q4_K_XL`\n- Model alias: `qwen3.5-35b-a3b`\n- Startup profile: thinking enabled by default\n- Sampling defaults: `temperature 0.6`, `top_p 0.95`, `min_p 0.0`, `top_k 20`\n\n`temperature`, `top_p`, and `min_p` are startup defaults. They can still be overridden per request in your inference payload.\n\nTo control reasoning per request, add `/no_think` to disable thinking for that turn or `/think` to explicitly enable it.\n\n## Curl Example\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -d '{\n      \"model\": \"qwen3.5-35b-a3b\",\n      \"messages\": [\n        {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n        {\"role\": \"user\", \"content\": \"Write a short explanation of mixture-of-experts models.\"}\n      ],\n      \"max_tokens\": 256\n    }'\n`}</CodeBlock>\n\nIf you enable auth later, add `-H 'Salad-Api-Key: ${props.apiKey}'` to your requests.\n\n## Resources\n\n- [Unsloth Qwen3.5 model notes](https://unsloth.ai/docs/models/qwen3.5#qwen3.5-35b-a3b)\n- [llama.cpp Server Documentation](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/qwen3.5-35b-a3b-llama-cpp)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Qwen3.5-35B-A3B%20llama.cpp&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n",
+    "container": {
+      "command": [
+        "sh",
+        "-c",
+        "exec /app/llama-server --temp \"${LLAMA_SERVER_TEMP}\" --top-p \"${LLAMA_SERVER_TOP_P}\" --min-p \"${LLAMA_SERVER_MIN_P}\""
+      ],
+      "environmentVariables": {
+        "LLAMA_ARG_HOST": "::",
+        "LLAMA_ARG_PORT": "8080",
+        "LLAMA_ARG_HF_REPO": "unsloth/Qwen3.5-35B-A3B-GGUF:UD-Q4_K_XL",
+        "LLAMA_ARG_N_GPU_LAYERS": "auto",
+        "LLAMA_ARG_CTX_SIZE": "16384",
+        "LLAMA_ARG_N_PARALLEL": "1",
+        "LLAMA_ARG_ALIAS": "qwen3.5-35b-a3b",
+        "LLAMA_ARG_TOP_K": "20",
+        "LLAMA_ARG_JINJA": "on",
+        "LLAMA_ARG_FLASH_ATTN": "on",
+        "LLAMA_ARG_FIT": "on",
+        "LLAMA_ARG_MMPROJ_AUTO": "on",
+        "LLAMA_SERVER_TEMP": "0.6",
+        "LLAMA_SERVER_TOP_P": "0.95",
+        "LLAMA_SERVER_MIN_P": "0.0"
+      },
+      "image": "ghcr.io/ggml-org/llama.cpp:server-cuda",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 30720,
+        "gpuClasses": ["ed563892-aacd-40f5-80b7-90c9be6c759b"],
+        "storageAmount": 107374182400,
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 1,
+    "startupProbe": {
+      "failureThreshold": 20,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8080,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 1000,
+      "periodSeconds": 60,
+      "successThreshold": 1,
+      "timeoutSeconds": 5
+    },
+    "livenessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8080,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 1000,
+      "periodSeconds": 30,
+      "successThreshold": 1,
+      "timeoutSeconds": 5
+    },
+    "readinessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8080,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 2
+    },
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8080,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "Qwen3.5-35B-A3B (llama.cpp)",
+    "description": "Run `Qwen3.5-35B-A3B` with `llama.cpp` on a Salad GPU.\n\nThis recipe is designed to be easy for nontechnical users:\n\n- the model is already chosen for you\n- it downloads automatically on startup (might take about 20 minutes to start)\n- you can use it from the built-in web UI or connect tools such as OpenClaw and OpenCode\n\nIf you want the simple version: enter a container group name, deploy, and wait for the first startup to finish.\n\nIf you want more technical details, read below.\n\n<Callout variation=\"note\">The first startup downloads the model from Hugging Face, so the initial cold start can take several minutes before the deployment becomes ready.</Callout>\n\nWhat is already configured for you:\n\n- the model download source\n- GPU offload and context settings for a single consumer GPU\n- a Qwen thinking toggle in the form, enabled by default\n- public access by default, with the built-in llama.cpp web UI available at the deployment URL\n\nIf you later want private access, you can enable Container Gateway Authentication in the container group settings after deployment.\n\nThinking is enabled by default. When it is enabled, you can control it per request by adding `/no_think` to disable reasoning for that turn or `/think` to explicitly enable it.\n\nIf you disable thinking in the form, the recipe sets Qwen's hard switch and `/think` will no longer override it.\n\nIf you want different llama.cpp settings later, you can still change the environment variables in Advanced Configuration after deployment.\n\nHelpful references:\n\n- [Unsloth Qwen3.5 model notes](https://unsloth.ai/docs/models/qwen3.5#qwen3.5-35b-a3b)\n- [llama.cpp server docs](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n",
+    "type": "object",
+    "required": ["container_group_name"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "enable_thinking": {
+        "title": "Enable Thinking / Reasoning",
+        "description": "When enabled, Qwen uses its reasoning mode by default. When disabled, the recipe forces non-thinking mode for faster, shorter responses.",
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/enable_thinking",
+        "value": false
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/LLAMA_CHAT_TEMPLATE_KWARGS",
+        "value": "{\"enable_thinking\":false}"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/LLAMA_SERVER_TEMP",
+        "value": "0.7"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/LLAMA_SERVER_TOP_P",
+        "value": "0.80"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/qwen3.5-35b-a3b-llama-cpp",
+  "short_description": "Serve Qwen3.5-35B-A3B with llama.cpp on a Salad GPU.",
+  "workload_types": ["LLM"]
+}

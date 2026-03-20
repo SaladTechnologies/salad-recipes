@@ -1,0 +1,46 @@
+# Qwen3.5-35B-A3B (Unsloth GGUF) with llama.cpp
+
+This deployment runs `Qwen3.5-35B-A3B` with the official `llama.cpp` CUDA server and downloads the public GGUF weights automatically on startup.
+
+<Callout variation="note">This recipe is public by default. If you want private access later, enable Container Gateway Authentication in the container group settings and include `Salad-Api-Key` in your requests.</Callout>
+
+## Access
+
+- <Link url={`https://${props.networking.dns}`}>Open the built-in llama.cpp UI</Link>
+- `GET https://${props.networking.dns}/health`
+- `GET https://${props.networking.dns}/v1/models`
+
+## Defaults
+
+- Model source: `unsloth/Qwen3.5-35B-A3B-GGUF:UD-Q4_K_XL`
+- Model alias: `qwen3.5-35b-a3b`
+- Startup profile: thinking enabled by default
+- Sampling defaults: `temperature 0.6`, `top_p 0.95`, `min_p 0.0`, `top_k 20`
+
+`temperature`, `top_p`, and `min_p` are startup defaults. They can still be overridden per request in your inference payload.
+
+To control reasoning per request, add `/no_think` to disable thinking for that turn or `/think` to explicitly enable it.
+
+## Curl Example
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/chat/completions \\
+    -X POST \\
+    -H 'Content-Type: application/json' \\
+    -d '{
+      "model": "qwen3.5-35b-a3b",
+      "messages": [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Write a short explanation of mixture-of-experts models."}
+      ],
+      "max_tokens": 256
+    }'
+`}</CodeBlock>
+
+If you enable auth later, add `-H 'Salad-Api-Key: ${props.apiKey}'` to your requests.
+
+## Resources
+
+- [Unsloth Qwen3.5 model notes](https://unsloth.ai/docs/models/qwen3.5#qwen3.5-35b-a3b)
+- [llama.cpp Server Documentation](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/qwen3.5-35b-a3b-llama-cpp)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Qwen3.5-35B-A3B%20llama.cpp&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>
