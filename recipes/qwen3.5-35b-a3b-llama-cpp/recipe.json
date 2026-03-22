@@ -13,7 +13,7 @@
         "LLAMA_ARG_PORT": "8080",
         "LLAMA_ARG_HF_REPO": "unsloth/Qwen3.5-35B-A3B-GGUF:UD-Q4_K_XL",
         "LLAMA_ARG_N_GPU_LAYERS": "auto",
-        "LLAMA_ARG_CTX_SIZE": "16384",
+        "LLAMA_ARG_CTX_SIZE": "262144",
         "LLAMA_ARG_N_PARALLEL": "1",
         "LLAMA_ARG_ALIAS": "qwen3.5-35b-a3b",
         "LLAMA_ARG_TOP_K": "20",
