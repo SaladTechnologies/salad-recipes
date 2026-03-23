@@ -1,7 +1,7 @@
 {
   "container_template": {
     "name": "",
-    "readme": "# Qwen3.5-35B-A3B (Unsloth GGUF) with llama.cpp\n\nThis deployment runs `Qwen3.5-35B-A3B` with the official `llama.cpp` CUDA server and downloads the public GGUF weights automatically on startup.\n\n<Callout variation=\"note\">This recipe is public by default. If you want private access later, enable Container Gateway Authentication in the container group settings and include `Salad-Api-Key` in your requests.</Callout>\n\n## Access\n\n- <Link url={`https://${props.networking.dns}`}>Open the built-in llama.cpp UI</Link>\n- `GET https://${props.networking.dns}/health`\n- `GET https://${props.networking.dns}/v1/models`\n\n## Defaults\n\n- Model source: `unsloth/Qwen3.5-35B-A3B-GGUF:UD-Q4_K_XL`\n- Model alias: `qwen3.5-35b-a3b`\n- Startup profile: thinking enabled by default\n- Sampling defaults: `temperature 0.6`, `top_p 0.95`, `min_p 0.0`, `top_k 20`\n\n`temperature`, `top_p`, and `min_p` are startup defaults. They can still be overridden per request in your inference payload.\n\nTo control reasoning per request, add `/no_think` to disable thinking for that turn or `/think` to explicitly enable it.\n\n## Curl Example\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -d '{\n      \"model\": \"qwen3.5-35b-a3b\",\n      \"messages\": [\n        {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n        {\"role\": \"user\", \"content\": \"Write a short explanation of mixture-of-experts models.\"}\n      ],\n      \"max_tokens\": 256\n    }'\n`}</CodeBlock>\n\nIf you enable auth later, add `-H 'Salad-Api-Key: ${props.apiKey}'` to your requests.\n\n## Resources\n\n- [Unsloth Qwen3.5 model notes](https://unsloth.ai/docs/models/qwen3.5#qwen3.5-35b-a3b)\n- [llama.cpp Server Documentation](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/qwen3.5-35b-a3b-llama-cpp)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Qwen3.5-35B-A3B%20llama.cpp&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n",
+    "readme": "# Qwen3.5-35B-A3B (Unsloth GGUF) with llama.cpp\n\nThis deployment runs `Qwen3.5-35B-A3B` with the official `llama.cpp` CUDA server, downloads the public GGUF weights automatically on startup, and exposes an OpenAI-compatible API for tools such as OpenClaw, OpenCode, and other compatible clients.\n\n<Callout variation=\"note\">This recipe is public by default. If you enabled Container Gateway Authentication during deployment, include `Salad-Api-Key` in your requests.</Callout>\n\n## Use With OpenClaw\n\nIf you want to connect this deployment to OpenClaw, follow this guide:\n\n- [Use OpenClaw with a Salad-hosted LLM](https://docs.salad.com/container-engine/how-to-guides/openclaw/openclaw-ollama-salad-hosted-telegram)\n\n## Access\n\n- <Link url={`https://${props.networking.dns}`}>Open the built-in llama.cpp UI</Link>\n- <Link url={`https://${props.networking.dns}/health`}>Health Check</Link>\n- <Link url={`https://${props.networking.dns}/v1/models`}>List Models</Link>\n\n## Defaults\n\n- Model source: `unsloth/Qwen3.5-35B-A3B-GGUF:UD-Q4_K_XL`\n- Model alias: `qwen3.5-35b-a3b`\n- Startup profile: thinking enabled by default\n- Sampling defaults: `temperature 0.6`, `top_p 0.95`, `min_p 0.0`, `top_k 20`\n\n`temperature`, `top_p`, and `min_p` are startup defaults. They can still be overridden per request in your inference payload.\n\nTo control reasoning per request, add `/no_think` to disable thinking for that turn or `/think` to explicitly enable it.\n\n## Curl Example\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n    -X POST \\\\\n    -H 'Content-Type: application/json' \\\\\n    -d '{\n      \"model\": \"qwen3.5-35b-a3b\",\n      \"messages\": [\n        {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n        {\"role\": \"user\", \"content\": \"Write a short explanation of mixture-of-experts models.\"}\n      ],\n      \"max_tokens\": 256\n    }'\n`}</CodeBlock>\n\nIf you enabled Container Gateway Authentication during deployment, add `-H 'Salad-Api-Key: ${props.apiKey}'` to your requests.\n\n## Resources\n\n- [Use OpenClaw with a Salad-hosted LLM](https://docs.salad.com/container-engine/how-to-guides/openclaw/openclaw-ollama-salad-hosted-telegram)\n- [Unsloth Qwen3.5 model notes](https://unsloth.ai/docs/models/qwen3.5#qwen3.5-35b-a3b)\n- [llama.cpp Server Documentation](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/qwen3.5-35b-a3b-llama-cpp)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Qwen3.5-35B-A3B%20llama.cpp&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n",
     "container": {
       "command": [
         "sh",
@@ -90,9 +90,9 @@
   },
   "form": {
     "title": "Qwen3.5-35B-A3B (llama.cpp)",
-    "description": "Run `Qwen3.5-35B-A3B` with `llama.cpp` on a Salad GPU.\n\nThis recipe is designed to be easy for nontechnical users:\n\n- the model is already chosen for you\n- it downloads automatically on startup (might take about 20 minutes to start)\n- you can use it from the built-in web UI or connect tools such as OpenClaw and OpenCode\n\nIf you want the simple version: enter a container group name, deploy, and wait for the first startup to finish.\n\nIf you want more technical details, read below.\n\n<Callout variation=\"note\">The first startup downloads the model from Hugging Face, so the initial cold start can take several minutes before the deployment becomes ready.</Callout>\n\nWhat is already configured for you:\n\n- the model download source\n- GPU offload and context settings for a single consumer GPU\n- a Qwen thinking toggle in the form, enabled by default\n- public access by default, with the built-in llama.cpp web UI available at the deployment URL\n\nIf you later want private access, you can enable Container Gateway Authentication in the container group settings after deployment.\n\nThinking is enabled by default. When it is enabled, you can control it per request by adding `/no_think` to disable reasoning for that turn or `/think` to explicitly enable it.\n\nIf you disable thinking in the form, the recipe sets Qwen's hard switch and `/think` will no longer override it.\n\nIf you want different llama.cpp settings later, you can still change the environment variables in Advanced Configuration after deployment.\n\nHelpful references:\n\n- [Unsloth Qwen3.5 model notes](https://unsloth.ai/docs/models/qwen3.5#qwen3.5-35b-a3b)\n- [llama.cpp server docs](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n",
+    "description": "Run `Qwen3.5-35B-A3B` with `llama.cpp` on a Salad GPU as an OpenAI-compatible API for a wide variety of tools.\n\nThis recipe is designed to be easy for nontechnical users:\n\n- the model is already chosen for you\n- it downloads automatically on startup (might take about 20 minutes to start)\n- you can use it from the built-in web UI or connect tools such as OpenClaw and OpenCode through its OpenAI-compatible API\n\nIf you want the simple version: enter a container group name, deploy, and wait for startup to finish.\n\nIf you want requests to require a SaladCloud API Key, enable Container Gateway Authentication in the deployment form.\n\nThinking is enabled by default. When it is enabled, you can control it per request by adding `/no_think` to disable reasoning for that turn or `/think` to explicitly enable it.\n\nIf you disable thinking in the form, the recipe sets Qwen's hard switch and `/think` will no longer override it.\n\nIf you want different llama.cpp settings later, you can still change the environment variables in Advanced Configuration after deployment.\n\nHelpful references:\n\n- [Unsloth Qwen3.5 model notes](https://unsloth.ai/docs/models/qwen3.5#qwen3.5-35b-a3b)\n- [llama.cpp server docs](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)\n",
     "type": "object",
-    "required": ["container_group_name"],
+    "required": ["container_group_name", "networking_auth"],
     "properties": {
       "container_group_name": {
         "title": "Container Group Name",
@@ -107,6 +107,12 @@
         "description": "When enabled, Qwen uses its reasoning mode by default. When disabled, the recipe forces non-thinking mode for faster, shorter responses.",
         "type": "boolean",
         "default": true
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+        "type": "boolean",
+        "default": false
       }
     }
   },
@@ -126,6 +132,11 @@
         "op": "copy",
         "from": "/input/container_group_name",
         "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
       }
     ],
     [
@@ -153,6 +164,6 @@
   ],
   "ui": {},
   "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/qwen3.5-35b-a3b-llama-cpp",
-  "short_description": "Serve Qwen3.5-35B-A3B with llama.cpp on a Salad GPU.",
+  "short_description": "Serve Qwen3.5-35B-A3B with llama.cpp as an OpenAI-compatible API for OpenClaw, OpenCode, and other tools.",
   "workload_types": ["LLM"]
 }

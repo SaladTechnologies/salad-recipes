@@ -3,7 +3,8 @@
   "description": "$replace",
   "type": "object",
   "required": [
-    "container_group_name"
+    "container_group_name",
+    "networking_auth"
   ],
   "properties": {
     "container_group_name": {
@@ -19,6 +20,12 @@
       "description": "When enabled, Qwen uses its reasoning mode by default. When disabled, the recipe forces non-thinking mode for faster, shorter responses.",
       "type": "boolean",
       "default": true
+    },
+    "networking_auth": {
+      "title": "Require Container Gateway Authentication",
+      "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+      "type": "boolean",
+      "default": false
     }
   }
 }

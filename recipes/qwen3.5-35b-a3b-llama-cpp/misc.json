@@ -1,7 +1,7 @@
 {
   "ui": {},
   "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/qwen3.5-35b-a3b-llama-cpp",
-  "short_description": "Serve Qwen3.5-35B-A3B with llama.cpp on a Salad GPU.",
+  "short_description": "Serve Qwen3.5-35B-A3B with llama.cpp as an OpenAI-compatible API for OpenClaw, OpenCode, and other tools.",
   "workload_types": [
     "LLM"
   ]

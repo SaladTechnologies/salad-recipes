@@ -14,6 +14,11 @@
       "op": "copy",
       "from": "/input/container_group_name",
       "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/networking_auth",
+      "path": "/output/networking/auth"
     }
   ],
   [
