@@ -1,5 +1,5 @@
 {
-  "title": "Qwen3.5-35B-A3B (llama.cpp)",
+  "title": "Qwen3.5-9B (llama.cpp)",
   "description": "$replace",
   "type": "object",
   "required": [

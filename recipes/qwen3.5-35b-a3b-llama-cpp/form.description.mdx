@@ -1,25 +1,14 @@
-Run `Qwen3.5-35B-A3B` with `llama.cpp` on a Salad GPU.
+Run `Qwen3.5-35B-A3B` with `llama.cpp` on a Salad GPU as an OpenAI-compatible API for a wide variety of tools.
 
 This recipe is designed to be easy for nontechnical users:
 
 - the model is already chosen for you
 - it downloads automatically on startup (might take about 20 minutes to start)
-- you can use it from the built-in web UI or connect tools such as OpenClaw and OpenCode
+- you can use it from the built-in web UI, use through its OpenAI-compatible API, or connect tools such as OpenClaw and OpenCode
 
-If you want the simple version: enter a container group name, deploy, and wait for the first startup to finish.
+If you want the simple version: enter a container group name, deploy, and wait for startup to finish.
 
-If you want more technical details, read below.
-
-<Callout variation="note">The first startup downloads the model from Hugging Face, so the initial cold start can take several minutes before the deployment becomes ready.</Callout>
-
-What is already configured for you:
-
-- the model download source
-- GPU offload and context settings for a single consumer GPU
-- a Qwen thinking toggle in the form, enabled by default
-- public access by default, with the built-in llama.cpp web UI available at the deployment URL
-
-If you later want private access, you can enable Container Gateway Authentication in the container group settings after deployment.
+If you want requests to require a SaladCloud API Key, enable Container Gateway Authentication in the deployment form.
 
 Thinking is enabled by default. When it is enabled, you can control it per request by adding `/no_think` to disable reasoning for that turn or `/think` to explicitly enable it.
 
