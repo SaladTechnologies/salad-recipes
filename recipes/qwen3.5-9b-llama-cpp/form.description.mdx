@@ -1,0 +1,20 @@
+Run `Qwen3.5-9B` with `llama.cpp` on a Salad GPU as an OpenAI-compatible API for a wide variety of tools.
+
+This recipe is designed to be easy for nontechnical users:
+
+- the model is already chosen for you
+- it downloads automatically on startup
+- you can use it from the built-in web UI, use through its OpenAI-compatible API, or connect tools such as OpenClaw and OpenCode
+
+If you want the simple version: enter a container group name, deploy, and wait for startup to finish.
+
+If you want requests to require a SaladCloud API Key, enable Container Gateway Authentication in the deployment form.
+
+Thinking is enabled by default. If you turn it off in the form, the recipe forces non-thinking mode for faster, shorter responses.
+
+Technical note: if you want to switch this recipe to a different model later, change `LLAMA_ARG_HF_REPO` in Advanced Configuration. You can also use `LLAMA_ARG_MODEL_URL` if you want to point llama.cpp at a specific GGUF file.
+
+Helpful references:
+
+- [Unsloth Qwen3.5 small model notes](https://unsloth.ai/docs/models/qwen3.5#qwen3.5-small-0.8b-2b-4b-9b)
+- [llama.cpp server docs](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)
