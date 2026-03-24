@@ -1,0 +1,104 @@
+{
+  "title": "SGLang",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "model_id",
+    "networking_auth"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "model_id": {
+      "title": "Model",
+      "type": "string",
+      "description": "Required* Hugging Face model ID to load with SGLang (`--model-path`).",
+      "default": "Qwen/Qwen3.5-9B"
+    },
+    "served_model_name": {
+      "title": "Served Model Name",
+      "type": "string",
+      "description": "Optional. Override the model name returned by `/v1/models`. Leave blank to use the model ID.",
+      "default": ""
+    },
+    "hf_token": {
+      "title": "Hugging Face Token",
+      "description": "Optional. Required only for private or gated Hugging Face models.",
+      "type": "string",
+      "default": ""
+    },
+    "context_length": {
+      "title": "Context Length",
+      "description": "Optional `--context-length`. Leave blank to let SGLang use the model's default context size.",
+      "type": "string",
+      "default": "32768"
+    },
+    "mem_fraction_static": {
+      "title": "Memory Fraction Static",
+      "description": "Fraction of GPU memory reserved for model weights and KV cache (`--mem-fraction-static`). Lower this if you see out-of-memory errors.",
+      "type": "string",
+      "default": "0.8"
+    },
+    "load_format": {
+      "title": "Load Format",
+      "description": "SGLang model loading format (`--load-format`). Enter any SGLang-supported value.",
+      "type": "string",
+      "default": "auto"
+    },
+    "sampling_defaults": {
+      "title": "Sampling Defaults Source",
+      "description": "Sampling defaults source (`--sampling-defaults`). Enter any SGLang-supported value.",
+      "type": "string",
+      "default": "model"
+    },
+    "attention_backend": {
+      "title": "Attention Backend",
+      "description": "Optional `--attention-backend`. Enter any SGLang-supported backend name, or leave blank to let SGLang choose.",
+      "type": "string",
+      "default": "triton"
+    },
+    "reasoning_parser": {
+      "title": "Reasoning Parser",
+      "description": "Optional `--reasoning-parser`. Enter any SGLang-supported parser name, or leave blank.",
+      "type": "string",
+      "default": "qwen3"
+    },
+    "tool_call_parser": {
+      "title": "Tool Call Parser",
+      "description": "Optional `--tool-call-parser`. Enter any SGLang-supported parser name, or leave blank.",
+      "type": "string",
+      "default": "qwen3_coder"
+    },
+    "hf_chat_template_name": {
+      "title": "HF Chat Template Name",
+      "description": "Optional `--hf-chat-template-name` for tokenizers that expose multiple named chat templates.",
+      "type": "string",
+      "default": ""
+    },
+    "trust_remote_code": {
+      "title": "Trust Remote Code",
+      "description": "Enable `--trust-remote-code` for Hugging Face repos that require custom model code.",
+      "type": "boolean",
+      "default": false
+    },
+    "disable_cuda_graph": {
+      "title": "Disable CUDA Graph",
+      "description": "Disable CUDA graph capture (`--disable-cuda-graph`). This can improve startup reliability on some consumer GPUs.",
+      "type": "boolean",
+      "default": true
+    },
+    "networking_auth": {
+      "title": "Require Container Gateway Authentication",
+      "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+      "type": "boolean",
+      "default": true
+    }
+  }
+}
