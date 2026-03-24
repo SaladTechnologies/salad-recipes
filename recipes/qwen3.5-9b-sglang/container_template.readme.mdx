@@ -1,0 +1,52 @@
+# Qwen3.5-9B with SGLang
+
+This deployment runs `Qwen3.5-9B` with the official `SGLang` runtime and exposes an OpenAI-compatible API for tools such as OpenClaw, OpenCode, and other compatible clients.
+
+<Callout variation="note">This recipe is public by default. If you enabled Container Gateway Authentication during deployment, include `Salad-Api-Key` in your requests.</Callout>
+
+## Use With OpenClaw
+
+If you want to connect this deployment to OpenClaw, follow this guide:
+
+- [Use OpenClaw with a Salad-hosted LLM](https://docs.salad.com/container-engine/how-to-guides/openclaw/openclaw-ollama-salad-hosted-telegram)
+
+## Access
+
+- <Link url={`https://${props.networking.dns}/health`}>Health Check</Link>
+- <Link url={`https://${props.networking.dns}/v1/models`}>List Models</Link>
+
+
+This recipe follows the official Qwen SGLang launch pattern and keeps Qwen thinking enabled by default.
+
+To disable thinking for a specific request, include this in the JSON body:
+
+<CodeBlock language="json">{`"chat_template_kwargs": {"enable_thinking": false}`}</CodeBlock>
+
+## Curl Example
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/chat/completions \\
+  -X POST \\
+  -H 'Content-Type: application/json' \\
+  -d '{
+    "model": "qwen3.5-9b",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant."},
+      {"role": "user", "content": "Write a short explanation of mixture-of-experts models."}
+    ],
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "max_tokens": 512
+  }'
+`}</CodeBlock>
+
+If you enabled Container Gateway Authentication during deployment, add `-H 'Salad-Api-Key: your_salad_api_key'` to your requests.
+
+## Resources
+
+- [Use OpenClaw with a Salad-hosted LLM](https://docs.salad.com/container-engine/how-to-guides/openclaw/openclaw-ollama-salad-hosted-telegram)
+- [Qwen3.5-9B model card](https://huggingface.co/Qwen/Qwen3.5-9B)
+- [Qwen SGLang deployment docs](https://qwen.readthedocs.io/en/v3.0/deployment/sglang.html)
+- [SGLang server arguments](https://docs.sglang.io/advanced_features/server_arguments.html)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/qwen3.5-9b-sglang)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Qwen3.5-9B%20SGLang&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>

@@ -1,0 +1,42 @@
+Run large language models with [SGLang](https://docs.sglang.io/), a high-performance inference engine with an OpenAI-compatible API and strong support for reasoning models, tool calling, and high-throughput serving.
+
+<Callout variation="warning">Ensure your use is permissible under whatever license applies to the model you deploy.</Callout>
+
+This recipe is aimed at a more technical audience. All model and runtime settings used by this recipe are exposed in the deployment form.
+
+Fields like `Load Format`, `Sampling Defaults Source`, `Reasoning Parser`, and `Tool Call Parser` accept raw SGLang argument values. 
+
+Example models you can use:
+
+- `Qwen/Qwen3.5-9B` with `Reasoning Parser = qwen3` and `Tool Call Parser = qwen3_coder` (default)
+- `Qwen/Qwen2.5-7B-Instruct` with `Tool Call Parser = qwen25`
+- `meta-llama/Llama-3.1-8B-Instruct` with `Tool Call Parser = llama3`
+- `deepseek-ai/DeepSeek-R1-Distill-Qwen-7B` with `Reasoning Parser = deepseek-r1`
+- `mistralai/Mistral-7B-Instruct-v0.3` with `Tool Call Parser = mistral`
+
+Examples of SGLang option values you can enter:
+
+- `Load Format`: `auto`, `safetensors`, `gguf`, `bitsandbytes`
+- `Sampling Defaults Source`: `model`, `openai`
+- `Attention Backend`: `triton`, `trtllm_mha`
+- `Reasoning Parser`: `qwen3`, `deepseek-r1`, `gpt-oss`
+- `Tool Call Parser`: `qwen3_coder`, `qwen25`, `llama3`, `mistral`
+
+If a model is private or gated on Hugging Face, provide `HF_TOKEN`.
+
+Notes:
+
+- `Served Model Name` is optional. If left blank, SGLang will use the model ID returned by `/v1/models`.
+- `Context Length` can be left blank to use the model's own configured max context.
+- The default `Context Length` is `32768`, which is a more practical startup default than the model maximum on Salad consumer GPUs.
+- Parser settings are model-specific. Leave them blank if your model does not need a matching parser.
+- `Attention Backend = triton` and `Disable CUDA Graph = true` are safer defaults for hybrid Qwen models on newer consumer GPUs.
+- Gateway authentication is enabled by default in this recipe.
+
+For additional SGLang options not exposed by the form, use Advanced Configuration after deployment.
+
+Helpful references:
+
+- [SGLang server arguments](https://docs.sglang.io/advanced_features/server_arguments.html)
+- [SGLang OpenAI-compatible API docs](https://docs.sglang.io/basic_usage/openai_api.html)
+- [SGLang supported models](https://docs.sglang.io/supported_models/generative_models.html)

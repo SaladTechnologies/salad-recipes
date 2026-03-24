@@ -1,0 +1,131 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# Qwen3.5-9B with SGLang\n\nThis deployment runs `Qwen3.5-9B` with the official `SGLang` runtime and exposes an OpenAI-compatible API for tools such as OpenClaw, OpenCode, and other compatible clients.\n\n<Callout variation=\"note\">This recipe is public by default. If you enabled Container Gateway Authentication during deployment, include `Salad-Api-Key` in your requests.</Callout>\n\n## Use With OpenClaw\n\nIf you want to connect this deployment to OpenClaw, follow this guide:\n\n- [Use OpenClaw with a Salad-hosted LLM](https://docs.salad.com/container-engine/how-to-guides/openclaw/openclaw-ollama-salad-hosted-telegram)\n\n## Access\n\n- <Link url={`https://${props.networking.dns}/health`}>Health Check</Link>\n- <Link url={`https://${props.networking.dns}/v1/models`}>List Models</Link>\n\n\nThis recipe follows the official Qwen SGLang launch pattern and keeps Qwen thinking enabled by default.\n\nTo disable thinking for a specific request, include this in the JSON body:\n\n<CodeBlock language=\"json\">{`\"chat_template_kwargs\": {\"enable_thinking\": false}`}</CodeBlock>\n\n## Curl Example\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n  -X POST \\\\\n  -H 'Content-Type: application/json' \\\\\n  -d '{\n    \"model\": \"qwen3.5-9b\",\n    \"messages\": [\n      {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n      {\"role\": \"user\", \"content\": \"Write a short explanation of mixture-of-experts models.\"}\n    ],\n    \"temperature\": 0.6,\n    \"top_p\": 0.95,\n    \"top_k\": 20,\n    \"max_tokens\": 512\n  }'\n`}</CodeBlock>\n\nIf you enabled Container Gateway Authentication during deployment, add `-H 'Salad-Api-Key: your_salad_api_key'` to your requests.\n\n## Resources\n\n- [Use OpenClaw with a Salad-hosted LLM](https://docs.salad.com/container-engine/how-to-guides/openclaw/openclaw-ollama-salad-hosted-telegram)\n- [Qwen3.5-9B model card](https://huggingface.co/Qwen/Qwen3.5-9B)\n- [Qwen SGLang deployment docs](https://qwen.readthedocs.io/en/v3.0/deployment/sglang.html)\n- [SGLang server arguments](https://docs.sglang.io/advanced_features/server_arguments.html)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/qwen3.5-9b-sglang)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Qwen3.5-9B%20SGLang&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n",
+    "container": {
+      "command": [
+        "sh",
+        "-c",
+        "exec python3 -m sglang.launch_server --model-path \"${SGLANG_MODEL_PATH}\" --served-model-name \"${SGLANG_SERVED_MODEL_NAME}\" --host :: --port 8000 --tp-size \"${SGLANG_TP_SIZE}\" --mem-fraction-static \"${SGLANG_MEM_FRACTION_STATIC}\" --context-length \"${SGLANG_CONTEXT_LENGTH}\" --attention-backend triton --reasoning-parser qwen3 --tool-call-parser qwen3_coder"
+      ],
+      "environmentVariables": {
+        "SGLANG_MODEL_PATH": "Qwen/Qwen3.5-9B",
+        "SGLANG_SERVED_MODEL_NAME": "qwen3.5-9b",
+        "SGLANG_TP_SIZE": "1",
+        "SGLANG_MEM_FRACTION_STATIC": "0.8",
+        "SGLANG_CONTEXT_LENGTH": "131072"
+      },
+      "image": "lmsysorg/sglang:latest-runtime",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 30720,
+        "gpuClasses": ["851399fb-7329-4195-a042-d6514b28cf33"],
+        "storageAmount": 53687091200,
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 1,
+    "startupProbe": {
+      "failureThreshold": 20,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 600,
+      "periodSeconds": 60,
+      "successThreshold": 1,
+      "timeoutSeconds": 5
+    },
+    "livenessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 600,
+      "periodSeconds": 30,
+      "successThreshold": 1,
+      "timeoutSeconds": 5
+    },
+    "readinessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 2
+    },
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "Qwen3.5-9B (SGLang)",
+    "description": "Run `Qwen3.5-9B` with `SGLang` on a Salad GPU as an OpenAI-compatible API for a wide variety of tools.\n\nThis recipe is designed to be easy easy to use:\n\n- the model is already chosen for you\n- it downloads automatically on startup\n- server is configured with recommended settings for the model\n- you can connect tools such as OpenClaw, OpenCode, and other OpenAI-compatible clients\n\nSimply enter a container group name, choose whether to require a SaladCloud API Key, deploy, and wait for startup to finish.\n\nThinking is enabled by default. If you want a direct response for a specific request, send `chat_template_kwargs: {\"enable_thinking\": false}` in that request body.\n\nThis recipe follows the official Qwen SGLang launch pattern for `Qwen/Qwen3.5-9B`, including `--reasoning-parser qwen3`. It also enables `--tool-call-parser qwen3_coder` so the endpoint is ready for tool-using clients and agent frameworks.\n\nTechnical note: if you want to change the model or runtime settings later, edit these environment variables in Advanced Configuration:\n\n- `SGLANG_MODEL_PATH`\n- `SGLANG_SERVED_MODEL_NAME`\n- `SGLANG_CONTEXT_LENGTH`\n- `SGLANG_MEM_FRACTION_STATIC`\n- `SGLANG_TP_SIZE`\n\nHelpful references:\n\n- [Qwen3.5-9B model card](https://huggingface.co/Qwen/Qwen3.5-9B)\n- [Qwen SGLang deployment docs](https://qwen.readthedocs.io/en/v3.0/deployment/sglang.html)\n- [SGLang server arguments](https://docs.sglang.io/advanced_features/server_arguments.html)\n",
+    "type": "object",
+    "required": ["container_group_name", "networking_auth"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+        "type": "boolean",
+        "default": false
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/qwen3.5-9b-sglang",
+  "short_description": "Serve Qwen3.5-9B with SGLang as an OpenAI-compatible API for OpenClaw, OpenCode, and other tools.",
+  "workload_types": ["LLM"]
+}

@@ -1,0 +1,28 @@
+Run `Qwen3.5-9B` with `SGLang` on a Salad GPU as an OpenAI-compatible API for a wide variety of tools.
+
+This recipe is designed to be easy easy to use:
+
+- the model is already chosen for you
+- it downloads automatically on startup
+- server is configured with recommended settings for the model
+- you can connect tools such as OpenClaw, OpenCode, and other OpenAI-compatible clients
+
+Simply enter a container group name, choose whether to require a SaladCloud API Key, deploy, and wait for startup to finish.
+
+Thinking is enabled by default. If you want a direct response for a specific request, send `chat_template_kwargs: {"enable_thinking": false}` in that request body.
+
+This recipe follows the official Qwen SGLang launch pattern for `Qwen/Qwen3.5-9B`, including `--reasoning-parser qwen3`. It also enables `--tool-call-parser qwen3_coder` so the endpoint is ready for tool-using clients and agent frameworks.
+
+Technical note: if you want to change the model or runtime settings later, edit these environment variables in Advanced Configuration:
+
+- `SGLANG_MODEL_PATH`
+- `SGLANG_SERVED_MODEL_NAME`
+- `SGLANG_CONTEXT_LENGTH`
+- `SGLANG_MEM_FRACTION_STATIC`
+- `SGLANG_TP_SIZE`
+
+Helpful references:
+
+- [Qwen3.5-9B model card](https://huggingface.co/Qwen/Qwen3.5-9B)
+- [Qwen SGLang deployment docs](https://qwen.readthedocs.io/en/v3.0/deployment/sglang.html)
+- [SGLang server arguments](https://docs.sglang.io/advanced_features/server_arguments.html)

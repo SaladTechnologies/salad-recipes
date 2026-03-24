@@ -1,0 +1,317 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "# SGLang\n\nServe Hugging Face models with the official `SGLang` runtime on SaladCloud GPUs.\n\nThis container exposes an OpenAI-compatible API for chat completions and related clients. It does not include a built-in web UI.\n\n## Access\n\n- <Link url={`https://${props.networking.dns}/health`}>Health Check</Link>\n- <Link url={`https://${props.networking.dns}/v1/models`}>List Models</Link>\n\n## Notes\n\n- Startup can take several minutes because models are downloaded from Hugging Face at container startup.\n- Parser settings are model-specific. If your model does not support the configured parser, update the container group settings and redeploy.\n- On Blackwell GPUs, hybrid Qwen models may require `Attention Backend = triton`.\n- To use a direct response instead of a reasoning response for supported models, include `chat_template_kwargs: {\"enable_thinking\": false}` in the request body.\n- The default context in this recipe is `32768`, but larger models or weaker GPUs may still need lower values.\n\n<Callout variation=\"note\">If your model is private or gated on Hugging Face, set `HF_TOKEN` in the container group environment variables.</Callout>\n\n## Curl Example\n\n<Callout variation=\"note\">Omit the `Salad-Api-Key` header if auth is disabled.</Callout>\n\n<CodeBlock language=\"bash\">{`curl https://${props.networking.dns}/v1/chat/completions \\\\\n  -X POST \\\\\n  -H 'Content-Type: application/json' \\\\\n  -H 'Salad-Api-Key: ${props.apiKey}' \\\\\n  -d '{\\n    \"model\": \"${props.container.environmentVariables.SGLANG_SERVED_MODEL_NAME || props.container.environmentVariables.SGLANG_MODEL_ID}\",\\n    \"messages\": [\\n      {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\\n      {\"role\": \"user\", \"content\": \"Explain how tensor parallelism affects inference serving.\"}\\n    ],\\n    \"max_tokens\": 256\\n  }'\n`}</CodeBlock>\n\n## Resources\n\n- [SGLang Documentation](https://docs.sglang.io/)\n- [SGLang server arguments](https://docs.sglang.io/advanced_features/server_arguments.html)\n- [SGLang OpenAI-compatible API docs](https://docs.sglang.io/basic_usage/openai_api.html)\n- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/sglang)\n- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=SGLang%20recipe&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>\n",
+    "container": {
+      "command": [
+        "sh",
+        "-c",
+        "set -eu; set -- python3 -m sglang.launch_server --model-path \"${SGLANG_MODEL_ID}\" --host '::' --port 8000 --tp-size \"${SGLANG_TP_SIZE}\" --mem-fraction-static \"${SGLANG_MEM_FRACTION_STATIC}\" --load-format \"${SGLANG_LOAD_FORMAT}\" --sampling-defaults \"${SGLANG_SAMPLING_DEFAULTS}\"; [ -n \"${SGLANG_SERVED_MODEL_NAME:-}\" ] && set -- \"$@\" --served-model-name \"$SGLANG_SERVED_MODEL_NAME\"; [ -n \"${SGLANG_CONTEXT_LENGTH:-}\" ] && set -- \"$@\" --context-length \"$SGLANG_CONTEXT_LENGTH\"; [ -n \"${SGLANG_ATTENTION_BACKEND:-}\" ] && set -- \"$@\" --attention-backend \"$SGLANG_ATTENTION_BACKEND\"; [ -n \"${SGLANG_REASONING_PARSER:-}\" ] && set -- \"$@\" --reasoning-parser \"$SGLANG_REASONING_PARSER\"; [ -n \"${SGLANG_TOOL_CALL_PARSER:-}\" ] && set -- \"$@\" --tool-call-parser \"$SGLANG_TOOL_CALL_PARSER\"; [ -n \"${SGLANG_HF_CHAT_TEMPLATE_NAME:-}\" ] && set -- \"$@\" --hf-chat-template-name \"$SGLANG_HF_CHAT_TEMPLATE_NAME\"; [ \"${SGLANG_TRUST_REMOTE_CODE:-false}\" = \"true\" ] && set -- \"$@\" --trust-remote-code; [ \"${SGLANG_DISABLE_CUDA_GRAPH:-true}\" = \"true\" ] && set -- \"$@\" --disable-cuda-graph; exec \"$@\""
+      ],
+      "environmentVariables": {
+        "SGLANG_MODEL_ID": "Qwen/Qwen3.5-9B",
+        "SGLANG_SERVED_MODEL_NAME": "",
+        "SGLANG_TP_SIZE": "1",
+        "SGLANG_CONTEXT_LENGTH": "32768",
+        "SGLANG_MEM_FRACTION_STATIC": "0.8",
+        "SGLANG_LOAD_FORMAT": "auto",
+        "SGLANG_SAMPLING_DEFAULTS": "model",
+        "SGLANG_ATTENTION_BACKEND": "triton",
+        "SGLANG_REASONING_PARSER": "qwen3",
+        "SGLANG_TOOL_CALL_PARSER": "qwen3_coder",
+        "SGLANG_HF_CHAT_TEMPLATE_NAME": "",
+        "SGLANG_TRUST_REMOTE_CODE": "false",
+        "SGLANG_DISABLE_CUDA_GRAPH": "true"
+      },
+      "image": "lmsysorg/sglang:latest-runtime",
+      "imageCaching": true,
+      "resources": {
+        "cpu": 8,
+        "memory": 30720,
+        "gpuClasses": ["851399fb-7329-4195-a042-d6514b28cf33"],
+        "storageAmount": 53687091200,
+        "shmSize": 2048
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 3,
+    "startupProbe": {
+      "failureThreshold": 20,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 600,
+      "periodSeconds": 60,
+      "successThreshold": 1,
+      "timeoutSeconds": 5
+    },
+    "livenessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 600,
+      "periodSeconds": 30,
+      "successThreshold": 1,
+      "timeoutSeconds": 5
+    },
+    "readinessProbe": {
+      "failureThreshold": 3,
+      "http": {
+        "headers": [],
+        "path": "/health",
+        "port": 8000,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 0,
+      "periodSeconds": 3,
+      "successThreshold": 1,
+      "timeoutSeconds": 2
+    },
+    "networking": {
+      "auth": true,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8000,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    }
+  },
+  "form": {
+    "title": "SGLang",
+    "description": "Run large language models with [SGLang](https://docs.sglang.io/), a high-performance inference engine with an OpenAI-compatible API and strong support for reasoning models, tool calling, and high-throughput serving.\n\n<Callout variation=\"warning\">Ensure your use is permissible under whatever license applies to the model you deploy.</Callout>\n\nThis recipe is aimed at a more technical audience. All model and runtime settings used by this recipe are exposed in the deployment form.\n\nFields like `Load Format`, `Sampling Defaults Source`, `Reasoning Parser`, and `Tool Call Parser` accept raw SGLang argument values. \n\nExample models you can use:\n\n- `Qwen/Qwen3.5-9B` with `Reasoning Parser = qwen3` and `Tool Call Parser = qwen3_coder` (default)\n- `Qwen/Qwen2.5-7B-Instruct` with `Tool Call Parser = qwen25`\n- `meta-llama/Llama-3.1-8B-Instruct` with `Tool Call Parser = llama3`\n- `deepseek-ai/DeepSeek-R1-Distill-Qwen-7B` with `Reasoning Parser = deepseek-r1`\n- `mistralai/Mistral-7B-Instruct-v0.3` with `Tool Call Parser = mistral`\n\nExamples of SGLang option values you can enter:\n\n- `Load Format`: `auto`, `safetensors`, `gguf`, `bitsandbytes`\n- `Sampling Defaults Source`: `model`, `openai`\n- `Attention Backend`: `triton`, `trtllm_mha`\n- `Reasoning Parser`: `qwen3`, `deepseek-r1`, `gpt-oss`\n- `Tool Call Parser`: `qwen3_coder`, `qwen25`, `llama3`, `mistral`\n\nIf a model is private or gated on Hugging Face, provide `HF_TOKEN`.\n\nNotes:\n\n- `Served Model Name` is optional. If left blank, SGLang will use the model ID returned by `/v1/models`.\n- `Context Length` can be left blank to use the model's own configured max context.\n- The default `Context Length` is `32768`, which is a more practical startup default than the model maximum on Salad consumer GPUs.\n- Parser settings are model-specific. Leave them blank if your model does not need a matching parser.\n- `Attention Backend = triton` and `Disable CUDA Graph = true` are safer defaults for hybrid Qwen models on newer consumer GPUs.\n- Gateway authentication is enabled by default in this recipe.\n\nFor additional SGLang options not exposed by the form, use Advanced Configuration after deployment.\n\nHelpful references:\n\n- [SGLang server arguments](https://docs.sglang.io/advanced_features/server_arguments.html)\n- [SGLang OpenAI-compatible API docs](https://docs.sglang.io/basic_usage/openai_api.html)\n- [SGLang supported models](https://docs.sglang.io/supported_models/generative_models.html)\n",
+    "type": "object",
+    "required": ["container_group_name", "model_id", "networking_auth"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "model_id": {
+        "title": "Model",
+        "type": "string",
+        "description": "Required* Hugging Face model ID to load with SGLang (`--model-path`).",
+        "default": "Qwen/Qwen3.5-9B"
+      },
+      "served_model_name": {
+        "title": "Served Model Name",
+        "type": "string",
+        "description": "Optional. Override the model name returned by `/v1/models`. Leave blank to use the model ID.",
+        "default": ""
+      },
+      "hf_token": {
+        "title": "Hugging Face Token",
+        "description": "Optional. Required only for private or gated Hugging Face models.",
+        "type": "string",
+        "default": ""
+      },
+      "context_length": {
+        "title": "Context Length",
+        "description": "Optional `--context-length`. Leave blank to let SGLang use the model's default context size.",
+        "type": "string",
+        "default": "32768"
+      },
+      "mem_fraction_static": {
+        "title": "Memory Fraction Static",
+        "description": "Fraction of GPU memory reserved for model weights and KV cache (`--mem-fraction-static`). Lower this if you see out-of-memory errors.",
+        "type": "string",
+        "default": "0.8"
+      },
+      "load_format": {
+        "title": "Load Format",
+        "description": "SGLang model loading format (`--load-format`). Enter any SGLang-supported value.",
+        "type": "string",
+        "default": "auto"
+      },
+      "sampling_defaults": {
+        "title": "Sampling Defaults Source",
+        "description": "Sampling defaults source (`--sampling-defaults`). Enter any SGLang-supported value.",
+        "type": "string",
+        "default": "model"
+      },
+      "attention_backend": {
+        "title": "Attention Backend",
+        "description": "Optional `--attention-backend`. Enter any SGLang-supported backend name, or leave blank to let SGLang choose.",
+        "type": "string",
+        "default": "triton"
+      },
+      "reasoning_parser": {
+        "title": "Reasoning Parser",
+        "description": "Optional `--reasoning-parser`. Enter any SGLang-supported parser name, or leave blank.",
+        "type": "string",
+        "default": "qwen3"
+      },
+      "tool_call_parser": {
+        "title": "Tool Call Parser",
+        "description": "Optional `--tool-call-parser`. Enter any SGLang-supported parser name, or leave blank.",
+        "type": "string",
+        "default": "qwen3_coder"
+      },
+      "hf_chat_template_name": {
+        "title": "HF Chat Template Name",
+        "description": "Optional `--hf-chat-template-name` for tokenizers that expose multiple named chat templates.",
+        "type": "string",
+        "default": ""
+      },
+      "trust_remote_code": {
+        "title": "Trust Remote Code",
+        "description": "Enable `--trust-remote-code` for Hugging Face repos that require custom model code.",
+        "type": "boolean",
+        "default": false
+      },
+      "disable_cuda_graph": {
+        "title": "Disable CUDA Graph",
+        "description": "Disable CUDA graph capture (`--disable-cuda-graph`). This can improve startup reliability on some consumer GPUs.",
+        "type": "boolean",
+        "default": true
+      },
+      "networking_auth": {
+        "title": "Require Container Gateway Authentication",
+        "description": "When enabled, requests must include a SaladCloud API Key to access the container. When disabled, public (unauthenticated) access is allowed.",
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/networking_auth",
+        "path": "/output/networking/auth"
+      },
+      {
+        "op": "copy",
+        "from": "/input/model_id",
+        "path": "/output/container/environmentVariables/SGLANG_MODEL_ID"
+      },
+      {
+        "op": "copy",
+        "from": "/input/served_model_name",
+        "path": "/output/container/environmentVariables/SGLANG_SERVED_MODEL_NAME"
+      },
+      {
+        "op": "copy",
+        "from": "/input/hf_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      },
+      {
+        "op": "copy",
+        "from": "/input/context_length",
+        "path": "/output/container/environmentVariables/SGLANG_CONTEXT_LENGTH"
+      },
+      {
+        "op": "copy",
+        "from": "/input/mem_fraction_static",
+        "path": "/output/container/environmentVariables/SGLANG_MEM_FRACTION_STATIC"
+      },
+      {
+        "op": "copy",
+        "from": "/input/load_format",
+        "path": "/output/container/environmentVariables/SGLANG_LOAD_FORMAT"
+      },
+      {
+        "op": "copy",
+        "from": "/input/sampling_defaults",
+        "path": "/output/container/environmentVariables/SGLANG_SAMPLING_DEFAULTS"
+      },
+      {
+        "op": "copy",
+        "from": "/input/attention_backend",
+        "path": "/output/container/environmentVariables/SGLANG_ATTENTION_BACKEND"
+      },
+      {
+        "op": "copy",
+        "from": "/input/reasoning_parser",
+        "path": "/output/container/environmentVariables/SGLANG_REASONING_PARSER"
+      },
+      {
+        "op": "copy",
+        "from": "/input/tool_call_parser",
+        "path": "/output/container/environmentVariables/SGLANG_TOOL_CALL_PARSER"
+      },
+      {
+        "op": "copy",
+        "from": "/input/hf_chat_template_name",
+        "path": "/output/container/environmentVariables/SGLANG_HF_CHAT_TEMPLATE_NAME"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/SGLANG_TRUST_REMOTE_CODE",
+        "value": "false"
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/SGLANG_DISABLE_CUDA_GRAPH",
+        "value": "true"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/trust_remote_code",
+        "value": true
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/SGLANG_TRUST_REMOTE_CODE",
+        "value": "true"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/hf_token",
+        "value": ""
+      },
+      {
+        "op": "remove",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      }
+    ],
+    [
+      {
+        "op": "test",
+        "path": "/input/disable_cuda_graph",
+        "value": false
+      },
+      {
+        "op": "add",
+        "path": "/output/container/environmentVariables/SGLANG_DISABLE_CUDA_GRAPH",
+        "value": "false"
+      }
+    ]
+  ],
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/sglang",
+  "short_description": "Serve LLMs with SGLang on SaladCloud GPUs using an OpenAI-compatible API.",
+  "workload_types": ["LLM"]
+}

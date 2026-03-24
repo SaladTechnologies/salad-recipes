@@ -1,0 +1,124 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/networking_auth",
+      "path": "/output/networking/auth"
+    },
+    {
+      "op": "copy",
+      "from": "/input/model_id",
+      "path": "/output/container/environmentVariables/SGLANG_MODEL_ID"
+    },
+    {
+      "op": "copy",
+      "from": "/input/served_model_name",
+      "path": "/output/container/environmentVariables/SGLANG_SERVED_MODEL_NAME"
+    },
+    {
+      "op": "copy",
+      "from": "/input/hf_token",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
+    },
+    {
+      "op": "copy",
+      "from": "/input/context_length",
+      "path": "/output/container/environmentVariables/SGLANG_CONTEXT_LENGTH"
+    },
+    {
+      "op": "copy",
+      "from": "/input/mem_fraction_static",
+      "path": "/output/container/environmentVariables/SGLANG_MEM_FRACTION_STATIC"
+    },
+    {
+      "op": "copy",
+      "from": "/input/load_format",
+      "path": "/output/container/environmentVariables/SGLANG_LOAD_FORMAT"
+    },
+    {
+      "op": "copy",
+      "from": "/input/sampling_defaults",
+      "path": "/output/container/environmentVariables/SGLANG_SAMPLING_DEFAULTS"
+    },
+    {
+      "op": "copy",
+      "from": "/input/attention_backend",
+      "path": "/output/container/environmentVariables/SGLANG_ATTENTION_BACKEND"
+    },
+    {
+      "op": "copy",
+      "from": "/input/reasoning_parser",
+      "path": "/output/container/environmentVariables/SGLANG_REASONING_PARSER"
+    },
+    {
+      "op": "copy",
+      "from": "/input/tool_call_parser",
+      "path": "/output/container/environmentVariables/SGLANG_TOOL_CALL_PARSER"
+    },
+    {
+      "op": "copy",
+      "from": "/input/hf_chat_template_name",
+      "path": "/output/container/environmentVariables/SGLANG_HF_CHAT_TEMPLATE_NAME"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/SGLANG_TRUST_REMOTE_CODE",
+      "value": "false"
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/SGLANG_DISABLE_CUDA_GRAPH",
+      "value": "true"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/trust_remote_code",
+      "value": true
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/SGLANG_TRUST_REMOTE_CODE",
+      "value": "true"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/hf_token",
+      "value": ""
+    },
+    {
+      "op": "remove",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
+    }
+  ],
+  [
+    {
+      "op": "test",
+      "path": "/input/disable_cuda_graph",
+      "value": false
+    },
+    {
+      "op": "add",
+      "path": "/output/container/environmentVariables/SGLANG_DISABLE_CUDA_GRAPH",
+      "value": "false"
+    }
+  ]
+]

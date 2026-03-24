@@ -1,0 +1,9 @@
+{
+  "ui": {
+  },
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/sglang",
+  "short_description": "Serve LLMs with SGLang on SaladCloud GPUs using an OpenAI-compatible API.",
+  "workload_types": [
+    "LLM"
+  ]
+}

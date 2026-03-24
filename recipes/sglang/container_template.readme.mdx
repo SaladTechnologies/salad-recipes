@@ -1,0 +1,39 @@
+# SGLang
+
+Serve Hugging Face models with the official `SGLang` runtime on SaladCloud GPUs.
+
+This container exposes an OpenAI-compatible API for chat completions and related clients. It does not include a built-in web UI.
+
+## Access
+
+- <Link url={`https://${props.networking.dns}/health`}>Health Check</Link>
+- <Link url={`https://${props.networking.dns}/v1/models`}>List Models</Link>
+
+## Notes
+
+- Startup can take several minutes because models are downloaded from Hugging Face at container startup.
+- Parser settings are model-specific. If your model does not support the configured parser, update the container group settings and redeploy.
+- On Blackwell GPUs, hybrid Qwen models may require `Attention Backend = triton`.
+- To use a direct response instead of a reasoning response for supported models, include `chat_template_kwargs: {"enable_thinking": false}` in the request body.
+- The default context in this recipe is `32768`, but larger models or weaker GPUs may still need lower values.
+
+<Callout variation="note">If your model is private or gated on Hugging Face, set `HF_TOKEN` in the container group environment variables.</Callout>
+
+## Curl Example
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if auth is disabled.</Callout>
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/chat/completions \\
+  -X POST \\
+  -H 'Content-Type: application/json' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -d '{\n    "model": "${props.container.environmentVariables.SGLANG_SERVED_MODEL_NAME || props.container.environmentVariables.SGLANG_MODEL_ID}",\n    "messages": [\n      {"role": "system", "content": "You are a helpful assistant."},\n      {"role": "user", "content": "Explain how tensor parallelism affects inference serving."}\n    ],\n    "max_tokens": 256\n  }'
+`}</CodeBlock>
+
+## Resources
+
+- [SGLang Documentation](https://docs.sglang.io/)
+- [SGLang server arguments](https://docs.sglang.io/advanced_features/server_arguments.html)
+- [SGLang OpenAI-compatible API docs](https://docs.sglang.io/basic_usage/openai_api.html)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/sglang)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=SGLang%20recipe&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>

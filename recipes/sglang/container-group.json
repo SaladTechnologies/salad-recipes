@@ -1,0 +1,89 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [
+      "sh",
+      "-c",
+      "set -eu; set -- python3 -m sglang.launch_server --model-path \"${SGLANG_MODEL_ID}\" --host '::' --port 8000 --tp-size \"${SGLANG_TP_SIZE}\" --mem-fraction-static \"${SGLANG_MEM_FRACTION_STATIC}\" --load-format \"${SGLANG_LOAD_FORMAT}\" --sampling-defaults \"${SGLANG_SAMPLING_DEFAULTS}\"; [ -n \"${SGLANG_SERVED_MODEL_NAME:-}\" ] && set -- \"$@\" --served-model-name \"$SGLANG_SERVED_MODEL_NAME\"; [ -n \"${SGLANG_CONTEXT_LENGTH:-}\" ] && set -- \"$@\" --context-length \"$SGLANG_CONTEXT_LENGTH\"; [ -n \"${SGLANG_ATTENTION_BACKEND:-}\" ] && set -- \"$@\" --attention-backend \"$SGLANG_ATTENTION_BACKEND\"; [ -n \"${SGLANG_REASONING_PARSER:-}\" ] && set -- \"$@\" --reasoning-parser \"$SGLANG_REASONING_PARSER\"; [ -n \"${SGLANG_TOOL_CALL_PARSER:-}\" ] && set -- \"$@\" --tool-call-parser \"$SGLANG_TOOL_CALL_PARSER\"; [ -n \"${SGLANG_HF_CHAT_TEMPLATE_NAME:-}\" ] && set -- \"$@\" --hf-chat-template-name \"$SGLANG_HF_CHAT_TEMPLATE_NAME\"; [ \"${SGLANG_TRUST_REMOTE_CODE:-false}\" = \"true\" ] && set -- \"$@\" --trust-remote-code; [ \"${SGLANG_DISABLE_CUDA_GRAPH:-true}\" = \"true\" ] && set -- \"$@\" --disable-cuda-graph; exec \"$@\""
+    ],
+    "environmentVariables": {
+      "SGLANG_MODEL_ID": "Qwen/Qwen3.5-9B",
+      "SGLANG_SERVED_MODEL_NAME": "",
+      "SGLANG_TP_SIZE": "1",
+      "SGLANG_CONTEXT_LENGTH": "32768",
+      "SGLANG_MEM_FRACTION_STATIC": "0.8",
+      "SGLANG_LOAD_FORMAT": "auto",
+      "SGLANG_SAMPLING_DEFAULTS": "model",
+      "SGLANG_ATTENTION_BACKEND": "triton",
+      "SGLANG_REASONING_PARSER": "qwen3",
+      "SGLANG_TOOL_CALL_PARSER": "qwen3_coder",
+      "SGLANG_HF_CHAT_TEMPLATE_NAME": "",
+      "SGLANG_TRUST_REMOTE_CODE": "false",
+      "SGLANG_DISABLE_CUDA_GRAPH": "true"
+    },
+    "image": "lmsysorg/sglang:latest-runtime",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 8,
+      "memory": 30720,
+      "gpuClasses": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "storageAmount": 53687091200,
+      "shmSize": 2048
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 3,
+  "startupProbe": {
+    "failureThreshold": 20,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 600,
+    "periodSeconds": 60,
+    "successThreshold": 1,
+    "timeoutSeconds": 5
+  },
+  "livenessProbe": {
+    "failureThreshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 600,
+    "periodSeconds": 30,
+    "successThreshold": 1,
+    "timeoutSeconds": 5
+  },
+  "readinessProbe": {
+    "failureThreshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 8000,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 0,
+    "periodSeconds": 3,
+    "successThreshold": 1,
+    "timeoutSeconds": 2
+  },
+  "networking": {
+    "auth": true,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 8000,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  }
+}
