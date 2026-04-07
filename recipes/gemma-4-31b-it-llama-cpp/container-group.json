@@ -1,0 +1,93 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [
+      "sh",
+      "-c",
+      "exec /app/llama-server --temp \"${LLAMA_SERVER_TEMP}\" --top-p \"${LLAMA_SERVER_TOP_P}\" --min-p \"${LLAMA_SERVER_MIN_P}\""
+    ],
+    "environmentVariables": {
+      "LLAMA_ARG_HOST": "::",
+      "LLAMA_ARG_PORT": "8080",
+      "LLAMA_ARG_HF_REPO": "unsloth/gemma-4-31B-it-GGUF",
+      "LLAMA_ARG_HF_FILE": "gemma-4-31B-it-UD-Q4_K_XL.gguf",
+      "LLAMA_ARG_N_GPU_LAYERS": "auto",
+      "LLAMA_ARG_CTX_SIZE": "262144",
+      "LLAMA_ARG_N_PARALLEL": "1",
+      "LLAMA_ARG_ALIAS": "gemma-4-31b-it",
+      "LLAMA_ARG_TOP_K": "64",
+      "LLAMA_ARG_JINJA": "on",
+      "LLAMA_ARG_FLASH_ATTN": "on",
+      "LLAMA_ARG_FIT": "on",
+      "LLAMA_ARG_CACHE_TYPE_K": "q8_0",
+      "LLAMA_ARG_CACHE_TYPE_V": "q8_0",
+      "LLAMA_SERVER_TEMP": "1.0",
+      "LLAMA_SERVER_TOP_P": "0.95",
+      "LLAMA_SERVER_MIN_P": "0.0"
+    },
+    "image": "ghcr.io/ggml-org/llama.cpp:server-cuda",
+    "imageCaching": true,
+    "resources": {
+      "cpu": 16,
+      "memory": 30720,
+      "gpuClasses": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "storageAmount": 107374182400,
+      "shmSize": 2048
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 1,
+  "startupProbe": {
+    "failureThreshold": 20,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 8080,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 300,
+    "periodSeconds": 60,
+    "successThreshold": 1,
+    "timeoutSeconds": 5
+  },
+  "livenessProbe": {
+    "failureThreshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 8080,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 300,
+    "periodSeconds": 30,
+    "successThreshold": 1,
+    "timeoutSeconds": 5
+  },
+  "readinessProbe": {
+    "failureThreshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/health",
+      "port": 8080,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 0,
+    "periodSeconds": 3,
+    "successThreshold": 1,
+    "timeoutSeconds": 2
+  },
+  "networking": {
+    "auth": false,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 8080,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  }
+}
