@@ -1,0 +1,37 @@
+Run `Gemma 4 31B IT` with `llama.cpp` as an OpenAI-compatible API for a wide variety of tools.
+
+This recipe is designed to be easy for nontechnical users:
+
+- the model is already chosen for you
+- it downloads automatically on startup
+- it is tuned for a single GPU
+- it is optimized for long-context text chat, coding, and agent tools such as OpenClaw and OpenCode
+
+If you want the simple version: enter a container group name, decide whether you want public or private access, deploy, and wait for startup to finish.
+
+If you want more technical detail, read below.
+
+<Callout variation="note">The model is downloaded at startup and can take several minutes before the deployment becomes ready.</Callout>
+
+What is already configured for you:
+
+- Unsloth's `unsloth/gemma-4-31B-it-GGUF` GGUF conversion of the Google Gemma 4 31B instruction model
+- the `UD-Q4_K_XL` GGUF file, which is a practical single-GPU choice for this model size
+- full `256K` context length
+- automatic GPU layer offload
+- Flash Attention and fit-to-memory tuning
+- `q8_0` key/value cache types to make long context more practical on a single GPU
+- public access by default, with optional Container Gateway Authentication in the form
+
+This recipe is intentionally optimized for text chat, coding, and agent workflows. Gemma 4 is multimodal, but this recipe stays text-first by default to preserve memory headroom for the long context window on consumer hardware.
+
+Reasoning is controlled per request. To turn reasoning on, start the system prompt with `<|think|>`. To leave reasoning off, do not include that token. 
+
+For technical users: if you want to change defaults, check advanced settings.
+
+Helpful references:
+
+- [NVIDIA Gemma-4-31B-IT-NVFP4 model card](https://huggingface.co/nvidia/Gemma-4-31B-IT-NVFP4)
+- [Unsloth Gemma 4 31B GGUF repo](https://huggingface.co/unsloth/gemma-4-31B-it-GGUF)
+- [llama.cpp server docs](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)
+- [NVIDIA Gemma 4 deployment overview](https://developer.nvidia.com/blog/bringing-ai-closer-to-the-edge-and-on-device-with-gemma-4/)

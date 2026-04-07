@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/gemma-4-31b-it-llama-cpp",
+  "short_description": "Serve Gemma 4 31B with llama.cpp as an OpenAI-compatible API for OpenClaw, OpenCode, and other tools.",
+  "workload_types": ["LLM"]
+}

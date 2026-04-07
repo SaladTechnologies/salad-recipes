@@ -1,0 +1,69 @@
+# Gemma 4 31B (Unsloth GGUF) with llama.cpp
+
+This deployment runs the `Gemma 4 31B IT` GGUF model with the official `llama.cpp` CUDA server and exposes an OpenAI-compatible API for tools such as OpenClaw, OpenCode, and other compatible clients.
+
+<Callout variation="note">This recipe is public by default. If you enabled Container Gateway Authentication during deployment, include `Salad-Api-Key` in your requests.</Callout>
+
+## Use With OpenClaw
+
+If you want to connect this deployment to OpenClaw or other agentic tools, follow our guides:
+
+- [Use Agentic Tools with a Salad-hosted LLM](https://docs.salad.com/container-engine/tutorials/agentic-tools)
+
+## Access
+
+- <Link url={`https://${props.networking.dns}`}>Open the built-in llama.cpp UI</Link>
+- <Link url={`https://${props.networking.dns}/health`}>Health Check</Link>
+- <Link url={`https://${props.networking.dns}/v1/models`}>List Models</Link>
+
+## Defaults
+
+- Model source: `unsloth/gemma-4-31B-it-GGUF`
+- Model file: `gemma-4-31B-it-UD-Q4_K_XL.gguf`
+- API model name: `gemma-4-31b-it`
+- Context length: `256K`
+- GPU offload: `auto`
+- Parallel slots: `1`
+- KV cache types: `q8_0 / q8_0`
+- Sampling defaults: `temperature 1.0`, `top_p 0.95`, `min_p 0.0`, `top_k 64`
+- Public access: enabled by default unless you turned auth on during deployment
+
+This recipe uses the Unsloth GGUF conversion of Gemma 4 31B.
+
+This recipe is tuned for long-context text workloads on a single GPU.
+
+## Thinking Mode
+
+To explicitly request reasoning, start your system prompt with `<|think|>`.
+
+For example:
+
+```json
+{"role": "system", "content": "<|think|> You are a careful reasoning assistant."}
+```
+
+The startup sampling values are defaults. They can still be overridden per request with `temperature`, `top_p`, and `min_p` in your inference payload.
+
+## Curl Example
+
+<Callout variation="note">Omit the `Salad-Api-Key` header if you did not enable auth.</Callout>
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/chat/completions \\
+  -X POST \\
+  -H 'Content-Type: application/json' \\
+  -H 'Salad-Api-Key: ${props.apiKey}' \\
+  -d '{
+    "model": "gemma-4-31b-it",
+    "messages": [
+      {"role": "system", "content": "<|think|> You are a careful reasoning assistant."},
+      {"role": "user", "content": "Summarize why long context can help coding agents."}
+    ],
+    "max_tokens": 512
+  }'
+`}</CodeBlock>
+
+## Resources
+
+- [Unsloth Gemma 4 31B GGUF repo](https://huggingface.co/unsloth/gemma-4-31B-it-GGUF)
+- [llama.cpp server docs](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/gemma-4-31b-it-llama-cpp)
