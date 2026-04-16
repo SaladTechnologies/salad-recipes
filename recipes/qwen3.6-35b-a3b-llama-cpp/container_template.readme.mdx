@@ -1,0 +1,66 @@
+# Qwen3.6-35B-A3B (Unsloth GGUF) with llama.cpp
+
+This deployment runs `Qwen3.6-35B-A3B` with the official `llama.cpp` CUDA server, downloads the public GGUF weights automatically on startup, and exposes an OpenAI-compatible API for tools such as OpenClaw, OpenCode, and other compatible clients.
+
+<Callout variation="note">This recipe is public by default. If you enabled Container Gateway Authentication during deployment, include `Salad-Api-Key` in your requests.</Callout>
+
+## Use With OpenClaw
+
+If you want to connect this deployment to agentic tools, follow this guides:
+
+- [Cline](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-cline-with-saladcloud)
+- [Aider](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-aider-with-saladcloud)
+- [OpenCode](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-opencode-with-saladcloud)
+- [OpenClaw](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-openclaw-with-saladcloud)
+- [Kilo Code](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-kilo-code-with-saladcloud)
+- [Roo Code](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-roo-code-with-saladcloud)
+- [Continue](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-continue-with-saladcloud)
+- [Versel AI](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-vercel-ai-sdk-with-saladcloud)
+- [Goose](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-goose-with-saladcloud)
+- [Hermes](https://docs.salad.com/container-engine/tutorials/agentic-tools/use-hermes-agent-with-saladcloud)
+
+## Access
+
+- <Link url={`https://${props.networking.dns}`}>Open the built-in llama.cpp UI</Link>
+- <Link url={`https://${props.networking.dns}/health`}>Health Check</Link>
+- <Link url={`https://${props.networking.dns}/v1/models`}>List Models</Link>
+
+## Defaults
+
+- Model source: `unsloth/Qwen3.6-35B-A3B-GGUF`
+- Model file: `Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf`
+- Model alias: `qwen3.6-35b-a3b`
+- Context window: `262144` tokens
+- Startup profile: thinking enabled by default
+- Sampling defaults: `temperature 0.6`, `top_p 0.95`, `min_p 0.0`, `top_k 20`
+
+`temperature`, `top_p`, and `min_p` are startup defaults. They can still be overridden per request in your inference payload.
+
+This is a text-only recipe, so automatic multimodal projector lookup is disabled.
+
+Qwen3.6 thinks by default. It does not officially use prompt switches such as `/think` or `/nothink`. To request a direct response in clients that support extra fields, pass `chat_template_kwargs: {"enable_thinking": false}`.
+
+## Curl Example
+
+<CodeBlock language="bash">{`curl https://${props.networking.dns}/v1/chat/completions \\
+    -X POST \\
+    -H 'Content-Type: application/json' \\
+    -d '{
+      "model": "qwen3.6-35b-a3b",
+      "messages": [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Write a short explanation of mixture-of-experts models."}
+      ],
+      "max_tokens": 256
+    }'
+`}</CodeBlock>
+
+If you enabled Container Gateway Authentication during deployment, add `-H 'Salad-Api-Key: ${props.apiKey}'` to your requests.
+
+## Resources
+
+- [Use OpenClaw with a Salad-hosted LLM](https://docs.salad.com/container-engine/how-to-guides/openclaw/openclaw-ollama-salad-hosted-telegram)
+- [Unsloth Qwen3.6 GGUF model card](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF)
+- [llama.cpp Server Documentation](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)
+- [Recipe Source](https://github.com/SaladTechnologies/salad-recipes/tree/master/recipes/qwen3.6-35b-a3b-llama-cpp)
+- <Link url={`https://github.com/SaladTechnologies/salad-recipes/issues/new?title=Qwen3.6-35B-A3B%20llama.cpp&body=Image%3A%20${props.container.image}`}>Report an Issue on GitHub</Link>

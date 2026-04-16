@@ -1,0 +1,22 @@
+Run `Qwen3.6-35B-A3B` with `llama.cpp` on a Salad GPU as an OpenAI-compatible API for a wide variety of tools. The best open-source model in its class as of April 2026.
+
+This recipe is designed to be easy for nontechnical users:
+
+- the model is already chosen for you
+- it downloads automatically on startup (might take about 20 minutes to start)
+- you can use it from the built-in web UI, use through its OpenAI-compatible API, or connect tools such as OpenClaw and OpenCode
+
+If you want the simple version: enter a container group name, deploy, and wait for startup to finish.
+
+If you want requests to require a SaladCloud API Key, enable Container Gateway Authentication in the deployment form.
+
+Thinking is enabled by default.  To get direct, non-thinking responses, turn off thinking in this form or pass `chat_template_kwargs: {"enable_thinking": false}` in clients that support extra request fields.
+
+If you disable thinking in the form, the recipe sets Qwen's hard switch and request-level thinking prompts will not override it.
+
+If you want different llama.cpp settings later, you can still change the environment variables in Advanced Configuration after deployment.
+`
+Helpful references:
+
+- [Unsloth Qwen3.6 GGUF model card](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF)
+- [llama.cpp server docs](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)
