@@ -1,0 +1,27 @@
+Run `Qwen3.6-27B-unsloth` with `llama.cpp` on a Salad GPU as an OpenAI-compatible API for coding assistants, agent frameworks, and general chat apps.
+
+This recipe is designed to be easy for nontechnical users:
+
+- the model is already chosen for you
+- it downloads automatically on startup
+- you can use it from the built-in web UI, use it through its OpenAI-compatible API, or connect tools such as OpenClaw and OpenCode
+
+Qwen3.6-27B-unsloth is a dense Qwen3.6 model that focuses on stronger agentic coding workflows and adds support for preserving reasoning context across turns.
+
+If you want the simple version: enter a container group name, deploy, and wait for startup to finish.
+
+If you want requests to require a SaladCloud API Key, enable Container Gateway Authentication in the deployment form.
+
+Thinking is enabled by default. To get direct, non-thinking responses, turn off thinking in this form or pass `chat_template_kwargs: {"enable_thinking": false}` in clients that support extra request fields.
+
+Advanced clients can also request preserved reasoning context across turns with `chat_template_kwargs: {"preserve_thinking": true}`.
+
+This model natively supports up to `262144` tokens, but this recipe defaults to `131072` tokens for a more practical single-GPU deployment. If you need more context later, you can raise `LLAMA_ARG_CTX_SIZE` in Advanced Configuration.
+
+If you want different llama.cpp settings later, you can still change the environment variables in Advanced Configuration after deployment.
+
+Helpful references:
+
+- [Unsloth Qwen3.6 27B GGUF model card](https://huggingface.co/unsloth/Qwen3.6-27B-GGUF)
+- [Official Qwen3.6 27B model card](https://huggingface.co/Qwen/Qwen3.6-27B)
+- [llama.cpp server docs](https://github.com/ggml-org/llama.cpp/tree/master/tools/server)
