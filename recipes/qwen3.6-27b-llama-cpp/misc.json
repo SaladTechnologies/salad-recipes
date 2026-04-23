@@ -1,0 +1,8 @@
+{
+  "ui": {},
+  "documentation_url": "https://docs.salad.com/container-engine/reference/recipes/qwen3.6-27b-llama-cpp",
+  "short_description": "Serve Qwen3.6-27B with llama.cpp as an OpenAI-compatible API for OpenClaw, OpenCode, and other tools.",
+  "workload_types": [
+    "LLM"
+  ]
+}
