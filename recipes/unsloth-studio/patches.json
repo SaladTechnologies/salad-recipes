@@ -1,0 +1,29 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_unsloth_password",
+      "path": "/output/container/environmentVariables/UNSLOTH_PASSWORD"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_environment_hf_token",
+      "path": "/output/container/environmentVariables/HF_TOKEN"
+    }
+  ]
+]

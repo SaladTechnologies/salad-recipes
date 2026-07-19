@@ -1,0 +1,119 @@
+{
+  "container_template": {
+    "name": "",
+    "readme": "## Your Unsloth Studio is deploying 🦥\n\nIt can take a few minutes for a node to be allocated, pull the image and start.\n\n### 1. Open the Studio\n\nOnce the container group is **Running**, open the **Access Domain Name** shown in\nthe SaladCloud Portal (Container Gateway URL). That's your Studio.\n\n### 2. Authentication\n\n- **Container Gateway auth** (if you enabled it): requests need a SaladCloud API\n  key. The Portal preview handles this for you; for direct browser access, keep\n  it disabled or use an authenticated client.\n- **Studio password**: log in with the **admin password** you set in the form.\n\n### 3. Fine-tune & run\n\nUse the **Entraîner / Train** tab to fine-tune a model, and the **Chat** tab to\ntest the base vs. fine-tuned model side by side.\n\n### ⚠️ Persist your work\n\nSaladCloud nodes are ephemeral — if a node is reallocated, anything written only\nto local disk is lost. To keep your trained models:\n\n- Provide a **Hugging Face token** and **push/export** your model to the Hub from\n  the Studio **Export** tab, **or**\n- Download your artifacts before stopping the group.\n\nThe image itself (Unsloth + PyTorch) is baked in, so a recycled node comes back\nready without any reinstall.\n\n### Notes\n\n- The image already removes `flash_attn` so inference uses `sdpa`, avoiding the\n  `static cache is not compatible with flash_attention_2` error on Nemotron /\n  Gemma-3 style models.\n- Default GPU class is high-VRAM. Adjust CPU / RAM / GPU class in the form or the\n  container group settings to fit the models you train.\n",
+    "container": {
+      "command": [],
+      "environmentVariables": {
+        "EXPOSE_MODE": "gateway",
+        "STUDIO_PORT": "8080",
+        "LD_LIBRARY_PATH": "/root/.unsloth/llama.cpp/build/bin:/root/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages/nvidia/cuda_runtime/lib:/root/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages/nvidia/cublas/lib:/root/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages/nvidia/cuda_nvrtc/lib"
+      },
+      "image": "volkobfq/unsloth-studio@sha256:da6347e54d71fc6b1e6475363b08efdfd6351ec74201fb1930f54ced0e264df6",
+      "imageCaching": false,
+      "resources": {
+        "cpu": 8,
+        "memory": 24576,
+        "gpuClasses": ["851399fb-7329-4195-a042-d6514b28cf33"],
+        "storageAmount": 107374182400,
+        "shmSize": 4096
+      },
+      "priority": "high"
+    },
+    "autostartPolicy": true,
+    "restartPolicy": "always",
+    "replicas": 1,
+    "networking": {
+      "auth": false,
+      "clientRequestTimeout": 100000,
+      "loadBalancer": "least_number_of_connections",
+      "port": 8080,
+      "protocol": "http",
+      "serverResponseTimeout": 100000,
+      "singleConnectionLimit": false
+    },
+    "readinessProbe": {
+      "failureThreshold": 20,
+      "http": {
+        "headers": [],
+        "path": "/",
+        "port": 8080,
+        "scheme": "http"
+      },
+      "initialDelaySeconds": 30,
+      "periodSeconds": 15,
+      "successThreshold": 1,
+      "timeoutSeconds": 5
+    }
+  },
+  "form": {
+    "title": "Unsloth Studio",
+    "description": "Deploy **Unsloth Studio** — a no-code web UI to fine-tune, run and export open\nLLMs (Gemma, Qwen, Llama, DeepSeek, gpt-oss…) on a SaladCloud GPU.\n\nEverything (PyTorch, CUDA, Unsloth) is baked into the image, so the node is\nready as soon as it starts — and stays ready across reallocations. The web UI is\nexposed through the **SaladCloud Container Gateway**, giving you a stable HTTPS\nURL (no Cloudflare quick tunnels).\n\nYou'll set an admin password for the Studio UI. Optionally provide a Hugging\nFace token to pull gated models and push your trained models to the Hub so your\nwork is never lost when a node is recycled.\n",
+    "type": "object",
+    "required": ["container_group_name", "container_environment_unsloth_password"],
+    "properties": {
+      "container_group_name": {
+        "title": "Container Group Name",
+        "description": "Required* Must be 2-63 characters: lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+        "type": "string",
+        "maxLength": 63,
+        "minLength": 2,
+        "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+      },
+      "container_environment_unsloth_password": {
+        "title": "Studio Admin Password",
+        "description": "Required* Password to log into the Unsloth Studio web UI. Choose a strong one - the UI can run code on the machine.",
+        "type": "string",
+        "minLength": 8,
+        "maxLength": 128
+      },
+      "container_environment_hf_token": {
+        "title": "HuggingFace Token (optional)",
+        "description": "Optional. Lets Studio pull gated models and push your trained LoRA/models to the Hub so they survive node reallocation. Must begin with \"hf_\" or \"api_org_\". Leave empty to skip.",
+        "type": "string",
+        "maxLength": 42,
+        "pattern": "^$|^(?:hf_|api_org_)[a-zA-Z0-9]{34}$"
+      }
+    }
+  },
+  "patches": [
+    [
+      {
+        "op": "copy",
+        "from": "/input/autostart_policy",
+        "path": "/output/autostartPolicy"
+      },
+      {
+        "op": "copy",
+        "from": "/input/replicas",
+        "path": "/output/replicas"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_group_name",
+        "path": "/output/name"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_environment_unsloth_password",
+        "path": "/output/container/environmentVariables/UNSLOTH_PASSWORD"
+      },
+      {
+        "op": "copy",
+        "from": "/input/container_environment_hf_token",
+        "path": "/output/container/environmentVariables/HF_TOKEN"
+      }
+    ]
+  ],
+  "ui": {
+    "container_environment_unsloth_password": {
+      "ui:widget": "password"
+    },
+    "container_environment_hf_token": {
+      "ui:widget": "password"
+    }
+  },
+  "documentation_url": "https://unsloth.ai/docs/new/studio",
+  "short_description": "Run Unsloth Studio - a no-code web UI to fine-tune, run and export open LLMs (Gemma, Qwen, Llama, gpt-oss) on a SaladCloud GPU.",
+  "workload_types": ["LLM"]
+}

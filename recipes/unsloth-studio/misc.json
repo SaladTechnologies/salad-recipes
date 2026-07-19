@@ -1,0 +1,15 @@
+{
+  "ui": {
+    "container_environment_unsloth_password": {
+      "ui:widget": "password"
+    },
+    "container_environment_hf_token": {
+      "ui:widget": "password"
+    }
+  },
+  "documentation_url": "https://unsloth.ai/docs/new/studio",
+  "short_description": "Run Unsloth Studio - a no-code web UI to fine-tune, run and export open LLMs (Gemma, Qwen, Llama, gpt-oss) on a SaladCloud GPU.",
+  "workload_types": [
+    "LLM"
+  ]
+}
