@@ -1,0 +1,6 @@
+{
+  "ui": {},
+  "documentation_url": "https://gpu-action.com/salad",
+  "short_description": "Run a PyTorch and Jupyter workspace prepared for SpotWarp checkpoint backup and recovery.",
+  "workload_types": []
+}

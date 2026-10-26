@@ -1,0 +1,61 @@
+Deploy a PyTorch 2.1 and CUDA 12.1 Jupyter workspace prepared for [SpotWarp](https://gpu-action.com/salad) checkpoint backup and recovery.
+
+SpotWarp consists of two parts:
+
+- This recipe runs `ghcr.io/enplabs/spotwarp:pytorch2.1` on SaladCloud and provides a `/workspace` directory for code and checkpoints.
+- The SpotWarp client runs on your own workstation or server. It periodically copies `/workspace` over SaladCloud SSH, detects replacement instances, restores the latest local backup, and can run a resume command.
+
+See [SpotWarp for SaladCloud](https://gpu-action.com/salad) for client installation, project setup, and pricing. Salad users can use code `SALAD` for 50% off their first three months of a SpotWarp subscription. SaladCloud compute charges are separate.
+
+## Prerequisites
+
+Before deploying, you need:
+
+1. A license key provided by SpotWarp.
+2. A SaladCloud API key available only on the machine that will run the SpotWarp client.
+3. An Ed25519 or RSA public key added to your SaladCloud account, with the matching private key available to the client.
+4. A workstation or server that remains online and has enough disk space for the local backup.
+5. A workload that writes restartable checkpoints under `/workspace`.
+
+<Callout variation="warning">
+  SpotWarp makes periodic backups; it does not make ephemeral container storage durable. Changes made after the last
+  successful backup can be lost when an instance is replaced. Validate checkpoint integrity and recovery with a
+  disposable workload before relying on it for a long-running job.
+</Callout>
+
+## Recipe Configuration
+
+- **Image**: `ghcr.io/enplabs/spotwarp:pytorch2.1`
+- **Runtime**: PyTorch 2.1.2, CUDA 12.1, and Jupyter Notebook
+- **Workspace**: `/workspace`
+- **Jupyter port**: `8888`
+- **Readiness endpoint**: `GET /api`
+- **Default replicas**: `1`
+- **GPUs**: RTX 3080, RTX 3090, RTX 4080, or RTX 4090
+
+The Container Gateway is intentionally unauthenticated because Jupyter uses WebSockets, which cannot send the `Salad-Api-Key` header. At startup, the container generates a strong random Jupyter token and prints it in the instance logs. Use that token to sign in, and do not share the deployment URL or token. A restarted or replacement instance generates a new token.
+
+The recipe adds `LICENSE_KEY` and `GPU_ACTION_SERVER_URL` to the container so its entrypoint can validate and report the configured SpotWarp license. The Salad API key and SSH private key remain only on the client machine. Configure the same SpotWarp license in the local client when prompted by `spotwarp init`.
+
+## Replica Modes
+
+This recipe supports both single-replica use and SpotWarp's two-replica warm-standby mode:
+
+- **One replica (recipe default)**: Recommended for initial setup and Jupyter access through the shared Container Gateway URL. Start the client with `--no-standby` to leave the replica count unchanged. After an interruption, recovery waits for SaladCloud to allocate a replacement instance.
+- **Two replicas (warm standby)**: SpotWarp's default client mode maintains an active instance and a standby instance for recovery. The client scales the group to two replicas, and both replicas are billed normally. Each instance has its own workspace; recovery depends on the client restoring a backup.
+
+The single-replica recommendation applies to Jupyter access through the shared URL. With two replicas, requests can reach different instances, each with its own Jupyter token and notebook sessions. Use the selected instance's Terminal tab or SSH command in the Portal for direct shell access. These per-instance shell connections avoid gateway load balancing.
+
+## Important Behavior
+
+- Always pass `--container <container-group-name>` when starting SpotWarp so it does not monitor or scale unrelated container groups in the same project.
+- `--no-standby` prevents the client from adding a standby; it does not reduce an already scaled group. To return to single-replica mode, also set the group to one replica in the Portal.
+- Backups use `rsync` on Linux and macOS when available, and `scp` on Windows. Transfer time depends on your local connection and checkpoint size.
+- The current SpotWarp client disables SSH host-key checking to accommodate replacement instances and sends periodic license/status requests to `gpu-action.com`. Review that behavior against your security and privacy requirements.
+- This recipe uses a mutable image tag. Review upstream changes before redeploying or updating a production workload.
+
+## Resources
+
+- [SpotWarp GitHub](https://github.com/enplabs/spotwarp)
+- [SpotWarp for SaladCloud: client setup and pricing](https://gpu-action.com/salad)
+- [SaladCloud SSH access](https://docs.salad.com/container-engine/explanation/container-groups/ssh-and-terminal)
