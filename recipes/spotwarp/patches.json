@@ -1,0 +1,29 @@
+[
+  [
+    {
+      "op": "copy",
+      "from": "/input/autostart_policy",
+      "path": "/output/autostartPolicy"
+    },
+    {
+      "op": "copy",
+      "from": "/input/replicas",
+      "path": "/output/replicas"
+    },
+    {
+      "op": "copy",
+      "from": "/input/container_group_name",
+      "path": "/output/name"
+    },
+    {
+      "op": "copy",
+      "from": "/input/license_key",
+      "path": "/output/container/environmentVariables/LICENSE_KEY"
+    },
+    {
+      "op": "copy",
+      "from": "/input/gpu_action_server_url",
+      "path": "/output/container/environmentVariables/GPU_ACTION_SERVER_URL"
+    }
+  ]
+]

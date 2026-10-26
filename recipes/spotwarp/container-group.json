@@ -1,0 +1,47 @@
+{
+  "autostartPolicy": true,
+  "container": {
+    "environmentVariables": {},
+    "image": "ghcr.io/enplabs/spotwarp:pytorch2.1",
+    "imageCaching": true,
+    "priority": "high",
+    "resources": {
+      "cpu": 4,
+      "gpuClasses": [
+        "43a49c0c-f860-40e9-a509-702d0dba0902",
+        "a5db5c50-cbcb-4596-ae80-6a0c8090d80f",
+        "0d062939-7c01-4aae-a2b1-30e315124e51",
+        "ed563892-aacd-40f5-80b7-90c9be6c759b"
+      ],
+      "memory": 16384,
+      "storageAmount": 53687091200,
+      "shmSize": 2048
+    }
+  },
+  "name": "",
+  "networking": {
+    "auth": false,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 8888,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  },
+  "replicas": 1,
+  "restartPolicy": "always",
+  "readme": "$replace",
+  "readinessProbe": {
+    "failureThreshold": 3,
+    "http": {
+      "headers": [],
+      "path": "/api",
+      "port": 8888,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 20,
+    "periodSeconds": 10,
+    "successThreshold": 1,
+    "timeoutSeconds": 5
+  }
+}

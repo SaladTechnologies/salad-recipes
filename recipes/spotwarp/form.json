@@ -1,0 +1,31 @@
+{
+  "title": "SpotWarp Checkpoint Backup and Restore",
+  "description": "$replace",
+  "type": "object",
+  "required": ["container_group_name", "license_key"],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2-63 lowercase letters, numbers, or hyphens. Cannot start with a number or start or end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "license_key": {
+      "title": "SpotWarp License Key",
+      "description": "Required* Your license key provided by SpotWarp.",
+      "type": "string",
+      "format": "password",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "gpu_action_server_url": {
+      "title": "SpotWarp Server URL",
+      "description": "SpotWarp server used to validate the license configured in this container.",
+      "type": "string",
+      "format": "uri",
+      "default": "https://gpu-action.com"
+    }
+  }
+}
