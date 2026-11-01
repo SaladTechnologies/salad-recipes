@@ -1,0 +1,49 @@
+{
+  "name": "",
+  "readme": "$replace",
+  "container": {
+    "command": [],
+    "environmentVariables": {
+      "EXPOSE_MODE": "gateway",
+      "STUDIO_PORT": "8080",
+      "LD_LIBRARY_PATH": "/root/.unsloth/llama.cpp/build/bin:/root/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages/nvidia/cuda_runtime/lib:/root/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages/nvidia/cublas/lib:/root/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages/nvidia/cuda_nvrtc/lib"
+    },
+    "image": "volkobfq/unsloth-studio@sha256:da6347e54d71fc6b1e6475363b08efdfd6351ec74201fb1930f54ced0e264df6",
+    "imageCaching": false,
+    "resources": {
+      "cpu": 8,
+      "memory": 24576,
+      "gpuClasses": [
+        "851399fb-7329-4195-a042-d6514b28cf33"
+      ],
+      "storageAmount": 107374182400,
+      "shmSize": 4096
+    },
+    "priority": "high"
+  },
+  "autostartPolicy": true,
+  "restartPolicy": "always",
+  "replicas": 1,
+  "networking": {
+    "auth": false,
+    "clientRequestTimeout": 100000,
+    "loadBalancer": "least_number_of_connections",
+    "port": 8080,
+    "protocol": "http",
+    "serverResponseTimeout": 100000,
+    "singleConnectionLimit": false
+  },
+  "readinessProbe": {
+    "failureThreshold": 20,
+    "http": {
+      "headers": [],
+      "path": "/",
+      "port": 8080,
+      "scheme": "http"
+    },
+    "initialDelaySeconds": 30,
+    "periodSeconds": 15,
+    "successThreshold": 1,
+    "timeoutSeconds": 5
+  }
+}

@@ -1,0 +1,40 @@
+## Your Unsloth Studio is deploying 🦥
+
+It can take a few minutes for a node to be allocated, pull the image and start.
+
+### 1. Open the Studio
+
+Once the container group is **Running**, open the **Access Domain Name** shown in
+the SaladCloud Portal (Container Gateway URL). That's your Studio.
+
+### 2. Authentication
+
+- **Container Gateway auth** (if you enabled it): requests need a SaladCloud API
+  key. The Portal preview handles this for you; for direct browser access, keep
+  it disabled or use an authenticated client.
+- **Studio password**: log in with the **admin password** you set in the form.
+
+### 3. Fine-tune & run
+
+Use the **Entraîner / Train** tab to fine-tune a model, and the **Chat** tab to
+test the base vs. fine-tuned model side by side.
+
+### ⚠️ Persist your work
+
+SaladCloud nodes are ephemeral — if a node is reallocated, anything written only
+to local disk is lost. To keep your trained models:
+
+- Provide a **Hugging Face token** and **push/export** your model to the Hub from
+  the Studio **Export** tab, **or**
+- Download your artifacts before stopping the group.
+
+The image itself (Unsloth + PyTorch) is baked in, so a recycled node comes back
+ready without any reinstall.
+
+### Notes
+
+- The image already removes `flash_attn` so inference uses `sdpa`, avoiding the
+  `static cache is not compatible with flash_attention_2` error on Nemotron /
+  Gemma-3 style models.
+- Default GPU class is high-VRAM. Adjust CPU / RAM / GPU class in the form or the
+  container group settings to fit the models you train.
