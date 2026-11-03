@@ -4,7 +4,7 @@
   "container": {
     "command": [],
     "environmentVariables": {},
-    "image": "saladtechnologies/risc0-recipe:1.0.0",
+    "image": "saladtechnologies/risc0-recipe:1.0.0-kelpie-0.7.2",
     "imageCaching": true,
     "resources": {
       "cpu": 16,

@@ -3,7 +3,7 @@
     "autostartPolicy": true,
     "container": {
       "environmentVariables": {},
-      "image": "saladtechnologies/ai-toolkit:cuda12.8-flux1-dev-kelpie",
+      "image": "saladtechnologies/ai-toolkit:cuda12.8-flux1-dev-kelpie-0.7.2",
       "imageCaching": true,
       "priority": "high",
       "resources": {

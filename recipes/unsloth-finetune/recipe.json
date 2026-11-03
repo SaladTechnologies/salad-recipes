@@ -5,7 +5,7 @@
     "container": {
       "command": [],
       "environmentVariables": {},
-      "image": "saladtechnologies/unsloth-kelpie:1.0.0",
+      "image": "saladtechnologies/unsloth-kelpie:1.0.0-kelpie-0.7.2",
       "imageCaching": true,
       "resources": {
         "cpu": 8,
