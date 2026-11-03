@@ -1,0 +1,7 @@
+FROM scratch AS kelpie
+ARG KELPIE_VERSION=0.7.2
+ADD --chmod=0755 --checksum=sha256:a0b98e9d44fb4ebbe3b8267e7545616a6814f9b07f9757e00ca84037b73f20f8 https://github.com/SaladTechnologies/kelpie/releases/download/${KELPIE_VERSION}/kelpie /kelpie
+
+# Preserve the 1.0.0 runtime; replace only the Kelpie worker.
+FROM saladtechnologies/unsloth-kelpie@sha256:a54084ac75fcb4470868d2cea2d60b7b48cd286efbdae8823c32823d1cae8328
+COPY --link --from=kelpie /kelpie /usr/local/bin/kelpie

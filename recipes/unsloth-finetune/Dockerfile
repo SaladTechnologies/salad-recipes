@@ -18,7 +18,7 @@ RUN pip install --upgrade --no-cache-dir unsloth unsloth_zoo
 COPY unsloth-cli.py /opt/unsloth-cli.py
 
 # Download kelpie into user-local bin
-ARG KELPIE_VERSION=0.6.1
+ARG KELPIE_VERSION=0.7.2
 RUN set -eux; \
     curl -fsSL --retry 5 --retry-connrefused --connect-timeout 30 --http1.1 \
         -o /usr/local/bin/kelpie \

@@ -3,7 +3,7 @@
     "autostartPolicy": true,
     "container": {
       "environmentVariables": {},
-      "image": "docker.io/saladtechnologies/mds:001-gromacs-kelpie-no-sync",
+      "image": "docker.io/saladtechnologies/mds:001-gromacs-kelpie-no-sync-0.7.2",
       "imageCaching": true,
       "priority": "high",
       "resources": {

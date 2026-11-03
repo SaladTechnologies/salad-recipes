@@ -52,7 +52,7 @@ RUN git clone --depth 1 https://github.com/risc0/risc0.git /opt/risc0 && \
 WORKDIR /opt/risc0
 
 # Download kelpie into user-local bin
-ARG KELPIE_VERSION=0.6.1
+ARG KELPIE_VERSION=0.7.2
 RUN set -eux; \
     curl -fsSL --retry 5 --retry-connrefused --connect-timeout 30 --http1.1 \
         -o /usr/local/bin/kelpie \

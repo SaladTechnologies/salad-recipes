@@ -1,0 +1,7 @@
+FROM scratch AS kelpie
+ARG KELPIE_VERSION=0.7.2
+ADD --chmod=0755 --checksum=sha256:a0b98e9d44fb4ebbe3b8267e7545616a6814f9b07f9757e00ca84037b73f20f8 https://github.com/SaladTechnologies/kelpie/releases/download/${KELPIE_VERSION}/kelpie /kelpie
+
+# Preserve the cuda12.8-flux1-dev-kelpie runtime; replace only the worker.
+FROM saladtechnologies/ai-toolkit@sha256:beaf4a352024300fdad5316544c50a047163c295977eff3d98b9f5c253482a8f
+COPY --link --from=kelpie /kelpie /kelpie
