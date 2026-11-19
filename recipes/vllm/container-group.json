@@ -2,11 +2,15 @@
   "name": "",
   "readme": "$replace",
   "container": {
-    "command": [],
+    "command": [
+      "/bin/sh",
+      "-c",
+      "uv pip install --system --no-deps --index-url https://download.pytorch.org/whl/cu129 torchcodec==0.16.0+cu129 || exit 1; export HF_TOKEN=\"${HF_TOKEN:-${HUGGING_FACE_HUB_TOKEN:-}}\"; exec vllm serve \"${MODEL_ID:?You must set MODEL_ID}\" --host \"${HOST:-::}\" --port \"${PORT:-8000}\" ${DTYPE:+--dtype \"$DTYPE\"} ${TP_SIZE:+--tensor-parallel-size \"$TP_SIZE\"} ${PP_SIZE:+--pipeline-parallel-size \"$PP_SIZE\"} ${MAX_MODEL_LEN:+--max-model-len \"$MAX_MODEL_LEN\"} ${MAX_NUM_BATCH_TOKENS:+--max-num-batched-tokens \"$MAX_NUM_BATCH_TOKENS\"} ${MAX_NUM_SEQS:+--max-num-seqs \"$MAX_NUM_SEQS\"} ${GPU_MEM_UTIL:+--gpu-memory-utilization \"$GPU_MEM_UTIL\"} ${QUANTIZATION:+--quantization \"$QUANTIZATION\"} ${KV_CACHE_DTYPE:+--kv-cache-dtype \"$KV_CACHE_DTYPE\"} ${DOWNLOAD_DIR:+--download-dir \"$DOWNLOAD_DIR\"} ${TOKENIZER:+--tokenizer \"$TOKENIZER\"} ${TRUST_REMOTE_CODE:+--trust-remote-code}"
+    ],
     "environmentVariables": {
       "TP_SIZE": "1"
     },
-    "image": "saladtechnologies/salad-vllm-server:1.0.0",
+    "image": "vllm/vllm-openai:v0.32.0-cu129-ubuntu2404",
     "imageCaching": true,
     "resources": {
       "cpu": 8,
