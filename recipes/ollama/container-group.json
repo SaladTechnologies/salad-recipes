@@ -1,8 +1,15 @@
 {
   "autostartPolicy": true,
   "container": {
-    "environmentVariables": {},
-    "image": "saladtechnologies/ollama:0.17.6",
+    "environmentVariables": {
+      "OLLAMA_HOST": "[::]:11434"
+    },
+    "image": "ollama/ollama:0.40.16",
+    "command": [
+      "/bin/sh",
+      "-c",
+      ": \"${OLLAMA_MODEL_NAME:?model required}\"; ready=/tmp/ollama_model_ready; rm -f \"$ready\" || exit 1; server=$$; (export OLLAMA_HOST='http://[::1]:11434'; until ollama list >/dev/null 2>&1; do sleep 1; done; ollama run -- \"$OLLAMA_MODEL_NAME\" </dev/null && touch \"$ready\" || kill -TERM \"$server\") & exec ollama serve"
+    ],
     "imageCaching": true,
     "priority": "high",
     "resources": {
