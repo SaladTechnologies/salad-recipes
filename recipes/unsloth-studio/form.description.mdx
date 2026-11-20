@@ -1,0 +1,11 @@
+Deploy **Unsloth Studio** — a no-code web UI to fine-tune, run and export open
+LLMs (Gemma, Qwen, Llama, DeepSeek, gpt-oss…) on a SaladCloud GPU.
+
+Everything (PyTorch, CUDA, Unsloth) is baked into the image, so the node is
+ready as soon as it starts — and stays ready across reallocations. The web UI is
+exposed through the **SaladCloud Container Gateway**, giving you a stable HTTPS
+URL (no Cloudflare quick tunnels).
+
+You'll set an admin password for the Studio UI. Optionally provide a Hugging
+Face token to pull gated models and push your trained models to the Hub so your
+work is never lost when a node is recycled.

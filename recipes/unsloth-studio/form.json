@@ -1,0 +1,33 @@
+{
+  "title": "Unsloth Studio",
+  "description": "$replace",
+  "type": "object",
+  "required": [
+    "container_group_name",
+    "container_environment_unsloth_password"
+  ],
+  "properties": {
+    "container_group_name": {
+      "title": "Container Group Name",
+      "description": "Required* Must be 2-63 characters: lowercase letters, numbers, or hyphens. Cannot start with a number or start/end with a hyphen.",
+      "type": "string",
+      "maxLength": 63,
+      "minLength": 2,
+      "pattern": "^[a-z][a-z0-9-]{0,61}[a-z0-9]$"
+    },
+    "container_environment_unsloth_password": {
+      "title": "Studio Admin Password",
+      "description": "Required* Password to log into the Unsloth Studio web UI. Choose a strong one - the UI can run code on the machine.",
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "container_environment_hf_token": {
+      "title": "HuggingFace Token (optional)",
+      "description": "Optional. Lets Studio pull gated models and push your trained LoRA/models to the Hub so they survive node reallocation. Must begin with \"hf_\" or \"api_org_\". Leave empty to skip.",
+      "type": "string",
+      "maxLength": 42,
+      "pattern": "^$|^(?:hf_|api_org_)[a-zA-Z0-9]{34}$"
+    }
+  }
+}
